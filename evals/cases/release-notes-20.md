@@ -1,3 +1,5 @@
+# Release Notes — 20 Test Cases
+
 1. 8512df9 Added sentence to skill about already-read's heading
 2. d5c193e Fix skill format "other bks by author" line
 3. c1e5054 edited changelog to describe skill live user edit
