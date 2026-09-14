@@ -1,7 +1,12 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
-## Run 1
+## Run 2
+For all entries
+1. Criterion 1 failed because the prompt did not specify "do not look up the commits." The AI wanted to look up the actual commits for release notes, not use the input I gave it.
+2. Criterion 6 was unverifiable since there were no fallbacks or defaults applied.
+
+## Run 1 [2026-09-14]
 
 ### Entry 1: Commits 1 and 8
 What went wrong: User stopped the AI after it tried to find the commit hashes in another repo, and had to re-write the prompt to say "only use these commits" (Criterion 1).
