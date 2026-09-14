@@ -16,5 +16,3 @@ OVERALL: Rubric did not match the skill.
 - Fixed: The 'skip' rule had 2 contradicting requirements and was followin the second (writing a line describing the skip). Clarified the rule. Old: "Skip a commit if a user of the book recommender would never notice the change. Whenever a commit is skipped for any reason, still write a line: SKIP; <reason>. Never omit a line." New: "Skip a commit if a user of the book recommender would never notice the change. Do not add an entry for that commit."
 
 - Fixed: Deleted half of format requirement because I am no longer including a SKIP reason. Old: "- Format answers like this: "Commit 20 (30aace2): Sentence here." OR "Commit 20 (30aace2): SKIP; <reason>."" New: "- Format answers like this: "Commit 20 (30aace2): Sentence here.""
-
-- Fixed: Added rules for changelog since it is different formatting from release notes and the description of the skill includes both.
