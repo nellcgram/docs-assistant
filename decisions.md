@@ -19,7 +19,7 @@
 
 **Why:** Three commits in Run 3 went through two rounds of revision and were still judged too imprecise compared to the actual commit — the model kept generalizing away the specific default or check that made the note useful.
 
-**Status:** Logged in evals/findings.md (Run 3). Not yet written into SKILL.md as an explicit rule.
+**Status:** Logged in evals/findings.md (Run 3). Logged in skill. Logged in rubric.
 
 ## [2026-09-14 1:31 PM] — Broadened "don't check other repos" to "don't check any repo"
 **Decision:** Rewrote the rule from "Do not check other repos for the release notes commit hashes; use only the raw commits the user gives you" to "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes."

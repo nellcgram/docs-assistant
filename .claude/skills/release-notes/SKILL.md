@@ -15,4 +15,6 @@
 - Do not us internal file names (for example skill, rubriv, eval, findings) in release notes.
 - A release note fails if either:
    a. It's factually wrong, or
-   b. It's accurate but vague; it leaves out the specific mechanism or outcome (e.g., says 'adjusted when it asked' without naming what default was applied).
+   b. It's accurate but vague; it leaves out the specific mechanism or outcome
+   Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
+Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
