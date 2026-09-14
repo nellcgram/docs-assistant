@@ -1,5 +1,9 @@
 # Changelog
 
+## Run 2
+### Commit: ? , [2026-09-14]
+- Fixed: Rewrote rule telling AI not to check repos for commits. Old: "Do not check other repos for the release notes commit hashes; use only the raw commits the user gives you." New: "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes."
+
 ## Run 1 [2026-09-14]
 OVERALL: Rubric did not match the skill.
 
