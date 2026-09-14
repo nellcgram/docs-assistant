@@ -12,7 +12,7 @@
 
 **Why:** Run 3 findings showed this commit was wrongly marked skip. The skip rule is about whether the *effect* is visible to the user, not about whether the commit's own description uses technical-sounding language.
 
-**Status:** Logged in evals/findings.md (Run 3). Not yet written into SKILL.md as an explicit rule.
+**Status:** Logged in evals/findings.md (Run 3). Logged to skill and rubric.
 
 ## [2026-09-14 2:28 PM] — A technically-accurate release note that omits the specific outcome still fails
 **Decision:** A release note counts as a failure if it's vaguely accurate but drops the specific mechanism or outcome of the commit (for example, describing "adjusted when it asked" without saying what default was applied), not only if it's factually wrong.

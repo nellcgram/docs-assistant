@@ -7,7 +7,7 @@
 
 - Make tone of release notes user-facing; include what changed and why it matters. Example: "The skill now stops to tell user when already-read file is missing, which prevents the skill from running without exclusion filtering."
 - List release notes or entries in the same order as the input commits.
-- Skip a commit if a user of the book recommender would never notice the change. Do not add an entry for that commit.
+- Skip a commit if the effect is not visible to the user. Do not add an entry for that commit. If the commit sounds technical and internal but it changes something for the user, include it. Example: A commit adding "a pre-run check against the already-read-books file" sounds like internal implementation detail, but it changes which books the recommender shows; include it, don't skip it.
 - When a skill silently defaults to something, say that a default was applied.
 - Format release notes answers like this: "Commit 20 (30aace2): Sentence here."
 - Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes.

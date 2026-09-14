@@ -23,3 +23,4 @@ Outcomes: Pass, fail, unverifiable
 7. Is the release note both factually correct AND includes the specific mechanism or outcome 
 - Example: Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
 - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
+Outcomes: Pass, fail, unverifiable
