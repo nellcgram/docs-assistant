@@ -1,13 +1,20 @@
 # Changelog
 
+## Run 3 
+### Commit: c503947, [2026-09-14] - Fixed original input for commit #19 (3857bb6) release-notes-20.md
+-Fixed: For Commit #19 3857bb6, changed release-notes.md because only making the original input more precise would add enough detail to results. Old: "Added instruction to skill, check before running section." New: "Edited skill to check already-read.md before running so won't reproduce read books."
+
+### Commit: ceb3cc8, [2026-09-14] - Fixed original input for commit #4 (4e3564b) release-notes-20.md
+-Fixed: For Commit #4 4e3564b, changed release-notes.md because only making the original input more precise would add enough detail to results. Old: "Edited skill format about user being there to ask which genre." New: "Adjusted skill wording to default to contemporary genre and tell user."
+
 ## Run 2
-### Commit: ? , [2026-09-14]
+### Commit: 4dc4c81, [2026-09-14] - Rewrote checking repos rule
 - Fixed: Rewrote rule telling AI not to check repos for commits. Old: "Do not check other repos for the release notes commit hashes; use only the raw commits the user gives you." New: "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes."
 
 ## Run 1 [2026-09-14]
 OVERALL: Rubric did not match the skill.
 
-### Commit: 16c67f5, [2026-09-14]
+### Commit: 16c67f5, [2026-09-14] - Duplicate entry
 - Fixed: Findings Entry #2 duplicated Entry #3, giving conflicting guidance. Old: Entry #2 restated Entry #3. New: Deleted Entry #2 and renumbered the remaining entries.
 
 ### Commit: a59fc9d, [2026-09-14] - Rubric criteria
