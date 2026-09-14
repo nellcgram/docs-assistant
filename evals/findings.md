@@ -1,9 +1,6 @@
-For each failed case, write one entry answering: what went wrong, and which of these three it was —
-   - the spec never said anything about this situation
-   - the spec said something, but it was unclear
-   - the spec was clear, and the model just didn't follow 
+# Findings
+Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
-   
 1, 8
 What went wrong: User stopped the AI after it tried to find the commit hashes in another repo, and had to re-write the prompt to say "only use these commits" (Criterion 1).
 Entry was not in past tense (Criterion 2) and used internal file names (Criterion 3). There was exactly 1 release note so Criterion 3 passed and there was no fallback or default mentioned so Criterion 6 was unverifiable. Criterion 4 was unverifiable since this was not a developer-facing commit.
