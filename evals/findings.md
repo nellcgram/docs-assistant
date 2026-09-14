@@ -5,19 +5,20 @@ Below are the reasons why ouputs failed, grouped by what numbers matched each re
 ## For all entries:
 - Criterion 4 failed because it removed commit #19 which was still user-facing, not developer-facing.
 
-- Across 3 commits, the language is less precise than the actual commits:
- 1. Commit 19 (3857bb6)
- - V1 Original: "The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering."
-- Revised: "Commit 19 (3857bb6): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
-- It should say: "Checked the file of already read books before running, so the result won't produce books the user has already read."
-
-2. Commit 4 (4e3564b)
+- Across 2 commits, the language is less precise than the actual commits:
+ 1. Commit 4 (4e3564b)
 - V1: It was marked skip in version 1 but it should not have been
 - V2 Revised too vaguely: "Clarified that the recommender asked which genre when a user was present to answer."
 - V3 revised less vaguely but missing information: "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond"
 - It should say: "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 
-Commit 8 (a6477f0) and Commit 12 (02c7b94): acceptable
+ Commit 19 (3857bb6)
+ - V1 Original: "The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering."
+- Revised V2: "Commit 19 (3857bb6): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
+- Revised V3: Skipped completely.
+- It should say: "Checked the file of already read books before running, so the result won't produce books the user has already read."
+
+Commit 1, 4, 8, 12 were acceptable.
 
 ## Run 2 [2026-09-14]
 ## For all entries:
