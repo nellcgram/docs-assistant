@@ -1,8 +1,8 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
-## Run 2
-For all entries
+## Run 2 [2026-09-14]
+## For all entries:
 1. Criterion 1 failed because the prompt did not specify "do not look up the commits." The AI wanted to look up the actual commits for release notes, not use the input I gave it.
 2. Criterion 6 was unverifiable since there were no fallbacks or defaults applied.
 
