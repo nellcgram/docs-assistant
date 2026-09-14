@@ -1,8 +1,8 @@
 # Changelog
 
 ## Run 3 
-### Commit: c503947, [2026-09-14] - Fixed original input for commit #19 (3857bb6) release-notes-20.md
--Fixed: For Commit #19 3857bb6, changed release-notes.md because only making the original input more precise would add enough detail to results. Old: "Added instruction to skill, check before running section." New: "Edited skill to check already-read.md before running so won't reproduce read books."
+### Commit: c503947, [2026-09-14] - Fixed original input for commit #19 (dfb8369) release-notes-20.md
+-Fixed: For Commit #19 dfb8369, changed release-notes.md because only making the original input more precise would add enough detail to results. Old: "Added instruction to skill, check before running section." New: "Edited skill to check already-read.md before running so won't reproduce read books."
 
 ### Commit: ceb3cc8, [2026-09-14] - Fixed original input for commit #4 (4e3564b) release-notes-20.md
 -Fixed: For Commit #4 4e3564b, changed release-notes.md because only making the original input more precise would add enough detail to results. Old: "Edited skill format about user being there to ask which genre." New: "Adjusted skill wording to default to contemporary genre and tell user."
