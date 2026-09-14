@@ -42,7 +42,7 @@ OUT
 The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file edit, the new_string was NOT written to the file). STOP what you are doing and wait for the user to tell you how to proceed.
 
 ## Prompt 2
-Only use the release notes I gave you to write relrease notes for all 20 commits I listed.
+Only use the release notes I gave you to write release notes for all 20 commits I listed.
 
 ## Response 2
 Based on the release-notes skill rules and using only the commit messages provided:
