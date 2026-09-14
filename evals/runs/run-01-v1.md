@@ -159,3 +159,5 @@
 - Criterion 4: Fail
 - Criterion 5: Fail 
 - Criterion 6: Unverifiable
+
+**Passed every criteria:** O
