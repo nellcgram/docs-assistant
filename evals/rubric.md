@@ -2,19 +2,20 @@
 
 ## Criteria:
 - Did it run through the skill without interrupting for user feedback (for ex. asking if I wanted to find the commits in another repo)
-Fail
+Outcomes: Pass, fail, unverifiable
 
 - Is the response in past tense?
-Fail
+Outcomes: Pass, fail, unverifiable
 
 - Is there exactly one release note per non-skipped commit?
-Pass
+Outcomes: Pass, fail, unverifiable
 
 - Are developer-facing commits correctly skipped (no note at all)?
-Fail
+Outcomes: Pass, fail, unverifiable
 
 - Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
-Fail
+Outcomes: Pass, fail, unverifiable
 
 - Is a fallback or default explained when one applies?
 Unverifiable
+Outcomes: Pass, fail, unverifiable
