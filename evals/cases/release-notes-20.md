@@ -18,5 +18,5 @@
 16. 903d1d5 Move run-01 results into docs so it publishes to the site
 17. cd5df49 added note on repo history to README
 18. a855b95 fixed already read example file
-19. 3857bb6 Edited skill to check already-read.md before running so won't reproduce read books
+19. dfb8369 Edited skill to check already-read.md before running so won't reproduce read books
 20. 30aace2 moved rubric to eval file

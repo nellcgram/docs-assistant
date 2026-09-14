@@ -33,7 +33,7 @@ a855b95 fixed already read example file
 371f5e5 Added changelog entry
 a208b1f Added frontmatter to already-read example
 f29609a wrote already read example
-3857bb6 Added instruction to skill, check before running section
+dfb8369 Added instruction to skill, check before running section
 30aace2 moved rubric to eval file
 551549b Edited title of run 1 output for accuracy
 11d2d17 Edited run 1 file (criterion)

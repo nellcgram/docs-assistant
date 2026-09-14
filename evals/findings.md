@@ -12,9 +12,9 @@ Below are the reasons why ouputs failed, grouped by what numbers matched each re
 - V3 revised less vaguely but missing information: "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond"
 - It should say: "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 
- Commit 19 (3857bb6)
+ Commit 19 (dfb8369)
  - V1 Original: "The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering."
-- Revised V2: "Commit 19 (3857bb6): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
+- Revised V2: "Commit 19 (dfb8369): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
 - Revised V3: Skipped completely.
 - It should say: "Checked the file of already read books before running, so the result won't produce books the user has already read."
 

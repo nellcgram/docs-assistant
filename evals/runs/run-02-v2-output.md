@@ -21,7 +21,7 @@ use release note skill to write release notes for all 20 commits # Release Notes
 16. 903d1d5 Move run-01 results into docs so it publishes to the site
 17. cd5df49 added note on repo history to README
 18. a855b95 fixed already read example file
-19. 3857bb6 Added instruction to skill, check before running section
+19. dfb8369 Added instruction to skill, check before running section
 20. 30aace2 moved rubric to eval file
 Show more
 
@@ -30,7 +30,7 @@ release-notes skill
 Bash
 Reason: what does this do
 IN
-for h in 8512df9 d5c193e c1e5054 4e3564b 7534dc5 d103af2 4699559 a6477f0 8097851 552345f c3ea9fd 02c7b94 f223fc0 462668b df61095 903d1d5 cd5df49 a855b95 3857bb6 30aace2; do echo "=== $h ==="; git show --stat --format="%H%n%s%n%b" $h | head -20; echo; done
+for h in 8512df9 d5c193e c1e5054 4e3564b 7534dc5 d103af2 4699559 a6477f0 8097851 552345f c3ea9fd 02c7b94 f223fc0 462668b df61095 903d1d5 cd5df49 a855b95 dfb8369 30aace2; do echo "=== $h ==="; git show --stat --format="%H%n%s%n%b" $h | head -20; echo; done
 
 This command shows details for each of the 20 commits — for each hash, it prints the full commit hash, subject line, body, and a stat summary of which files changed (via git show --stat). I need this to see the actual diffs/context behind each commit message so I can write accurate, user-facing release notes rather than just paraphrasing the commit subject lines.
 
@@ -38,7 +38,7 @@ It's read-only (no changes to the repo) — just inspecting commit metadata and 
 
 Bash
 IN
-for h in 8512df9 d5c193e c1e5054 4e3564b 7534dc5 d103af2 4699559 a6477f0 8097851 552345f c3ea9fd 02c7b94 f223fc0 462668b df61095 903d1d5 cd5df49 a855b95 3857bb6 30aace2; do echo "=== $h ==="; git show --stat --format="%H%n%s%n%b" $h | head -20; echo; done
+for h in 8512df9 d5c193e c1e5054 4e3564b 7534dc5 d103af2 4699559 a6477f0 8097851 552345f c3ea9fd 02c7b94 f223fc0 462668b df61095 903d1d5 cd5df49 a855b95 dfb8369 30aace2; do echo "=== $h ==="; git show --stat --format="%H%n%s%n%b" $h | head -20; echo; done
 
 OUT
 The user doesn't want to proceed with this tool use. The tool use was rejected (eg. if it was a file edit, the new_string was NOT written to the file). STOP what you are doing and wait for the user to tell you how to proceed.
@@ -58,6 +58,6 @@ Commit 8 (a6477f0): Removed the note listing other books by the same author beca
 
 Commit 12 (02c7b94): Took the Book Recommendations project offline.
 
-Commit 19 (3857bb6): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing.
+Commit 19 (dfb8369): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing.
 
 The other 14 commits were internal-only changes a user of the recommender wouldn't notice, so no entries were written for them per the skip rule.

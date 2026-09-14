@@ -13,3 +13,6 @@
 - Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes.
 - Write all release notes in the past tense only.
 - Do not us internal file names (for example skill, rubriv, eval, findings) in release notes.
+- A release note fails if either:
+   a. It's factually wrong, or
+   b. It's accurate but vague; it leaves out the specific mechanism or outcome (e.g., says 'adjusted when it asked' without naming what default was applied).

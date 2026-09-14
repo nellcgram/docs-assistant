@@ -22,7 +22,7 @@ use the release-notes skill and write release notes for all 20 commits listed he
 16. 903d1d5 Move run-01 results into docs so it publishes to the site
 17. cd5df49 added note on repo history to README
 18. a855b95 fixed already read example file
-19. 3857bb6 Added instruction to skill, check before running section
+19. dfb8369 Added instruction to skill, check before running section
 20. 30aace2 moved rubric to eval file
 Show more
 
@@ -30,7 +30,7 @@ Show more
 release-notes skill
 Bash Find the 20 commits in git history
 IN
-git log --oneline --all | grep -E "8512df9|d5c193e|c1e5054|4e3564b|7534dc5|d103af2|4699559|a6477f0|8097851|552345f|c3ea9fd|02c7b94|f223fc0|462668b|df61095|903d1d5|cd5df49|a855b95|3857bb6|30aace2"
+git log --oneline --all | grep -E "8512df9|d5c193e|c1e5054|4e3564b|7534dc5|d103af2|4699559|a6477f0|8097851|552345f|c3ea9fd|02c7b94|f223fc0|462668b|df61095|903d1d5|cd5df49|a855b95|dfb8369|30aace2"
 
 OUT
 (Bash completed with no output)
@@ -83,6 +83,6 @@ Commit 17 (cd5df49): SKIP; README documentation update.
 
 Commit 18 (a855b95): Fixed an error in the example already-read file, so it now correctly shows the format for excluding books you've already read.
 
-Commit 19 (3857bb6): The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering.
+Commit 19 (dfb8369): The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering.
 
 Commit 20 (30aace2): SKIP; internal move of the grading rubric into the eval file, not a change to the skill itself.
