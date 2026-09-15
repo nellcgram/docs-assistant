@@ -16,6 +16,14 @@ The release notes themselves (commits 1, 4, 8, 19) stayed in past tense and were
 ### Likely cause, not yet confirmed
 Run 5's single batched pass made a judgment call on every ambiguous commit and flagged only one (commit 18) as uncertain. Running each commit as its own isolated case seems to have pushed the model toward hedging and asking rather than deciding, with no other commit's context to calibrate against. Worth re-running Run 6 batched, the way Run 5 was, before deciding whether this is a skill-wording gap or an artifact of the isolated-case format.
 
+### Root cause identified, skill updated [2026-09-15]
+Run 7 (evals/runs/run-07.md) re-ran the same 20 commits batched, as planned, and passed 7/7 — confirming the regression was produced by isolated single-commit calls, not a wording gap that only surfaces under batching. Tracing the two failure modes above to specific rule text:
+- The no-answer responses (case-10, case-12 in evals/runs/run-06/) came from rule 3's "flag the discrepancy back to the user rather than guessing" — written for a verified commit disagreeing with its description, but with no scope fence, so the model generalized it to any ambiguous description with no conflict at all.
+- The per-commit skip essays (case-03) came from rule 4 barring an entry but never barring prose about the decision.
+- Neither failure mode was ever explicitly forbidden anywhere in SKILL.md's history — the closest check, Version 1 rubric criterion 1 ("ran through without interrupting for user feedback"), was retired at Run 4 with no matching skill rule written to replace it.
+
+Fixed by tightening rule 3 (mark unverifiable and still write/skip, don't stop to ask), tightening rule 4 (no per-commit skip essays, aggregate line ok), and adding rule 10 (decide, don't ask, with a worked example on commit 12's ambiguity). Matching evals/rubric.md Version 2 criterion 8 added. See decisions.md 2026-09-15 entry. Not yet re-verified with a new isolated-case run.
+
 Commits 1, 4, 8, and 19 were acceptable. 
 
 ## Run 4 [2026-09-14]

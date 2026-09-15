@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-15] — Run 7 confirmed Run 6 was a batching artifact; skill hardened anyway against isolated-call ambiguity
+**Decision:** Ran the same 20 commits batched in one pass (Run 7) to resolve the open item from the Run 6 entry below. It passed 7/7 cleanly, confirming Run 6's regressions were produced by running each commit as an isolated single-commit call, not by a wording gap that only shows up under batching. Despite that, edited SKILL.md rules 3 and 4 and added rule 10, and added evals/rubric.md Version 2 criterion 8, because the underlying behavior — stopping to ask the user instead of deciding, and writing per-commit essays instead of "no entry" for skips — isn't something a caller can be relied on to avoid by always batching requests.
+
+**Why:** Case-10 and case-12 (evals/runs/run-06/) show the model generalizing rule 3's "flag the discrepancy back to the user" language, written for a verified-commit-vs-description conflict, to any ambiguous description with no conflict at all. Case-03 shows a correctly-skipped commit still getting a paragraph re-litigating the call. Both are things a single, non-batched request could trigger regardless of how the prompt is phrased. Separately, no rule ever told the model to decide rather than ask — that check existed only as Version 1 rubric criterion 1, retired at Run 4 without a matching SKILL.md rule ever being written to replace it.
+
+**Status:** Applied to SKILL.md rules 3, 4, and new rule 10; evals/rubric.md Version 2 criterion 8 added to match. Logged in CHANGELOG.md. Not yet committed to git. Open item: re-run the isolated single-commit format (as Run 6 did) against the updated skill to confirm the fix actually closes the gap, rather than assuming from the rule wording alone.
+
 ## [2026-09-15] — Run 6 findings logged; no skill or rubric fix decided yet, format change suspected
 **Decision:** Logged Run 6's regressions (no-answer responses, verbose skip write-ups standing in for "no entry," present-tense hedging) in findings.md without editing SKILL.md or evals/rubric.md yet.
 
