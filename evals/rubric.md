@@ -8,8 +8,8 @@ Outcomes: Pass, fail, unverifiable
 2. Is there exactly one release note per non-skipped commit?
 Outcomes: Pass, fail unverifiable
 
-3. Are commits skipped only when their effect is not visible to the user, not skipped because the commit's own description sounds technical or internal?
-Example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal plumbing, but it changes which books the user is shown — skipping it fails this criterion even though the wording sounds developer-facing.
+3. Are commits skipped when they're portfolio-site, eval, or project-meta changes (regardless of their visbility), or when their effect is not visible to the user of the books-recommendation skill, and never skipped only because the commit's own description sounds technical or internal?
+Example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal details, but it changes which books the user is shown. Skipping it fails this criterion even though the wording sounds developer-facing.
 Outcomes: Pass, fail, unverifiable
 
 4. Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
@@ -18,7 +18,7 @@ Outcomes: Pass, fail, unverifiable
 5. Is a fallback or default explained when one applies?
 Outcomes: Pass, fail, unverifiable
 
-6. When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it one way or the other?
+6. When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it? When the repo/commit couldn't be found, did it stop and mark unverifiable instead of continuing to search?
 Outcomes: Pass, fail, unverifiable
 
 7. Is the release note both factually correct AND includes the specific mechanism or outcome 
