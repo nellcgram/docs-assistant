@@ -27,7 +27,7 @@
 6. Pass
 7. Unverifiable
 
-# Commit 7, 8, 9, 10, 11
+# Commit 7, 9, 10, 11
 1. Fail
 2. Pass
 3. Fail

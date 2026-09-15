@@ -1,6 +1,23 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
+## Run 6 [2026-09-15]
+Run 6 was run as 20 separate single-commit cases (evals/runs/run-06/case-01.md through case-20.md) instead of one batched 20-commit conversation like Run 5. Three failure modes showed up that Run 5 did not have:
+
+### Several commits got no answer at all
+Commits 2 (2d10267), 6 (1e3c29b), 10 (ec87a17), 12 (6fce484), and 18 (b50af03) produced neither a release note nor a skip decision — the response stopped and asked the user to supply more detail or pick between readings instead of doing what Runs 1-5 did (make the call from the description given). For example, commit 12 ends with "Tell me which reading is correct (or point me at the repo), and I'll finalize or drop the entry," and commit 10 ends with "Rather than guess, could you either confirm the repo location... or tell me what the skill-language edit changed." The skill's "unverifiable" outcome was meant to mark a release note that can't be confirmed against the repo, not license to stop and ask instead of landing on skip-or-write.
+
+### Skipped commits still resulted in full write-up files, not "no entry"
+Nearly every commit correctly identified as skippable (3, 5, 7, 9, 11, 13, 14, 15, 16, 17, 20) still generated a multi-paragraph file restating the skip rule, flagging unverifiability, and inviting the user to override the call — instead of "no entry," which is what the skip rule says and what Run 5 actually did (one line: "Skipped (no visible effect...): 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20"). No single rubric criterion scores this directly, but it's a sharp behavior regression from Run 5.
+
+### Many responses were not in past tense
+The release notes themselves (commits 1, 4, 8, 19) stayed in past tense and were fine. The skip explanations and clarifying-question responses were written in present tense throughout — e.g., commit 3: "Editing the changelog is a project-meta change. It doesn't alter..."; commit 16: "Moving run-01 results into docs so it publishes to the site affects..."; commit 7: "'Edited skill formatting' describes a change... Nothing... points to...". The past-tense rule was written with release notes in mind and doesn't obviously cover this new category of skip/clarification prose.
+
+### Likely cause, not yet confirmed
+Run 5's single batched pass made a judgment call on every ambiguous commit and flagged only one (commit 18) as uncertain. Running each commit as its own isolated case seems to have pushed the model toward hedging and asking rather than deciding, with no other commit's context to calibrate against. Worth re-running Run 6 batched, the way Run 5 was, before deciding whether this is a skill-wording gap or an artifact of the isolated-case format.
+
+Commits 1, 4, 8, and 19 were acceptable. 
+
 ## Run 4 [2026-09-14]
 ## For all entries:
 - Criterion 3 was originally graded Pass, which was wrong: the response wrote release notes for commits 12 (6fce484, "Take Book Recommendations project offline"), 14 (f21345d, "Removed agentic AI section from portfolio site"), and 16 (8a39d5e, "Move run-01 results into docs so it publishes to the site") — all portfolio-site/project-meta changes that a book-recommendation skill user would never see. The rubric at the time only checked visibility to "the user," and these commits are visible to a portfolio site visitor, so they slipped through grading. This was found afterward, not caught by the original grading pass, and is why the skip rule and rubric criterion 3 were rewritten to skip portfolio/eval/project-meta commits regardless of visibility, with a worked meta example added. run-04.md has since been corrected to Criterion 3: Fail.

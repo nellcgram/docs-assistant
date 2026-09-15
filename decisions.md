@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-15] — Run 6 findings logged; no skill or rubric fix decided yet, format change suspected
+**Decision:** Logged Run 6's regressions (no-answer responses, verbose skip write-ups standing in for "no entry," present-tense hedging) in findings.md without editing SKILL.md or evals/rubric.md yet.
+
+**Why:** Run 6 was run as 20 separate single-commit cases instead of one batched 20-commit conversation like Run 5. Run 5, batched, passed cleanly; Run 6, run per-commit, regressed on behavior the current rubric doesn't cleanly score (hedging, asking for input instead of deciding, verbosity, tense drift in non-release-note prose). It isn't yet clear whether this is a real skill-wording gap or an artifact of running each commit in isolation with no other commit's context to calibrate against. Editing the skill now risks fixing a test-harness artifact instead of an actual behavior problem.
+
+**Status:** Logged in CHANGELOG.md and evals/findings.md under Run 6. Open item: re-run the same 20 commits batched, as Run 5 was, to see if the regression reproduces before deciding on a skill or rubric fix.
+
 ## [2026-09-15] — Run 5 confirmed the Run 4 fixes hold; skill and rubric left unchanged
 **Decision:** Made no further edits to SKILL.md or evals/rubric.md after Run 5 scored 7/7 on the Version 2 criteria — the repo-check stop condition and the portfolio/eval/meta skip rule added after Run 4 both held on a fresh session re-run of the same 20 test-case commits.
 

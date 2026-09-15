@@ -1,5 +1,8 @@
 # Changelog
 
+## Run 6 [2026-09-15]
+OVERALL: Regression, not one the Version 2 rubric wording catches cleanly. Run 6 processed the 20 commits as 20 separate single-commit cases instead of one batched conversation like Run 5, and: (1) gave no answer at all for commits 2 (2d10267), 6 (1e3c29b), 10 (ec87a17), 12 (6fce484), and 18 (b50af03) — the response asked the user to confirm a reading or supply more detail instead of writing a release note or making a skip call; (2) still produced a full multi-paragraph write-up for nearly every skipped commit (3, 5, 7, 9, 11, 13, 14, 15, 16, 17, 20), restating the skip rule and inviting an override, instead of the "no entry" the skip rule calls for; (3) wrote most of that skip/hedge prose in present tense (e.g. "is a project-meta change," "doesn't alter," "affects"). Commits 1, 4, 8, and 19, the ones it actually turned into release notes, stayed correct and in past tense. No skill or rubric edit made yet — see decisions.md and findings.md for the open item (re-run the same 20 commits batched, as in Run 5, before deciding on a fix).
+
 ## Run 5 [2026-09-15]
 OVERALL: Passed all 7 Version 2 criteria (evals/runs/run-05.md). No skill or rubric changes needed. The Run 4 fixes (repo-check stop condition, portfolio/eval/meta skip rule) held under a fresh session on the same 20 test-case commits.
 
