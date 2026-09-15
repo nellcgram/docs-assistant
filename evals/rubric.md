@@ -1,23 +1,51 @@
 # Rubric
+Important: After Version 1 runs 1-3, criterion 1 was deleted so runs 4-on use Version 2
 
-## Criteria:
+## Criteria Version 2 (Run 4-on):
+1. Is the response in past tense?
+Outcomes: Pass, fail, unverifiable
+
+2. Is there exactly one release note per non-skipped commit?
+Outcomes: Pass, fail unverifiable
+
+3. Are commits skipped only when their effect is not visible to the user, not skipped because the commit's own description sounds technical or internal?
+Example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal plumbing, but it changes which books the user is shown — skipping it fails this criterion even though the wording sounds developer-facing.
+Outcomes: Pass, fail, unverifiable
+
+4. Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
+Outcomes: Pass, fail, unverifiable
+
+5. Is a fallback or default explained when one applies?
+Outcomes: Pass, fail, unverifiable
+
+6. When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it one way or the other?
+Outcomes: Pass, fail, unverifiable
+
+7. Is the release note both factually correct AND includes the specific mechanism or outcome 
+- Example: Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
+- Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
+Outcomes: Pass, fail, unverifiable
+
+
+## Criteria Version 1 (Runs 1-3):
 1. Did it run through the skill without interrupting for user feedback (for ex. asking if I wanted to find the commits in another repo)
 Outcomes: Pass, fail, unverifiable
+Important: #1 RETIRED for Run 04 onward; see decisions.md
 
 2. Is the response in past tense?
 Outcomes: Pass, fail, unverifiable
 
 3. Is there exactly one release note per non-skipped commit?
-Outcomes: Pass, fail, unverifiable
+Outcomes: Pass, fail unverifiable
 
-4. Are developer-facing commits correctly skipped (no note at all)?
+4. Are commits skipped only when their effect is not visible to the user, not skipped because the commit's own description sounds technical or internal?
+Example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal plumbing, but it changes which books the user is shown — skipping it fails this criterion even though the wording sounds developer-facing.
 Outcomes: Pass, fail, unverifiable
 
 5. Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
 Outcomes: Pass, fail, unverifiable
 
 6. Is a fallback or default explained when one applies?
-Unverifiable
 Outcomes: Pass, fail, unverifiable
 
 7. Is the release note both factually correct AND includes the specific mechanism or outcome 
