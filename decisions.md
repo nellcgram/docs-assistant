@@ -97,7 +97,7 @@ release notes entirely — not given a note explaining the skip, just absent.
 
 **Why:** While hand-writing gold answers, two commits (adding example entries to already-read-example.md, moving a rubric into the evals folder) had no effect a user of the skill would ever see. Writing a release note for either would describe a change that doesn't exist from the reader's side.
 
-**Status:** Applied in gold answers for cases #18 and #20. Not yet written into SKILL.md. That happens when the spec is drafted in Phase 2.
+**Status:** Applied in gold answers for cases #18 and #20. Written into SKILL.md as the skip rule.
 
 ## [2026-09-12 4:35 PM] — Commits that produce no release notes are "skip"
 **Decision:** For a commit that should produce no release note, the correct gold answer is SKIP plus a one-line reason, not omitting the line. 
