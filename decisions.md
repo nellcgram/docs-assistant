@@ -17,7 +17,7 @@
 ## [2026-09-14 8:49 PM] — Repo-check rule needed a stop condition, not just permission to check
 **Decision:** Tightened skill rule 3 so it only checks a repo already known in context, never searches the filesystem or guesses at repo locations, and marks the commit unverifiable if not immediately accessible. Matching rubric criterion 6 now grades for this stop condition explicitly, not just conflict-flagging.
 
-**Why:** Run 4 scored 8/8 on the existing rubric, but the underlying behavior was wrong: once repo-checking was allowed (Run 4's earlier repo-check rule), the model kept trying to locate a repo instead of falling back to unverifiable when none was accessible — the test-case hashes are synthetic and don't resolve to a real repo. The rubric's "Unverifiable" outcome already existed for this case, but nothing in the skill told the model to stop and land there.
+**Why:** Run 4 scored 7/7 on the existing rubric, but the underlying behavior was wrong: once repo-checking was allowed (Run 4's earlier repo-check rule), the model kept trying to locate a repo instead of falling back to unverifiable when none was accessible — the test-case hashes are synthetic and don't resolve to a real repo. The rubric's "Unverifiable" outcome already existed for this case, but nothing in the skill told the model to stop and land there.
 
 **Status:** Applied to SKILL.md rule 3 and evals/rubric.md criterion 6 (commits a04b71b, 2b85564, bc6eef7). Logged in CHANGELOG.md.
 

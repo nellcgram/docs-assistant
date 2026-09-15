@@ -6,7 +6,7 @@ Important: After Version 1 runs 1-3, criterion 1 was deleted so runs 4-on use Ve
 Outcomes: Pass, fail, unverifiable
 
 2. Is there exactly one release note per non-skipped commit?
-Outcomes: Pass, fail unverifiable
+Outcomes: Pass, fail, unverifiable
 
 3. Are commits skipped when they're portfolio-site, eval, or project-meta changes (regardless of their visibility), or when their effect is not visible to the user of the books-recommendation skill, and never skipped only because the commit's own description sounds technical or internal?
     - Technical example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal details, but it changes which books the user is shown. Skipping it fails this criterion even though the wording sounds developer-facing.

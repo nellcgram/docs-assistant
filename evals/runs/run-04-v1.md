@@ -10,4 +10,4 @@
 - Criterion 6: Unverifiable
 - Criterion 7: Pass
 
-**Passed every criteria:** 0 of 8
+**Passed every criteria:** O

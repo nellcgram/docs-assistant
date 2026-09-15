@@ -10,19 +10,19 @@ OVERALL: Passed all 7 Version 2 criteria (evals/runs/run-05-v1.md). No skill or 
 ### Commit: bc6eef7 (builds on a04b71b, 2b85564; formatting in 60a077a), [2026-09-14] - Portfolio-site/eval/meta commits skipped regardless of visibility
 - Fixed: Skip rule only checked visibility to a user, so portfolio-site and eval/project commits with an effect visible to a site visitor (not a skill user) were wrongly written up as release notes. Old: "Skip a commit if the effect is not visible to the user. Do not add an entry for that commit. If the commit sounds technical and internal but it changes something for the user, include it. Example: A commit adding \"a pre-run check against the already-read-books file\" sounds like internal implementation detail, but it changes which books the recommender shows; include it, don't skip it." New: "Skip a commit if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Otherwise, skip a commit if the effect is not visible to a user of the book-recommendation skill. Do not add an entry for either kind of skip. If the commit sounds technical and internal but it changes something for that user, include it. Technical example: A commit adding \"a pre-run check against the already-read-books file\" sounds like an internal implementation detail, but it changes which books the recommender shows; include it, don't skip it. Meta example: a commit described as \"Removed agentic AI section from portfolio site\" is a project meta-change that can be skipped." Matching rubric criterion 3 updated the same way, with both examples added and a "visbility" typo fixed.
 
-### Commit: ?, [2026-09-14] - Fixed original input for commit #1 (3087743) release-notes-20.md
+### Commit: 21039c5, [2026-09-14] - Fixed original input for commit #1 (3087743) release-notes-20.md
 - Fixed: The 15:01 edit meant for commits #4 and #19 landed on #1 instead of #19, giving #1 wording that actually described #19's change. Old: "Added sentence to skill to check already-read books file before running so don't produce read books." New: "Added sentence to skill specifying the exact heading to look for in the already-read file." Checked evals/gold/release-notes.md, evals/cases/raw-commits.md, and evals/runs/run-01 through run-03 for the same issue — none needed changes (gold has no entry for commit 1, raw-commits.md intentionally keeps the original terse message, and the run outputs are historical records of what was produced at the time).
 
-### Commit: ?, [2026-09-14] - Rewrote repo-check rule to allow verification
+### Commit: b29e33d, [2026-09-14] - Rewrote repo-check rule to allow verification
 - Fixed: Skill forbade checking any repo, which was only ever needed to keep eval test cases reproducible, not a real production requirement. Old: "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes." New: "When a commit hash is given and the repo is accessible, check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct."
 
-### Commit: ?, [2026-09-14] - Added worked example to skip rule
+### Commit: ae5dcb5, [2026-09-14] - Added worked example to skip rule
 - Fixed: Skip rule stated the principle (judge by visible effect, not technical-sounding wording) but gave no example, despite commit 19 already having been wrongly skipped for this exact reason in Run 3. Added: "Example: A commit adding \"a pre-run check against the already-read-books file\" sounds like internal implementation detail, but it changes which books the recommender shows; include it, don't skip it."
 
-### Commit: ?, [2026-09-14] - Rubric: retired repo-check criterion, added conflict-flag criterion, versioned the file
+### Commit: 034a3c5, [2026-09-14] - Rubric: retired repo-check criterion, added conflict-flag criterion, versioned the file
 - Fixed: Criterion 1 (never check repos) contradicted the new repo-check rule above. Split evals/rubric.md into "Version 1 (Runs 1-3)," preserved exactly as originally graded, and "Version 2 (Run 4-on)," which drops criterion 1 and adds: "When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it one way or the other?"
 
-### Commit: ?, [2026-09-14] - Replaced real commit hashes with synthetic ones across eval files
+### Commit: 3091109, [2026-09-14] - Replaced real commit hashes with synthetic ones across eval files
 - Fixed: Eval test cases used real hashes from real past commits (this repo's own history) that Claude could look up directly, undermining the eval's controlled input. Replaced all 20 test-case hashes with synthetic, non-resolvable ones, consistently across evals/cases/, evals/gold/, evals/runs/, and SKILL.md's format example.
 
 ## Run 3 
