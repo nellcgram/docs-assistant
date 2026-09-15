@@ -1,6 +1,14 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
+## Run 4 [2026-09-14]
+## For all entries:
+- Criterion 3 was marked Pass at grading time but shouldn't have been: the response wrote release notes for commits 12 (6fce484, "Take Book Recommendations project offline"), 14 (f21345d, "Removed agentic AI section from portfolio site"), and 16 (8a39d5e, "Move run-01 results into docs so it publishes to the site") — all portfolio-site/project-meta changes that a book-recommendation skill user would never see. The rubric at the time only checked visibility to "the user," and these commits are visible to a portfolio site visitor, so they slipped through. This wasn't caught by grading; it was found afterward and is why the skip rule and rubric criterion 3 were rewritten to skip portfolio/eval/project-meta commits regardless of visibility, with a worked meta example added.
+- Criterion 6 was marked Unverifiable because this run's own prompt told the model not to check any repo, so no verification was attempted either way. Separately (not from this run's grading), it was later found that the repo-check rule itself had no stop condition — once repo-checking was allowed, the model could keep searching for a repo instead of falling back to unverifiable when none was accessible. That gap was fixed afterward even though nothing in Run 4 exercised or caught it directly.
+- The grading summary line ("Passed every criteria: 7 of 7") contradicts its own breakdown, which lists Criterion 6 as Unverifiable, not Pass — and, per the point above, Criterion 3 should have read Fail rather than Pass.
+
+Commits 1, 2, 4, 8, and 19 were acceptable.
+
 ## Run 3 [2026-09-14]
 ## For all entries:
 - Criterion 4 failed because it removed commit #19 which was still user-facing, not developer-facing.

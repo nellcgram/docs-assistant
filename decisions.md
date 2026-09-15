@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-15] — Run 5 confirmed the Run 4 fixes hold; skill and rubric left unchanged
+**Decision:** Made no further edits to SKILL.md or evals/rubric.md after Run 5 scored 7/7 on the Version 2 criteria — the repo-check stop condition and the portfolio/eval/meta skip rule added after Run 4 both held on a fresh session re-run of the same 20 test-case commits.
+
+**Why:** Run 4 had scored well on its own rubric but still turned out to need a rule fix afterward (the stop-condition gap wasn't caught by grading). Run 5 exists to re-test the same commits against the tightened rules before treating the skill as stable, rather than trusting Run 4's score alone.
+
+**Status:** Logged in CHANGELOG.md under Run 5. evals/runs/run-05-v1.md and run-05-v1-output.md hold the grading and output.
+
 ## [2026-09-14 9:05 PM] — Portfolio-site and eval/project-meta commits are skipped regardless of visibility
 **Decision:** Reinstated a project-scope skip condition: a commit is skipped if it's a portfolio-site, eval, or project-meta change even when its effect is visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Added a worked "meta example" alongside the existing "technical example" so the rule isn't just a stated principle.
 

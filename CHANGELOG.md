@@ -1,5 +1,8 @@
 # Changelog
 
+## Run 5 [2026-09-15]
+OVERALL: Passed all 7 Version 2 criteria (evals/runs/run-05-v1.md). No skill or rubric changes needed. The Run 4 fixes (repo-check stop condition, portfolio/eval/meta skip rule) held under a fresh session on the same 20 test-case commits.
+
 ## Run 4
 ### Commit: bc6eef7 (builds on a04b71b, 2b85564), [2026-09-14] - Repo-check rule stops and marks unverifiable instead of searching indefinitely
 - Fixed: Rule 3 allowed checking a repo but had no stop condition, so the model kept searching for a repo instead of falling back to unverifiable when none was accessible (the test-case hashes are synthetic and don't resolve to a real repo). Old: "When a commit hash is given and the repo is accessible, check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct." New: "When a commit hash is given, try to check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct. Only check the repo if it is known in context; do not search the filesystem or guess at repo locations. If not immediately accessible, mark unverifiable." Matching rubric criterion 6 old: "When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it one way or the other?" New: "When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it? When the repo/commit couldn't be found, did it stop and mark unverifiable instead of continuing to search?"
