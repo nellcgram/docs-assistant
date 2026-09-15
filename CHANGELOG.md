@@ -1,7 +1,7 @@
 # Changelog
 
 ## Run 5 [2026-09-15]
-OVERALL: Passed all 7 Version 2 criteria (evals/runs/run-05-v1.md). No skill or rubric changes needed. The Run 4 fixes (repo-check stop condition, portfolio/eval/meta skip rule) held under a fresh session on the same 20 test-case commits.
+OVERALL: Passed all 7 Version 2 criteria (evals/runs/run-05.md). No skill or rubric changes needed. The Run 4 fixes (repo-check stop condition, portfolio/eval/meta skip rule) held under a fresh session on the same 20 test-case commits.
 
 ## Run 4
 ### Commit: bc6eef7 (builds on a04b71b, 2b85564), [2026-09-14] - Repo-check rule stops and marks unverifiable instead of searching indefinitely
