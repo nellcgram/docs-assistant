@@ -71,7 +71,7 @@
 **Status:** Applied to SKILL.md across three edits (4bff7ca added the scope rule, 46f8733 removed it and merged skip conditions, b2810f4 restored the "would never notice" wording alongside the SKIP-line rule).
 
 ## [2026-09-12 5:25 PM] — Standardized how commits are cited in release notes
-**Decision:** Reformatted commit citations from "#4 4e3564b - sentence" to "Commit 4 (4e3564b): sentence."
+**Decision:** Reformatted commit citations from "#4 5da846a - sentence" to "Commit 4 (5da846a): sentence."
 
 **Why:** Needed one consistent citation format before generating and grading multiple release-note runs.
 

@@ -6,15 +6,15 @@ Below are the reasons why ouputs failed, grouped by what numbers matched each re
 - Criterion 4 failed because it removed commit #19 which was still user-facing, not developer-facing.
 
 - Across 2 commits, the language is less precise than the actual commits:
- 1. Commit 4 (4e3564b)
+ 1. Commit 4 (5da846a)
 - V1: It was marked skip in version 1 but it should not have been
 - V2 Revised too vaguely: "Clarified that the recommender asked which genre when a user was present to answer."
 - V3 revised less vaguely but missing information: "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond"
 - It should say: "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 
- Commit 19 (dfb8369)
+ Commit 19 (b971722)
  - V1 Original: "The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering."
-- Revised V2: "Commit 19 (dfb8369): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
+- Revised V2: "Commit 19 (b971722): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
 - Revised V3: Skipped completely.
 - It should say: "Checked the file of already read books before running, so the result won't produce books the user has already read."
 
