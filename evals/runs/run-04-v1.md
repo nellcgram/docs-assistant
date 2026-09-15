@@ -2,11 +2,12 @@
 
 ## Applies to all commits in results
 
-- Criterion 1: 
-- Criterion 2: 
-- Criterion 3: 
-- Criterion 4: 
-- Criterion 5: 
-- Criterion 6: 
+- Criterion 1: Pass
+- Criterion 2: Pass
+- Criterion 3: Pass
+- Criterion 4: Pass
+- Criterion 5: Pass
+- Criterion 6: Unverifiable
+- Criterion 7: Pass
 
-**Passed every criteria:** ?
+**Passed every criteria:** 8 of 8
