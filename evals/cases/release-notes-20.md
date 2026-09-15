@@ -1,22 +1,22 @@
 # Release Notes — 20 Test Cases
 
-1. 8512df9 Added sentence to skill about already-read's heading
-2. d5c193e Fix skill format "other bks by author" line
-3. c1e5054 edited changelog to describe skill live user edit
-4. 4e3564b Edited skill format about user being there to ask which genre
-5. 7534dc5 Edited changelog
-6. d103af2 Edited skill "what it does" to be accurate
-7. 4699559 Edited skill formatting
-8. a6477f0 Deleted "other bks by author" note in skill, unnecessarily complicated
-9. 8097851 reworded guardianship rubric again
-10. 552345f Edited changelog and skill language
-11. c3ea9fd Regrade Run 1 with an independent session, fix rubric gap it exposed
-12. 02c7b94 Take Book Recommendations project offline
-13. f223fc0 Fix case study inconsistencies: rescore Run 1, clarify verification, naming, and terminology
-14. 462668b Removed agentic AI section from portfolio site
-15. df61095 Updated README
-16. 903d1d5 Move run-01 results into docs so it publishes to the site
-17. cd5df49 added note on repo history to README
-18. a855b95 fixed already read example file
-19. 3857bb6 Added instruction to skill, check before running section
-20. 30aace2 moved rubric to eval file
+1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
+2. 2d10267 Fix skill format "other bks by author" line
+3. 06d7e80 edited changelog to describe skill live user edit
+4. 5da846a adjusted skill wording to default to contemporary genre and tell user
+5. 32c3bb8 Edited changelog
+6. 1e3c29b Edited skill "what it does" to be accurate
+7. 6217927 Edited skill formatting
+8. 3c8eb5b Deleted "other bks by author" note in skill, unnecessarily complicated
+9. b682575 reworded guardianship rubric again
+10. ec87a17 Edited changelog and skill language
+11. 1ac826a Regrade Run 1 with an independent session, fix rubric gap it exposed
+12. 6fce484 Take Book Recommendations project offline
+13. 78dcb74 Fix case study inconsistencies: rescore Run 1, clarify verification, naming, and terminology
+14. f21345d Removed agentic AI section from portfolio site
+15. 2cce803 Updated README
+16. 8a39d5e Move run-01 results into docs so it publishes to the site
+17. 0853964 added note on repo history to README
+18. b50af03 fixed already read example file
+19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
+20. f244f58 moved rubric to eval file
