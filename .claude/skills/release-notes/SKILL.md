@@ -12,8 +12,8 @@
 5. When a skill silently defaults to something, say that a default was applied.
 6. Format release notes answers like this: "Commit 20 (f244f58): Sentence here."
 7. Write all release notes in the past tense only.
-- Do not us internal file names (for example skill, rubriv, eval, findings) in release notes.
-8. A release note fails if either:
+8. Do not use internal file names (for example skill, rubric, eval, findings) in release notes.
+9. A release note fails if either:
    a. It's factually wrong, or
    b. It's accurate but vague; it leaves out the specific mechanism or outcome.
    Examples:

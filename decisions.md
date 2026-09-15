@@ -1,11 +1,18 @@
 # Decisions
 
+## [2026-09-14 6:06 PM] — Version 1 rubric must stay exactly as graded, not get retroactive fixes
+**Decision:** Restored evals/rubric.md's "Version 1 (Runs 1-3)" section to the original wording actually used to grade those runs — reverted criterion 4 to "Are developer-facing commits correctly skipped (no note at all)?" (no example) and removed criterion 7 (mechanism/outcome), since neither existed in that form when Runs 1-3 were graded.
+
+**Why:** After splitting the rubric into Version 1/Version 2, the Version 1 section had been overwritten with Version 2's improved wording (skip-rule example, mechanism/outcome criterion). That makes old findings citing criterion numbers (e.g. "Criterion 4 failed") misleading — a reader would assume the improved criteria applied at grading time when they didn't.
+
+**Status:** Applied to evals/rubric.md.
+
 ## [2026-09-14 <2:50 PM>] — Fixing the skill won't add missing detail
 **Decision:** I decided to change the input commit list, not the skill rules.
 
 **Why:** I had already tried changing the skill rules between versions 1, 2, and 3 with imprecise wording resulting. I talked to Claude and realized because I was not asking the skill to check actual commits (only using user input), the skill lacked context Git normally gave it, so it needed better input to run on specifically for commits 4 and 19. 
 
-**Status:** Applied edits to release-notes-20.md for commits 4 and 19; gold file still needs to be reconciled.
+**Status:** Applied edits to release-notes-20.md for commits 4 and 19; gold file reconciled 2026-09-14 6:06 PM.
 
 ## [2026-09-14 2:28 PM] — Skip rule depends on visible effect, not how technical a commit sounds
 **Decision:** Commit 19 (a pre-run check against the already-read-books file) should not have been skipped, even though its description sounds like an internal implementation detail — it changes which books the recommender shows the user.
