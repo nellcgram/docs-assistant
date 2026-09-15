@@ -8,8 +8,9 @@ Outcomes: Pass, fail, unverifiable
 2. Is there exactly one release note per non-skipped commit?
 Outcomes: Pass, fail unverifiable
 
-3. Are commits skipped when they're portfolio-site, eval, or project-meta changes (regardless of their visbility), or when their effect is not visible to the user of the books-recommendation skill, and never skipped only because the commit's own description sounds technical or internal?
-Example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal details, but it changes which books the user is shown. Skipping it fails this criterion even though the wording sounds developer-facing.
+3. Are commits skipped when they're portfolio-site, eval, or project-meta changes (regardless of their visibility), or when their effect is not visible to the user of the books-recommendation skill, and never skipped only because the commit's own description sounds technical or internal?
+- Technical example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal details, but it changes which books the user is shown. Skipping it fails this criterion even though the wording sounds developer-facing.
+- Meta example: a commit described as "Removed agentic AI section from portfolio site" is a project meta-change that can be skipped.
 Outcomes: Pass, fail, unverifiable
 
 4. Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
