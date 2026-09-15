@@ -1,6 +1,6 @@
 # Release Notes — 20 Test Cases
 
-1. 3087743 Added sentence to skill to check already-read books file before running so don't produce read books
+1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
 4. 5da846a adjusted skill wording to default to contemporary genre and tell user

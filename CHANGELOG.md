@@ -1,6 +1,9 @@
 # Changelog
 
 ## Run 4
+### Commit: ?, [2026-09-14] - Fixed original input for commit #1 (3087743) release-notes-20.md
+- Fixed: The 15:01 edit meant for commits #4 and #19 landed on #1 instead of #19, giving #1 wording that actually described #19's change. Old: "Added sentence to skill to check already-read books file before running so don't produce read books." New: "Added sentence to skill specifying the exact heading to look for in the already-read file." Checked evals/gold/release-notes.md, evals/cases/raw-commits.md, and evals/runs/run-01 through run-03 for the same issue — none needed changes (gold has no entry for commit 1, raw-commits.md intentionally keeps the original terse message, and the run outputs are historical records of what was produced at the time).
+
 ### Commit: ?, [2026-09-14] - Rewrote repo-check rule to allow verification
 - Fixed: Skill forbade checking any repo, which was only ever needed to keep eval test cases reproducible, not a real production requirement. Old: "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes." New: "When a commit hash is given and the repo is accessible, check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct."
 

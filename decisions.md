@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-14 <6:35 PM>] — Commit #1's input wording was fixed after landing on it by mistake meant for #19
+**Decision:** Restored evals/cases/release-notes-20.md commit #1's description to describe its own real change (specifying the exact heading to look for in the already-read file) instead of the #19-shaped wording it had picked up.
+
+**Why:** The 2:50 PM edit intended for commits #4 and #19 landed on #1 instead of #19 in its first pass; #19 was then separately and correctly rewritten in the next commit to nearly the same content, so #1 and #19 ended up as near-duplicates in the current release-notes-20.md. Caught before Run 4 used the file.
+
+**Status:** Applied to evals/cases/release-notes-20.md; logged in CHANGELOG.md under Run 4. Checked evals/gold/release-notes.md, evals/cases/raw-commits.md, and evals/runs/run-01 through run-03 output files for the same problem — none needed changes.
+
 ## [2026-09-14 6:06 PM] — Version 1 rubric must stay exactly as graded, not get retroactive fixes
 **Decision:** Restored evals/rubric.md's "Version 1 (Runs 1-3)" section to the original wording actually used to grade those runs — reverted criterion 4 to "Are developer-facing commits correctly skipped (no note at all)?" (no example) and removed criterion 7 (mechanism/outcome), since neither existed in that form when Runs 1-3 were graded.
 
