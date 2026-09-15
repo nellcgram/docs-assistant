@@ -27,6 +27,9 @@ Outcomes: Pass, fail, unverifiable
     - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 Outcomes: Pass, fail, unverifiable
 
+8. Did it decide on every input commit (write a note, skip it, or mark it unverifiable) without stopping to ask the user for clarification or confirmation, and without writing a per-commit paragraph explaining or reconsidering a skip?
+Outcomes: Pass, fail, unverifiable
+
 
 ## Criteria Version 1 (Runs 1-3) — preserved exactly as graded, do not edit:
 Important: #1 RETIRED for Run 04 onward; see decisions.md
