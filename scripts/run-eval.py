@@ -9,7 +9,7 @@ import anthropic
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_PATH = ROOT / ".claude/skills/release-notes/SKILL.md"
 CASES_PATH = ROOT / "evals/cases/release-notes-20.md"
-OUTPUT_DIR = ROOT / "evals/runs/v3"
+OUTPUT_DIR = ROOT / "evals/runs/run-06"
 
 CASE_LINE_RE = re.compile(r"^\d+\.\s+\S+\s+.+$")
 
