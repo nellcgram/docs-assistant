@@ -1,5 +1,16 @@
 # Changelog
 
+## Run 10 [2026-09-15]
+OVERALL: Re-tested the Run 8/9 rule 10 fix ("default to skip" clause, commit 512e384) against the isolated single-commit format that produced Run 6's regressions — this time via scripts/run-eval.py calling the API directly, 5 repetitions of all 20 cases (evals/runs/run-10/rep-01 through rep-05, graded in evals/runs/v3-stats.csv). 16 of 20 commits passed cleanly across all 5 reps. Commit 2 (2d10267, 4/5 reps failed) and commit 10 (ec87a17, 1/5 reps failed) still write a note or skip decision but then add a hedging follow-up asking for the diff or confirmation, tripping criterion 8. Commit 6 (1e3c29b, 3/5 reps failed) wrongly wrote a release note for what should have been skipped as an internal skill-wording fix. Commit 18 (b50af03, 3/5 reps failed) mixed both patterns (one rep asked for clarification despite correctly skipping; two reps wrongly wrote a note). No skill or rubric edit made yet — decisions.md logs this as an open item: the isolated-call format still hedges even with rule 10's decide-don't-ask clause in place.
+
+## Mechanical grading added [2026-09-15]
+- Added: scripts/check-mechanical.py, which scores rubric Version 2 criteria 1 (past tense), 2 (one note per commit), 4 (no internal filenames), and 8 (decided every commit without asking or hedging) directly from run output text, writing evals/runs/mechanical-results.csv. Criteria 3, 6, and 7 need to be checked against the actual commit content and stay hand-graded in evals/runs/judgment-grades.csv.
+- Fixed: evals/rubric.md tagged criteria 3, 6, and 7 "mechanical" when they need judgment; retagged to "judgment" (commit a432401). Criterion 5 was missed in that pass and is still tagged "mechanical" even though it's graded in judgment-grades.csv, not by the script — open item, see evals/findings.md.
+- Re-graded runs 4 through 9 with the script (commit fc8eafb), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the Run 6 entry below).
+
+## Run 9 [2026-09-15]
+OVERALL: Passed all 8 Version 2 criteria (evals/runs/run-09.md, run-09-output.md). Confirms the rule 10 default-to-skip fix corrected commit 12's misclassification from Run 8 — the batched run skipped commit 12 along with the other project-meta commits, with no reconsidering language. No skill or rubric changes needed.
+
 ## Run 8 [2026-09-15]
 OVERALL: Commits 1, 2, 4, 8 passed. Commit 12 (6fce484) failed criteria 3 and 8 — written up as a release note instead of skipped, repeating the Run 4 misclassification with rule 10 unchanged since Run 7's clean pass. No skill or rubric edit made yet; decisions.md logs the fix direction as an open item ("Ambiguous feature-vs-portfolio commits default to skip") pending an actual rule 10 edit.
 

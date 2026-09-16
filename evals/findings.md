@@ -1,6 +1,24 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
+## Run 10 [2026-09-15]
+Ran evals/cases/release-notes-20.md through scripts/run-eval.py as 20 isolated single-commit API calls, 5 repetitions (evals/runs/run-10/rep-01 through rep-05), to close the open item from the "Run 7 confirmed..." decision (decisions.md, 2026-09-15): confirm whether the rule 10 default-to-skip fix actually holds under the isolated-call format that caused Run 6's regressions, rather than assuming from the rule text alone. Per-case pass rate is in evals/runs/v3-stats.csv.
+
+### The decide-then-hedge pattern
+16 of 20 commits passed all 5 reps. Commits 2 (2d10267, failed 4 of 5 reps) and 10 (ec87a17, failed 1 of 5) show a failure mode distinct from Run 6's outright refusal to decide: the response does write a note or skip, satisfying rule 10 on its face, but then appends a hedging sentence asking for the diff or confirmation — e.g. commit 2, rep 1: "The message says only that the line's format was fixed, so the specific formatting change ... isn't captured here; if you can share the diff, I'll sharpen the entry." That trailing request still trips criterion 8 (mechanical-results.csv's clarify-pattern check matches "share the diff").
+
+### A real skip-rule miss, not just hedging
+Commit 6 (1e3c29b, failed 3 of 5 reps) wrongly wrote a release note treating a fix to the skill's own "what it does" summary as user-visible, instead of skipping it as an internal/meta change. Commit 18 (b50af03, failed 3 of 5 reps) mixed both patterns: one rep correctly skipped but still asked for clarification, two reps wrongly wrote a note.
+
+### Not yet fixed
+No SKILL.md or rubric edit made from these results. See decisions.md 2026-09-15 entry — the working theory is that the isolated single-commit format itself (no other commit's context, no conversation) makes hedging more likely independent of rule wording, so a further rule change is being held until that's confirmed rather than the script's call shape.
+
+## Run 9 [2026-09-15]
+Passed all 8 Version 2 criteria (evals/runs/run-09.md). Commit 12 (6fce484) was correctly folded into the aggregate skip line, with no release note and no reconsidering language — confirms the rule 10 default-to-skip clause (commit 512e384) fixed the exact misclassification Run 8 had.
+
+### Rubric tagging gap found while automating grading
+While adding scripts/check-mechanical.py, evals/rubric.md's Version 2 criterion 5 ("Is a fallback or default explained when one applies?") was found still tagged "mechanical," but it isn't checked by the script (which only covers criteria 1, 2, 4, 8) and is graded by hand in evals/runs/judgment-grades.csv alongside criteria 3, 6, 7. The a432401 fix that retagged 3, 6, 7 from "mechanical" to "judgment" missed criterion 5. Not yet corrected in evals/rubric.md.
+
 ## Run 8 [2026-09-15]
 Commits 1, 2, 4, 8 passed all Version 2 criteria (evals/runs/run-08.md). Commit 12 (6fce484, "Take Book Recommendations project offline") failed criteria 3 and 8: the response wrote a release note treating it as a book-recommendation feature change, when gold and the 2026-09-14 9:05 PM decision treat this as a portfolio/project-level change to skip. The entry also included a parenthetical weighing both readings ("...leaves some ambiguity about whether this meant discontinuing the feature itself versus removing its portfolio listing; this reads as the former"), which reads as reconsidering the call rather than a single flagged clause, failing criterion 8.
 

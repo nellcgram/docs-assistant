@@ -1,5 +1,19 @@
 # Decisions
 
+## [2026-09-15] — Rule 10 default-to-skip fix applied; holds in batched format, still gapped in isolated single-commit calls
+**Decision:** Applied the fix left pending by the "Ambiguous feature-vs-portfolio commits default to skip" entry below, adding a clause to rule 10 (commit 512e384): "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip." Verified with two follow-up runs: Run 9 (batched, matching Runs 5/7's format) passed 8/8 and correctly skipped commit 12. Run 10 (5 repetitions of the isolated single-commit format that caused Run 6's original regressions, run via the new scripts/run-eval.py against the API directly) confirmed the fix holds for commit 12 specifically, but 4 of the 20 cases (commits 2, 6, 10, 18) still failed a subset of reps — not by refusing to decide as in Run 6, but by deciding and then appending a hedging follow-up asking for the diff, which still trips criterion 8.
+
+**Why:** The isolated single-commit format has now caused two different failure modes at two different points (Run 6's outright non-decisions, Run 10's decide-then-hedge) despite two rounds of rule tightening (rules 3/4/10, then rule 10's default-to-skip clause). This suggests the format itself, not just remaining wording gaps, makes hedging more likely — each isolated case has no other commit's context to calibrate confidence against, unlike the batched conversational format Runs 5, 7, and 9 all used.
+
+**Status:** Rule 10 clause applied (512e384). No further rule change made yet — evals/findings.md logs the specific commits/reps from Run 10. Holding off on another rule edit until it's confirmed this isn't specific to the script's call shape (a single system-prompt-plus-one-message call, no conversation, no tools) versus Claude Code's actual runtime, which is how Runs 1-9 were produced.
+
+## [2026-09-15] — Mechanical criteria split out from judgment criteria for scripted grading
+**Decision:** Added scripts/check-mechanical.py to grade rubric Version 2 criteria 1 (past tense), 2 (one note per commit), 4 (no internal filenames), and 8 (decided every commit without asking or hedging) automatically from run output text, writing evals/runs/mechanical-results.csv. Criteria 3, 6, and 7 stay hand-graded in evals/runs/judgment-grades.csv. Retagged evals/rubric.md's Version 2 criteria 3, 6, and 7 from "mechanical" to "judgment" to match (commit a432401).
+
+**Why:** Criteria 1, 2, 4, and 8 can be checked with text pattern matching alone; criteria 3 (skip-rule correctness), 6 (conflict-flag/unverifiable), and 7 (factual accuracy plus specific mechanism) all require comparing the response against what the actual commit means, which a script can't do. Automating the mechanical half makes re-grading past runs and grading Run 10's 100 case files (5 reps × 20 commits) tractable, since only the judgment half needs to be graded by hand.
+
+**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, v3-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). Open item: evals/rubric.md criterion 5 is still tagged "mechanical" but is graded in judgment-grades.csv, not checked by the script — the a432401 retagging pass missed it.
+
 ## [2026-09-15] — Unverifiable does not disqualify a commit from the pass count
 **Decision:** For a run's "Passed every criteria: X of N" summary line, a commit counts toward X as long as none of its criteria are marked Fail. A criterion marked Unverifiable does not disqualify it.
 
