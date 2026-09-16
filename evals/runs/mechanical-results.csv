@@ -1,0 +1,12 @@
+run,criterion_1_past_tense,criterion_2_one_note_per_commit,criterion_4_no_internal_filenames,criterion_8_decided_every_commit,notes
+run-04,Pass,Pass,Pass,Pass,
+run-05,Pass,Pass,Pass,Fail,C8: asked user for clarification on commit(s): [19]
+run-06,Fail,Fail,Pass,Fail,"C1: commit 1: ""this commit — the repository isn't available""; commit 2: ""able from context.** The repo isn't available""; commit 3: ""pped.** Editing the changelog is a project-m""; C2: duplicate entries for commit(s): [2, 12, 18]; C8: asked user for clarification on commit(s): [2, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 20]"
+run-07,Pass,Pass,Pass,Pass,
+run-08,Pass,Pass,Pass,Fail,C8: reconsidered/hedged on a decision for commit(s): [12]
+run-09,Pass,Pass,Pass,Pass,
+run-10-rep-01,Fail,Pass,Pass,Fail,"C1: commit 1: ""inst the repository, since it isn't accessibl""; commit 2: ""l wording, or list structure) isn't captured""; commit 8: ""inst the repository, since it isn't accessibl""; C8: asked user for clarification on commit(s): [8]"
+run-10-rep-02,Fail,Pass,Pass,Pass,"C1: commit 6: ""9b): The skill's own ""what it does"" summary""; commit 18: ""the description given, which does not speci""; commit 19: ""ctual commit — the repository isn't accessibl"""
+run-10-rep-03,Fail,Pass,Pass,Fail,"C1: commit 2: ""iption alone. The description doesn't say what""; commit 6: ""he recommender's own ""what it does"" summary""; commit 8: ""hange to what the recommender does or shows,""; C8: asked user for clarification on commit(s): [2, 8]"
+run-10-rep-04,Fail,Pass,Pass,Fail,"C1: commit 10: ""or; unverifiable, as the repo isn't available""; aggregate skip line: ""or; unverifiable, as the repo isn't available""; C8: asked user for clarification on commit(s): [2]"
+run-10-rep-05,Fail,Pass,Pass,Fail,"C1: commit 6: ""ok recommender's own ""what it does"" descript""; C8: asked user for clarification on commit(s): [2]"

@@ -1,0 +1,19 @@
+run,commits,criterion_3,criterion_5,criterion_6,criterion_7
+run-04,all,Fail,Pass,Unverifiable,Pass
+run-05,all,Pass,Pass,Pass,Pass
+run-06,"1, 4, 8, 19",Pass,Unverifiable,Pass,Pass
+run-06,"2, 5, 6, 12, 13, 14, 15, 18",Fail,Unverifiable,Pass,Fail
+run-06,3,Pass,Unverifiable,Pass,Unverifiable
+run-06,"7, 9, 10, 11",Fail,Unverifiable,Pass,Unverifiable
+run-06,"16, 17, 20",Fail,Unverifiable,Pass,Unverifiable
+run-07,all,Pass,Pass,Pass,Pass
+run-08,"1, 2, 4, 8",Unverifiable,Unverifiable,Pass,Pass
+run-08,12,Fail,Unverifiable,Pass,Pass
+run-10-rep-01,all,Pass,Pass,Pass,Pass
+run-10-rep-02,all except 6,Pass,Pass,Pass,Pass
+run-10-rep-02,6,Fail,Unverifiable,Pass,Unverifiable
+run-10-rep-03,all except 6,Pass,Pass,Pass,Pass
+run-10-rep-03,6,Fail,Unverifiable,Pass,Unverifiable
+run-10-rep-04,all,Pass,Pass,Pass,Pass
+run-10-rep-05,all except 6,Pass,Pass,Pass,Pass
+run-10-rep-05,6,Fail,Unverifiable,Pass,Unverifiable

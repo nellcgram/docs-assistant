@@ -1,11 +1,53 @@
 # Decisions
 
+## [2026-09-15] — Rule 10 default-to-skip fix applied; holds in batched format, still gapped in isolated single-commit calls
+**Decision:** Applied the fix left pending by the "Ambiguous feature-vs-portfolio commits default to skip" entry below, adding a clause to rule 10 (commit 512e384): "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip." Verified with two follow-up runs: Run 9 (batched, matching Runs 5/7's format) passed 8/8 and correctly skipped commit 12. Run 10 (5 repetitions of the isolated single-commit format that caused Run 6's original regressions, run via the new scripts/run-eval.py against the API directly) confirmed the fix holds for commit 12 specifically, but 4 of the 20 cases (commits 2, 6, 10, 18) still failed a subset of reps — not by refusing to decide as in Run 6, but by deciding and then appending a hedging follow-up asking for the diff, which still trips criterion 8.
+
+**Why:** The isolated single-commit format has now caused two different failure modes at two different points (Run 6's outright non-decisions, Run 10's decide-then-hedge) despite two rounds of rule tightening (rules 3/4/10, then rule 10's default-to-skip clause). This suggests the format itself, not just remaining wording gaps, makes hedging more likely — each isolated case has no other commit's context to calibrate confidence against, unlike the batched conversational format Runs 5, 7, and 9 all used.
+
+**Status:** Rule 10 clause applied (512e384). No further rule change made yet — evals/findings.md logs the specific commits/reps from Run 10. Holding off on another rule edit until it's confirmed this isn't specific to the script's call shape (a single system-prompt-plus-one-message call, no conversation, no tools) versus Claude Code's actual runtime, which is how Runs 1-9 were produced.
+
+## [2026-09-15] — Mechanical criteria split out from judgment criteria for scripted grading
+**Decision:** Added scripts/check-mechanical.py to grade rubric Version 2 criteria 1 (past tense), 2 (one note per commit), 4 (no internal filenames), and 8 (decided every commit without asking or hedging) automatically from run output text, writing evals/runs/mechanical-results.csv. Criteria 3, 6, and 7 stay hand-graded in evals/runs/judgment-grades.csv. Retagged evals/rubric.md's Version 2 criteria 3, 6, and 7 from "mechanical" to "judgment" to match (commit a432401).
+
+**Why:** Criteria 1, 2, 4, and 8 can be checked with text pattern matching alone; criteria 3 (skip-rule correctness), 6 (conflict-flag/unverifiable), and 7 (factual accuracy plus specific mechanism) all require comparing the response against what the actual commit means, which a script can't do. Automating the mechanical half makes re-grading past runs and grading Run 10's 100 case files (5 reps × 20 commits) tractable, since only the judgment half needs to be graded by hand.
+
+**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, v3-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). evals/rubric.md criterion 5 was found still tagged "mechanical" (the a432401 retagging pass missed it, despite it being graded in judgment-grades.csv, not checked by the script) and has since been corrected to "judgment."
+
+## [2026-09-15] — Unverifiable does not disqualify a commit from the pass count
+**Decision:** For a run's "Passed every criteria: X of N" summary line, a commit counts toward X as long as none of its criteria are marked Fail. A criterion marked Unverifiable does not disqualify it.
+
+**Why:** Unverifiable usually means either the criterion doesn't apply to that commit (e.g. criterion 5's fallback check, when no fallback exists in that commit) or the model correctly followed the skill's rule to flag rather than guess against an inaccessible repo — neither is a fault in the response. Disqualifying on Unverifiable would make it nearly impossible for any commit in this test set to ever count, since almost every commit hits Unverifiable on criterion 3, 5, or 6 for reasons unrelated to response quality. run-08.md already used this convention ("4 of 5," where commits 1, 2, 4, 8 count despite criterion 3 and 5 being Unverifiable, and only commit 12 is excluded for its actual Fails), but run-06/grading.md's "0 of 20" summary didn't apply it — the "1, 4, 8, 19" group has zero Fails and should have counted.
+
+**Status:** Applied retroactively: run-06/grading.md corrected to "4 of 20." Logged in CHANGELOG.md and evals/findings.md.
+
+## [2026-09-15] — Ambiguous feature-vs-portfolio commits default to skip
+**Decision:** When a commit description could mean either the book-recommendation feature itself or its portfolio/project-level presence, and nothing in the wording favors one reading over the other, default to skip.
+
+**Why:** Run 8 wrote a release note for commit 12 (6fce484, "Take Book Recommendations project offline"), repeating the exact misclassification Run 4 made and Run 7 avoided — with no rule change in between. Rule 10's worked example names this ambiguity but only says to "pick the reading better supported by the wording," with no tiebreak for the case where the wording doesn't favor either reading, which is why this same commit has flipped between write and skip across runs (write in Run 1, wrongly write in Run 4, no answer in Run 6, correctly skip in Run 7, wrongly write in Run 8). Skip is the safer default here since it matches the existing posture that portfolio/eval/project-meta changes are skipped regardless of visibility (2026-09-14 9:05 PM decision below), and a missed release note is a smaller error than fabricating one for a change a skill user never sees.
+
+**Status:** Logged in evals/findings.md (Run 8) and CHANGELOG.md. Not yet applied to SKILL.md rule 10 or evals/rubric.md — pending.
+
+## [2026-09-15] — Run 7 confirmed Run 6 was a batching artifact; skill hardened anyway against isolated-call ambiguity
+**Decision:** Ran the same 20 commits batched in one pass (Run 7) to resolve the open item from the Run 6 entry below. It passed 7/7 cleanly, confirming Run 6's regressions were produced by running each commit as an isolated single-commit call, not by a wording gap that only shows up under batching. Despite that, edited SKILL.md rules 3 and 4 and added rule 10, and added evals/rubric.md Version 2 criterion 8, because the underlying behavior — stopping to ask the user instead of deciding, and writing per-commit essays instead of "no entry" for skips — isn't something a caller can be relied on to avoid by always batching requests.
+
+**Why:** Case-10 and case-12 (evals/runs/run-06/) show the model generalizing rule 3's "flag the discrepancy back to the user" language, written for a verified-commit-vs-description conflict, to any ambiguous description with no conflict at all. Case-03 shows a correctly-skipped commit still getting a paragraph re-litigating the call. Both are things a single, non-batched request could trigger regardless of how the prompt is phrased. Separately, no rule ever told the model to decide rather than ask — that check existed only as Version 1 rubric criterion 1, retired at Run 4 without a matching SKILL.md rule ever being written to replace it.
+
+**Status:** Applied to SKILL.md rules 3, 4, and new rule 10; evals/rubric.md Version 2 criterion 8 added to match. Logged in CHANGELOG.md. Not yet committed to git. Open item: re-run the isolated single-commit format (as Run 6 did) against the updated skill to confirm the fix actually closes the gap, rather than assuming from the rule wording alone.
+
+## [2026-09-15] — Run 6 findings logged; no skill or rubric fix decided yet, format change suspected
+**Decision:** Logged Run 6's regressions (no-answer responses, verbose skip write-ups standing in for "no entry," present-tense hedging) in findings.md without editing SKILL.md or evals/rubric.md yet.
+
+**Why:** Run 6 was run as 20 separate single-commit cases instead of one batched 20-commit conversation like Run 5. Run 5, batched, passed cleanly; Run 6, run per-commit, regressed on behavior the current rubric doesn't cleanly score (hedging, asking for input instead of deciding, verbosity, tense drift in non-release-note prose). It isn't yet clear whether this is a real skill-wording gap or an artifact of running each commit in isolation with no other commit's context to calibrate against. Editing the skill now risks fixing a test-harness artifact instead of an actual behavior problem.
+
+**Status:** Logged in CHANGELOG.md and evals/findings.md under Run 6. Open item: re-run the same 20 commits batched, as Run 5 was, to see if the regression reproduces before deciding on a skill or rubric fix.
+
 ## [2026-09-15] — Run 5 confirmed the Run 4 fixes hold; skill and rubric left unchanged
 **Decision:** Made no further edits to SKILL.md or evals/rubric.md after Run 5 scored 7/7 on the Version 2 criteria — the repo-check stop condition and the portfolio/eval/meta skip rule added after Run 4 both held on a fresh session re-run of the same 20 test-case commits.
 
 **Why:** Run 4 had scored well on its own rubric but still turned out to need a rule fix afterward (the stop-condition gap wasn't caught by grading). Run 5 exists to re-test the same commits against the tightened rules before treating the skill as stable, rather than trusting Run 4's score alone.
 
-**Status:** Logged in CHANGELOG.md under Run 5. evals/runs/run-05-v1.md and run-05-v1-output.md hold the grading and output.
+**Status:** Logged in CHANGELOG.md under Run 5. evals/runs/run-05.md and run-05-output.md hold the grading and output.
 
 ## [2026-09-14 9:05 PM] — Portfolio-site and eval/project-meta commits are skipped regardless of visibility
 **Decision:** Reinstated a project-scope skip condition: a commit is skipped if it's a portfolio-site, eval, or project-meta change even when its effect is visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Added a worked "meta example" alongside the existing "technical example" so the rule isn't just a stated principle.

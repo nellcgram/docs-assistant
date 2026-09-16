@@ -1,0 +1,1 @@
+Commit 8 (3c8eb5b): Recommendations no longer included a note listing other books by the same author, so each recommendation stayed focused on the single suggested title. (Unverified — the commit itself was not accessible, so this is based on the description provided.)

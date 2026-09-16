@@ -1,0 +1,1 @@
+Commit 18 (b50af03): Corrected the example list of already-read books, so the recommender reads that list as intended and leaves those titles out of its suggestions. (Commit contents were not verifiable here; this entry is based on the description given, which does not specify what was wrong with the file.)

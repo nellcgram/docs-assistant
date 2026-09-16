@@ -1,0 +1,1 @@
+Commit 1 (3087743): The recommender was given the exact heading to look for in your already-read books list, so it reliably located that list and excluded books you had already read instead of missing the section and recommending them again. (Unverified — commit not accessible in this context; written from the description provided.)

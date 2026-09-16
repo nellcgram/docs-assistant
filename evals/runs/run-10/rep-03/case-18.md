@@ -1,0 +1,1 @@
+Skipped: commit 18 (b50af03) — unverifiable; no repo available in context, and the description indicates a fix to a sample/reference file rather than a change visible to someone using the book recommender.

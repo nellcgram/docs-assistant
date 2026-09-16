@@ -1,0 +1,1 @@
+Commit 2 (2d10267): Corrected the formatting of the "other books by this author" line in recommendation output, so that suggestion of an author's other titles displayed as intended. (Unverifiable: the repository was not available in context, so this note is based on the commit description alone.)
