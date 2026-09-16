@@ -10,6 +10,8 @@
 7 pass
 8 pass
 
+**Passed every criteria:** O
+
 ## Run 5
 1 pass
 2 pass
@@ -19,6 +21,8 @@
 6 pass
 7 pass
 8 fail
+
+**Passed every criteria:** O
 
 ## Run 6
 ### commits 1, 4, 8, 19
@@ -51,6 +55,8 @@
 4 pass
 8 fail
 
+**Passed every criteria:** 4 of 20
+
 ## Run 7
 1 pass
 2 pass
@@ -60,6 +66,8 @@
 6 pass
 7 pass
 8 pass
+
+**Passed every criteria:** 8 of 8
 
 ## Run 8
 ### commits 1, 2, 4, 8
@@ -82,8 +90,9 @@
 7 pass
 8 fail
 
+**Passed every criteria:** 4 of 5
+
 ## Run 9
-run 9
 1 pass
 2 pass
 3 unverifiable
@@ -92,3 +101,5 @@ run 9
 6 pass
 7 pass
 8 pass
+
+**Passed every criteria:** 5 of 5

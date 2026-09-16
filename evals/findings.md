@@ -32,6 +32,9 @@ Fixed by tightening rule 3 (mark unverifiable and still write/skip, don't stop t
 
 Commits 1, 4, 8, and 19 were acceptable. 
 
+### Summary line corrected, [2026-09-15] - Unverifiable doesn't disqualify a commit from the pass count
+run-06/grading.md originally read "Passed every criteria: 0 of 20." That was wrong: the "commits 1, 4, 8, 19" group has zero Fails across all 8 criteria (criterion 5 is Unverifiable, everything else Pass), and criterion 5 being Unverifiable there isn't a shortcoming — no fallback applies to any of those four commits, so there's nothing to explain. Run 08.md already established the working convention for this ("4 of 5," where commits 1, 2, 4, 8 count as passing despite criterion 3 and 5 being Unverifiable, and only commit 12's actual Fails exclude it). Applying that same convention to Run 6, the correct total is 4 of 20, not 0. See decisions.md 2026-09-15 entry ("Unverifiable does not disqualify a commit from the pass count").
+
 ## Run 4 [2026-09-14]
 ## For all entries:
 - Criterion 3 was originally graded Pass, which was wrong: the response wrote release notes for commits 12 (6fce484, "Take Book Recommendations project offline"), 14 (f21345d, "Removed agentic AI section from portfolio site"), and 16 (8a39d5e, "Move run-01 results into docs so it publishes to the site") — all portfolio-site/project-meta changes that a book-recommendation skill user would never see. The rubric at the time only checked visibility to "the user," and these commits are visible to a portfolio site visitor, so they slipped through grading. This was found afterward, not caught by the original grading pass, and is why the skip rule and rubric criterion 3 were rewritten to skip portfolio/eval/project-meta commits regardless of visibility, with a worked meta example added. run-04.md has since been corrected to Criterion 3: Fail.

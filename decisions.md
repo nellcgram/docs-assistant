@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-15] — Unverifiable does not disqualify a commit from the pass count
+**Decision:** For a run's "Passed every criteria: X of N" summary line, a commit counts toward X as long as none of its criteria are marked Fail. A criterion marked Unverifiable does not disqualify it.
+
+**Why:** Unverifiable usually means either the criterion doesn't apply to that commit (e.g. criterion 5's fallback check, when no fallback exists in that commit) or the model correctly followed the skill's rule to flag rather than guess against an inaccessible repo — neither is a fault in the response. Disqualifying on Unverifiable would make it nearly impossible for any commit in this test set to ever count, since almost every commit hits Unverifiable on criterion 3, 5, or 6 for reasons unrelated to response quality. run-08.md already used this convention ("4 of 5," where commits 1, 2, 4, 8 count despite criterion 3 and 5 being Unverifiable, and only commit 12 is excluded for its actual Fails), but run-06/grading.md's "0 of 20" summary didn't apply it — the "1, 4, 8, 19" group has zero Fails and should have counted.
+
+**Status:** Applied retroactively: run-06/grading.md corrected to "4 of 20." Logged in CHANGELOG.md and evals/findings.md.
+
 ## [2026-09-15] — Ambiguous feature-vs-portfolio commits default to skip
 **Decision:** When a commit description could mean either the book-recommendation feature itself or its portfolio/project-level presence, and nothing in the wording favors one reading over the other, default to skip.
 

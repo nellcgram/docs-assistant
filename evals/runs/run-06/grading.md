@@ -45,4 +45,4 @@
 6. Pass
 7. Unverifiable
 
-**Passed every criteria:** 0 of 20
+**Passed every criteria:** 4 of 20
