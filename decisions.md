@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-15] — Ambiguous feature-vs-portfolio commits default to skip
+**Decision:** When a commit description could mean either the book-recommendation feature itself or its portfolio/project-level presence, and nothing in the wording favors one reading over the other, default to skip.
+
+**Why:** Run 8 wrote a release note for commit 12 (6fce484, "Take Book Recommendations project offline"), repeating the exact misclassification Run 4 made and Run 7 avoided — with no rule change in between. Rule 10's worked example names this ambiguity but only says to "pick the reading better supported by the wording," with no tiebreak for the case where the wording doesn't favor either reading, which is why this same commit has flipped between write and skip across runs (write in Run 1, wrongly write in Run 4, no answer in Run 6, correctly skip in Run 7, wrongly write in Run 8). Skip is the safer default here since it matches the existing posture that portfolio/eval/project-meta changes are skipped regardless of visibility (2026-09-14 9:05 PM decision below), and a missed release note is a smaller error than fabricating one for a change a skill user never sees.
+
+**Status:** Logged in evals/findings.md (Run 8) and CHANGELOG.md. Not yet applied to SKILL.md rule 10 or evals/rubric.md — pending.
+
 ## [2026-09-15] — Run 7 confirmed Run 6 was a batching artifact; skill hardened anyway against isolated-call ambiguity
 **Decision:** Ran the same 20 commits batched in one pass (Run 7) to resolve the open item from the Run 6 entry below. It passed 7/7 cleanly, confirming Run 6's regressions were produced by running each commit as an isolated single-commit call, not by a wording gap that only shows up under batching. Despite that, edited SKILL.md rules 3 and 4 and added rule 10, and added evals/rubric.md Version 2 criterion 8, because the underlying behavior — stopping to ask the user instead of deciding, and writing per-commit essays instead of "no entry" for skips — isn't something a caller can be relied on to avoid by always batching requests.
 

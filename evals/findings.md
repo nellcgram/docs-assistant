@@ -1,6 +1,12 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
+## Run 8 [2026-09-15]
+Commits 1, 2, 4, 8 passed all Version 2 criteria (evals/runs/run-08.md). Commit 12 (6fce484, "Take Book Recommendations project offline") failed criteria 3 and 8: the response wrote a release note treating it as a book-recommendation feature change, when gold and the 2026-09-14 9:05 PM decision treat this as a portfolio/project-level change to skip. The entry also included a parenthetical weighing both readings ("...leaves some ambiguity about whether this meant discontinuing the feature itself versus removing its portfolio listing; this reads as the former"), which reads as reconsidering the call rather than a single flagged clause, failing criterion 8.
+
+### Not a new wording gap
+Rule 10 and the skip rule were unchanged between Run 7 (evals/runs/run-07.md, passed 7/7, correctly skipped commit 12) and this run — same skill, same batched-prompt format, same input. Rule 10's own worked example describes this exact ambiguity ("could mean the portfolio listing was pulled (skip) or the skill itself was taken down (write)") but only tells the model to "pick the reading better supported by the wording," with no tiebreak for when neither reading is more supported than the other. That leaves this specific commit's classification unstable run to run: written in Run 1, wrongly written in Run 4, no answer in Run 6, correctly skipped in Run 7, wrongly written again here. See decisions.md 2026-09-15 entry ("Ambiguous feature-vs-portfolio commits default to skip") for the fix direction.
+
 ## Run 6 [2026-09-15]
 Run 6 was run as 20 separate single-commit cases (evals/runs/run-06/case-01.md through case-20.md) instead of one batched 20-commit conversation like Run 5. Three failure modes showed up that Run 5 did not have:
 
