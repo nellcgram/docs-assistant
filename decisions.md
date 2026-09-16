@@ -1,11 +1,32 @@
 # Decisions
 
+## [2026-09-15] — Ambiguous feature-vs-portfolio commits default to skip
+**Decision:** When a commit description could mean either the book-recommendation feature itself or its portfolio/project-level presence, and nothing in the wording favors one reading over the other, default to skip.
+
+**Why:** Run 8 wrote a release note for commit 12 (6fce484, "Take Book Recommendations project offline"), repeating the exact misclassification Run 4 made and Run 7 avoided — with no rule change in between. Rule 10's worked example names this ambiguity but only says to "pick the reading better supported by the wording," with no tiebreak for the case where the wording doesn't favor either reading, which is why this same commit has flipped between write and skip across runs (write in Run 1, wrongly write in Run 4, no answer in Run 6, correctly skip in Run 7, wrongly write in Run 8). Skip is the safer default here since it matches the existing posture that portfolio/eval/project-meta changes are skipped regardless of visibility (2026-09-14 9:05 PM decision below), and a missed release note is a smaller error than fabricating one for a change a skill user never sees.
+
+**Status:** Logged in evals/findings.md (Run 8) and CHANGELOG.md. Not yet applied to SKILL.md rule 10 or evals/rubric.md — pending.
+
+## [2026-09-15] — Run 7 confirmed Run 6 was a batching artifact; skill hardened anyway against isolated-call ambiguity
+**Decision:** Ran the same 20 commits batched in one pass (Run 7) to resolve the open item from the Run 6 entry below. It passed 7/7 cleanly, confirming Run 6's regressions were produced by running each commit as an isolated single-commit call, not by a wording gap that only shows up under batching. Despite that, edited SKILL.md rules 3 and 4 and added rule 10, and added evals/rubric.md Version 2 criterion 8, because the underlying behavior — stopping to ask the user instead of deciding, and writing per-commit essays instead of "no entry" for skips — isn't something a caller can be relied on to avoid by always batching requests.
+
+**Why:** Case-10 and case-12 (evals/runs/run-06/) show the model generalizing rule 3's "flag the discrepancy back to the user" language, written for a verified-commit-vs-description conflict, to any ambiguous description with no conflict at all. Case-03 shows a correctly-skipped commit still getting a paragraph re-litigating the call. Both are things a single, non-batched request could trigger regardless of how the prompt is phrased. Separately, no rule ever told the model to decide rather than ask — that check existed only as Version 1 rubric criterion 1, retired at Run 4 without a matching SKILL.md rule ever being written to replace it.
+
+**Status:** Applied to SKILL.md rules 3, 4, and new rule 10; evals/rubric.md Version 2 criterion 8 added to match. Logged in CHANGELOG.md. Not yet committed to git. Open item: re-run the isolated single-commit format (as Run 6 did) against the updated skill to confirm the fix actually closes the gap, rather than assuming from the rule wording alone.
+
+## [2026-09-15] — Run 6 findings logged; no skill or rubric fix decided yet, format change suspected
+**Decision:** Logged Run 6's regressions (no-answer responses, verbose skip write-ups standing in for "no entry," present-tense hedging) in findings.md without editing SKILL.md or evals/rubric.md yet.
+
+**Why:** Run 6 was run as 20 separate single-commit cases instead of one batched 20-commit conversation like Run 5. Run 5, batched, passed cleanly; Run 6, run per-commit, regressed on behavior the current rubric doesn't cleanly score (hedging, asking for input instead of deciding, verbosity, tense drift in non-release-note prose). It isn't yet clear whether this is a real skill-wording gap or an artifact of running each commit in isolation with no other commit's context to calibrate against. Editing the skill now risks fixing a test-harness artifact instead of an actual behavior problem.
+
+**Status:** Logged in CHANGELOG.md and evals/findings.md under Run 6. Open item: re-run the same 20 commits batched, as Run 5 was, to see if the regression reproduces before deciding on a skill or rubric fix.
+
 ## [2026-09-15] — Run 5 confirmed the Run 4 fixes hold; skill and rubric left unchanged
 **Decision:** Made no further edits to SKILL.md or evals/rubric.md after Run 5 scored 7/7 on the Version 2 criteria — the repo-check stop condition and the portfolio/eval/meta skip rule added after Run 4 both held on a fresh session re-run of the same 20 test-case commits.
 
 **Why:** Run 4 had scored well on its own rubric but still turned out to need a rule fix afterward (the stop-condition gap wasn't caught by grading). Run 5 exists to re-test the same commits against the tightened rules before treating the skill as stable, rather than trusting Run 4's score alone.
 
-**Status:** Logged in CHANGELOG.md under Run 5. evals/runs/run-05-v1.md and run-05-v1-output.md hold the grading and output.
+**Status:** Logged in CHANGELOG.md under Run 5. evals/runs/run-05.md and run-05-output.md hold the grading and output.
 
 ## [2026-09-14 9:05 PM] — Portfolio-site and eval/project-meta commits are skipped regardless of visibility
 **Decision:** Reinstated a project-scope skip condition: a commit is skipped if it's a portfolio-site, eval, or project-meta change even when its effect is visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Added a worked "meta example" alongside the existing "technical example" so the rule isn't just a stated principle.

@@ -1,0 +1,7 @@
+run,criterion_1_past_tense,criterion_2_one_note_per_commit,criterion_4_no_internal_filenames,criterion_8_decided_every_commit,notes
+run-04,Pass,Pass,Pass,Pass,
+run-05,Pass,Pass,Pass,Fail,C8: asked user for clarification on commit(s): [19]
+run-06,Fail,Fail,Pass,Fail,"C1: commit 1: ""this commit — the repository isn't available""; commit 2: ""able from context.** The repo isn't available""; commit 3: ""pped.** Editing the changelog is a project-m""; C2: duplicate entries for commit(s): [2, 12, 18]; C8: asked user for clarification on commit(s): [2, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 20]"
+run-07,Pass,Pass,Pass,Pass,
+run-08,Pass,Pass,Pass,Fail,C8: reconsidered/hedged on a decision for commit(s): [12]
+run-09,Pass,Pass,Pass,Pass,
