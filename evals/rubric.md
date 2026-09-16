@@ -14,7 +14,7 @@ mechnical
     - Technical example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal details, but it changes which books the user is shown. Skipping it fails this criterion even though the wording sounds developer-facing.
     - Meta example: a commit described as "Removed agentic AI section from portfolio site" is a project meta-change that can be skipped.
 Outcomes: Pass, fail, unverifiable
-mechnical
+judgment
 
 4. Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
 Outcomes: Pass, fail, unverifiable
@@ -26,13 +26,13 @@ mechnical
 
 6. When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it? When the repo/commit couldn't be found, did it stop and mark unverifiable instead of continuing to search?
 Outcomes: Pass, fail, unverifiable
-mechnical
+judgment
 
 7. Is the release note both factually correct AND includes the specific mechanism or outcome 
     - Example: Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
     - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 Outcomes: Pass, fail, unverifiable
-mechnical
+judgment
 
 8. Did it decide on every input commit (write a note, skip it, or mark it unverifiable) without stopping to ask the user for clarification or confirmation, and without writing a per-commit paragraph explaining or reconsidering a skip?
 Outcomes: Pass, fail, unverifiable
