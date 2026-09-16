@@ -22,7 +22,7 @@ mechnical
 
 5. Is a fallback or default explained when one applies?
 Outcomes: Pass, fail, unverifiable
-mechnical
+judgment
 
 6. When the commit hash and provided description conflict, did it flag the discrepancy instead of silently resolving it? When the repo/commit couldn't be found, did it stop and mark unverifiable instead of continuing to search?
 Outcomes: Pass, fail, unverifiable
