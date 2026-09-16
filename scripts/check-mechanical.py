@@ -80,8 +80,14 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
         name = f.stem.removesuffix("-output")
         runs[name] = ("single", f)
     for d in RUNS_DIR.iterdir():
-        if d.is_dir() and d.name.startswith("run-") and any(d.glob("case-*.md")):
+        if not (d.is_dir() and d.name.startswith("run-")):
+            continue
+        if any(d.glob("case-*.md")):
             runs[d.name] = ("multi", d)
+            continue
+        for rep_dir in sorted(d.glob("rep-*")):
+            if rep_dir.is_dir() and any(rep_dir.glob("case-*.md")):
+                runs[f"{d.name}-{rep_dir.name}"] = ("multi", rep_dir)
 
     def run_num(name: str) -> int:
         m = RUN_NUMBER_RE.search(name)
