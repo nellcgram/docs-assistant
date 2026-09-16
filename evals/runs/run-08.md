@@ -19,3 +19,6 @@
 6. Pass
 7. Pass
 8. Fail
+
+
+**Passed every criteria:** 4 of 5
