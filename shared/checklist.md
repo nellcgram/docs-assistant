@@ -1,9 +1,11 @@
 # Checklist
 
-1. Does the doc have a title and subheadings?
-2. Is body text Arial size 11?
-3. Does the body have the following sections: intro, description, action items, conclusion, related article links?
-4. Are all links live?
-5. Does the text match the company style guide?
-6. Are there sections at the top for legal, product, UX teams to sign off on it?
-7. Has information architecture been added to each section?
+1. Does the document state its purpose in the first
+paragraph/intro?
+2. Can the document be made more concise?
+3. Does the document have clear headings for every section?
+4. Is there an explanation of each section at the top of it?
+5. Does the document include all sections for that file type (ex. skill, README)
+6. Is the document correct tone for audience (developers vs public)?
+7. Is the documents' contents up to date with the project?
+Is content accurate?
