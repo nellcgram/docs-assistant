@@ -1,8 +1,25 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
+## v3 variance [2026-09-17]
+5 repetitions of all 20 cases (`scripts/run-eval.py --repeats 5`, `evals/runs/v3/rep-01` through `rep-05`), graded in `evals/runs/v3-stats.csv`. **9 of 20 cases pass every criterion in all 5 reps.**
+
+Commit 18 (b50af03) fails all 5 reps: wrote a release note instead of skipping in 4 of them, and hedged (asked for more detail) in all 5. Commit 6 (1e3c29b) fails 4 of 5 — the same skip-rule miss named in the `v3` entry below. Both are known-unstable cases under the isolated-call format.
+
+Eight more commits that are otherwise correctly skipped in every rep (7, 10, 11, 12, 13, 14, 16, 20) fail at least one rep anyway, each by attaching an unauthorized per-commit reason to an otherwise bare skip line — the same rule 4 violation the `v3` entry below documents for commit 20. No SKILL.md or rubric edit made from this finding yet.
+
+## v3 [2026-09-17]
+Single non-repeat scripted run (`scripts/run-eval.py`), graded one row per case in `evals/runs/v3.md` per the grading rule added to `evals/rubric.md`. 15 of 20 passed every criterion.
+
+Commit 6 (1e3c29b) failed criterion 3: wrote a release note for a fix to the skill's own "what it does" description, which is internal/developer-facing — SKILL.md's self-description is never seen by a user of the recommender.
+
+Commits 10 (ec87a17), 11 (1ac826a), 18 (b50af03), and 20 (f244f58) failed criterion 8: each added a per-commit reason clause for its skip decision, which rule 4 explicitly bars ("A single aggregate line listing skipped commit numbers is fine; per-commit justification is not"), and commit 18 additionally asked to reconsider. This is the same isolated-call decide-then-hedge pattern Run 10 identified below — a fresh data point for an already-identified failure mode, not a new spec gap.
+
+## Run 8/9 completed to full 20-case grading [2026-09-17]
+`run-08.md` and `run-09.md` are graded one row per case, all 20, per the write/skip ground truth in decisions.md: `run-08.md` is **19 of 20** (only commit 12's misclassification fails), `run-09.md` is **20 of 20**.
+
 ## Run 10 [2026-09-15]
-Ran evals/cases/release-notes-20.md through scripts/run-eval.py as 20 isolated single-commit API calls, 5 repetitions (evals/runs/run-10/rep-01 through rep-05), to close the open item from the "Run 7 confirmed..." decision (decisions.md, 2026-09-15): confirm whether the rule 10 default-to-skip fix actually holds under the isolated-call format that caused Run 6's regressions, rather than assuming from the rule text alone. Per-case pass rate is in evals/runs/v3-stats.csv.
+Ran evals/cases/release-notes-20.md through scripts/run-eval.py as 20 isolated single-commit API calls, 5 repetitions (evals/runs/run-10/rep-01 through rep-05), to close the open item from the "Run 7 confirmed..." decision (decisions.md, 2026-09-15): confirm whether the rule 10 default-to-skip fix actually holds under the isolated-call format that caused Run 6's regressions, rather than assuming from the rule text alone. Per-case pass rate is in evals/runs/run-10-stats.csv.
 
 ### The decide-then-hedge pattern
 16 of 20 commits passed all 5 reps. Commits 2 (2d10267, failed 4 of 5 reps) and 10 (ec87a17, failed 1 of 5) show a failure mode distinct from Run 6's outright refusal to decide: the response does write a note or skip, satisfying rule 10 on its face, but then appends a hedging sentence asking for the diff or confirmation — e.g. commit 2, rep 1: "The message says only that the line's format was fixed, so the specific formatting change ... isn't captured here; if you can share the diff, I'll sharpen the entry." That trailing request still trips criterion 8 (mechanical-results.csv's clarify-pattern check matches "share the diff").

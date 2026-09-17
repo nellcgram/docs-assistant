@@ -1,12 +1,16 @@
-   ---
-   name: doc-review
-   description: Use when the user asks to check a documentation page against a checklist.
-   ---
+---
+name: doc-review
+description: Use when the user asks to check a document against a checklist.
+---
 
-   ## Rules
+## Purpose
+The agent should check each rule when assessing a document.
 
-1. Make tone of doc review user-facing, active voice, and full sentences; include what is being checked and why it matters.
-2. List doc review entries in the same order as the input commits.
-3. When a doc's line is given, try to check the actual documentation. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct. Only check the repo if it is known in context; do not search the filesystem or guess at repo locations. If not immediately accessible, mark unverifiable and still write or skip the entry using the description given. Do not stop the response to ask which reading is correct.
-4. Do not use internal file names (for example skill, rubric, eval, findings) in doc review.
-5. Do not stop to ask the user to disambiguate documentation before finishing the response; decide using the rules above. Pick the reading better supported by the wording, write or skip accordingly, and flag the uncertainty in one clause if it matters. Don't ask which reading is correct. When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip.
+## Rules
+1. Check if the document states its purpose in the first paragraph/intro. Say pass, fail, or unverifiable.
+2. Check if the document uses active instead of passive voice, and uses full sentences instead of sentence fragments. Say pass, fail, or unverifiable.
+3. Check whether the document has headings for every section. Say pass, fail, or unverifiable.
+4. Check if the document uses the correct developer or user-facing voice for its audience. Say pass, fail, or unverifiable.
+5. Check if links and code examples work. Say pass, fail, or unverifiable.
+6. Check if format is consistent (terminology, code block style, headings). Say pass, fail, or unverifiable.
+7. When an item doesn’t apply — for example, if there are no links, no code samples, no sections that need headings, say so plainly; do not mark the item as fail. Say pass, fail, or unverifiable.

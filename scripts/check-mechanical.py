@@ -44,8 +44,11 @@ CLARIFY_PATTERNS = [
     r"needs your input",
     r"i'd need to know",
     r"paste the diff",
+    r"share the diff",
     r"and i'll write",
     r"and i'll finalize",
+    r"if you can (tell|share|confirm)",
+    r"i'll (sharpen|revise|update|adjust) the entry",
 ]
 
 RECONSIDER_PATTERNS = [
@@ -59,13 +62,41 @@ RECONSIDER_PATTERNS = [
 ]
 
 SKIP_WORD_RE = re.compile(r"\bSKIP\b|\bskipped\b|\bno release note\b|\bno entry\b", re.I)
-COMMIT_HEADER_RE = re.compile(r"Commit\s+(\d+)\s*\(([0-9a-fA-F]{5,40})\)")
+# Used only for "single" runs (one file holding all 20 commits), where the
+# skill's own format rule ("Commit N (hash): sentence") is consistently
+# followed. Requires the hash so a "commit N" mention buried mid-sentence in
+# another commit's prose (e.g. "Skipped: commit 11 (eval/project-meta
+# change...)") can't be mistaken for the start of commit 11's own segment and
+# swallow the tail of the segment before it. "Multi" runs (one file per
+# commit) don't use this at all — see statuses_for_multi below, which reads
+# each file directly instead of joining and regex-splitting a blob.
+COMMIT_HEADER_RE = re.compile(r"Commit\s+(\d+)\s*\(([0-9a-fA-F]{5,40})\)", re.I)
+CASE_FILENAME_RE = re.compile(r"case-(\d+)\.md$")
 PRESENT_TENSE_RE = re.compile(
     r"\bis a\b|\bis an\b|\bis the\b|\bdoesn't\b|\bisn't\b|\bdoes\b|\bmeans\b|\baffects\b",
     re.I,
 )
 GERUND_SENTENCE_RE = re.compile(r"(?:^|[.!?]\s+)([A-Z][a-z]+ing)\b")
 RUN_NUMBER_RE = re.compile(r"run-(\d+)")
+# Verification disclaimers ("Note: I could not verify this commit against the
+# repository, since it isn't accessible...") are correctly present tense since
+# they describe current verification status, not the commit's effect. They
+# aren't part of the release note, so criterion 1 shouldn't scan them. Matches
+# an optional leading markdown emphasis marker (*Note:*, **Note:**).
+NOTE_SPLIT_RE = re.compile(r"^\s*[*_]*\s*Note\s*:", re.M | re.I)
+QUOTED_SPAN_RE = re.compile(r"[\"“][^\"”]*[\"”]")
+# Same verification-disclaimer problem as NOTE_SPLIT_RE, but for the other
+# format the model uses: an inline parenthetical instead of its own "Note:"
+# line, e.g. "...it didn't have. (Unverifiable — the commit contents weren't
+# available to check, so the specific wording that changed isn't reflected
+# here.)" — legitimately present tense, not part of the release note. Matched
+# by keyword ("verif*"/"accessib*" anywhere inside the parenthetical) rather
+# than a fixed leading phrase, since the model phrases this disclaimer
+# inconsistently ("Unverifiable — ...", "Not verifiable...", "Commit contents
+# were not verifiable here..."). A release note's own content isn't expected
+# to use these words, so matching on them anywhere inside a parenthetical is
+# safe.
+DISCLAIMER_PAREN_RE = re.compile(r"\([^)]*(?:verif\w*|accessib\w*)[^)]*\)", re.I)
 
 
 def get_case_count() -> int:
@@ -80,28 +111,24 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
         name = f.stem.removesuffix("-output")
         runs[name] = ("single", f)
     for d in RUNS_DIR.iterdir():
-        if not (d.is_dir() and d.name.startswith("run-")):
+        if not (d.is_dir() and (d.name.startswith("run-") or d.name == "v3")):
             continue
+        # A run folder can hold a single run's case files directly (the
+        # non-repeat run) AND rep-*/ subfolders (a --repeats run) at the same
+        # time, as v3 does — check both, don't stop at the first match.
         if any(d.glob("case-*.md")):
             runs[d.name] = ("multi", d)
-            continue
         for rep_dir in sorted(d.glob("rep-*")):
             if rep_dir.is_dir() and any(rep_dir.glob("case-*.md")):
                 runs[f"{d.name}-{rep_dir.name}"] = ("multi", rep_dir)
 
     def run_num(name: str) -> int:
+        if name.startswith("v3"):
+            return 4  # Phase 4's scripted run; uses the Version 2 rubric same as run-04-on.
         m = RUN_NUMBER_RE.search(name)
         return int(m.group(1)) if m else -1
 
     return dict(sorted((k, v) for k, v in runs.items() if run_num(k) >= 4))
-
-
-def load_response_text(kind: str, path: Path) -> str:
-    if kind == "single":
-        text = path.read_text()
-        parts = re.split(r"^##\s*Response.*$", text, flags=re.M)
-        return parts[-1] if len(parts) > 1 else text
-    return "\n\n".join(cf.read_text() for cf in sorted(path.glob("case-*.md")))
 
 
 def parse_segments(text: str) -> dict[int, list[str]]:
@@ -136,73 +163,111 @@ def has_present_tense_flag(text: str) -> str | None:
     return None
 
 
-def classify_commits(segments: dict[int, list[str]], aggregate_skips: set[int], case_count: int):
+def classify_text(text: str) -> str:
+    if any(re.search(p, text, re.I) for p in CLARIFY_PATTERNS):
+        return "asked"
+    if SKIP_WORD_RE.search(text):
+        return "skipped"
+    return "written"
+
+
+def statuses_for_single(path: Path, case_count: int) -> dict[int, tuple[str, str]]:
+    """One file holding all `case_count` commits; split it by its own 'Commit N (hash):' headers."""
+    raw = path.read_text()
+    parts = re.split(r"^##\s*Response.*$", raw, flags=re.M)
+    text = parts[-1] if len(parts) > 1 else raw
+    segments = parse_segments(text)
+    aggregate_skips = parse_aggregate_skips(text)
+
     statuses = {}
     for k in range(1, case_count + 1):
         if k in segments:
             joined = " ".join(segments[k])
-            if any(re.search(p, joined, re.I) for p in CLARIFY_PATTERNS):
-                status = "asked"
-            elif SKIP_WORD_RE.search(joined):
-                status = "skipped"
-            else:
-                status = "written"
-            statuses[k] = (status, joined)
+            statuses[k] = (classify_text(joined), joined)
         elif k in aggregate_skips:
             statuses[k] = ("skipped", "")
         else:
             statuses[k] = ("missing", "")
-    return statuses
+    return statuses, segments
 
 
-def check_criterion_1(statuses: dict, full_text: str) -> tuple[str, str]:
-    flags = []
-    for k, (status, text) in statuses.items():
-        if not text:
-            continue
-        flag = has_present_tense_flag(text)
-        if flag:
-            flags.append(f"commit {k}: \"{flag}\"")
-    for line in full_text.splitlines():
-        if re.match(r"\s*(SKIP|Skipped)\b", line, re.I) and ":" in line:
-            flag = has_present_tense_flag(line)
-            if flag:
-                flags.append(f"aggregate skip line: \"{flag}\"")
-    if flags:
-        return "Fail", "; ".join(flags[:3])
+def statuses_for_multi(dir_path: Path, case_count: int) -> dict[int, tuple[str, str]]:
+    """One file per commit (case-NN.md); the filename is the ground truth for
+    which commit a file belongs to, so no header regex or text-joining is
+    needed. Joining all files into one blob and re-splitting by a header
+    regex is fragile: a skip line's own "Skipped: commit N" phrasing can get
+    matched as a false header and swallow the tail of the previous file's
+    segment along with it.
+    """
+    by_case: dict[int, str] = {}
+    for f in dir_path.glob("case-*.md"):
+        m = CASE_FILENAME_RE.search(f.name)
+        if m:
+            by_case[int(m.group(1))] = f.read_text()
+
+    statuses = {}
+    segments: dict[int, list[str]] = {}
+    for k in range(1, case_count + 1):
+        if k in by_case:
+            text = by_case[k]
+            statuses[k] = (classify_text(text), text)
+            segments[k] = [text]
+        else:
+            statuses[k] = ("missing", "")
+    return statuses, segments
+
+
+def release_note_portion(status: str, text: str) -> str | None:
+    """The part of a commit's segment that's actually the release note.
+
+    Only "written" and "asked" statuses ever contain a release note ("asked"
+    can still have written one before hedging in the same segment); "skipped"
+    and "missing" segments have no note to check tense on at all — their text
+    is a skip/verification explanation, which is legitimately present tense.
+    Within that portion, drop any trailing "Note: ..." verification
+    disclaimer and any quoted spans (e.g. a quoted reference to the skill's
+    own "what it does" section), neither of which are the note's own prose.
+    """
+    if status not in ("written", "asked"):
+        return None
+    m = NOTE_SPLIT_RE.search(text)
+    note_text = text[: m.start()] if m else text
+    note_text = DISCLAIMER_PAREN_RE.sub("", note_text)
+    return QUOTED_SPAN_RE.sub("", note_text)
+
+
+def check_case_criterion_1(status: str, text: str) -> tuple[str, str]:
+    note_text = release_note_portion(status, text)
+    if not note_text:
+        return "Unverifiable", "no release note to check (skipped/missing)"
+    flag = has_present_tense_flag(note_text)
+    if flag:
+        return "Fail", f'"{flag}"'
     return "Pass", ""
 
 
-def check_criterion_2(statuses: dict, segments: dict) -> tuple[str, str]:
-    dup_notes = [k for k, texts in segments.items() if len(texts) > 1]
-    missing = [k for k, (status, _) in statuses.items() if status == "missing"]
-    if dup_notes:
-        return "Fail", f"duplicate entries for commit(s): {dup_notes}"
-    if missing:
-        return "Unverifiable", f"commit(s) not addressed anywhere: {missing}"
+def check_case_criterion_2(case_num: int, status: str, segments: dict) -> tuple[str, str]:
+    if len(segments.get(case_num, [])) > 1:
+        return "Fail", "duplicate entries for this commit"
+    if status == "missing":
+        return "Unverifiable", "commit not addressed anywhere in the response"
     return "Pass", ""
 
 
-def check_criterion_4(full_text: str) -> tuple[str, str]:
-    found = [name for name in INTERNAL_FILENAMES if re.search(re.escape(name), full_text)]
+def check_case_criterion_4(text: str) -> tuple[str, str]:
+    found = [name for name in INTERNAL_FILENAMES if re.search(re.escape(name), text)]
     if found:
         return "Fail", f"named internal file(s): {found}"
     return "Pass", ""
 
 
-def check_criterion_8(statuses: dict) -> tuple[str, str]:
-    asked = [k for k, (status, _) in statuses.items() if status == "asked"]
-    reconsidered = []
-    for k, (status, text) in statuses.items():
-        if text and any(re.search(p, text, re.I) for p in RECONSIDER_PATTERNS):
-            reconsidered.append(k)
-    missing = [k for k, (status, _) in statuses.items() if status == "missing"]
-    if asked:
-        return "Fail", f"asked user for clarification on commit(s): {asked}"
-    if reconsidered:
-        return "Fail", f"reconsidered/hedged on a decision for commit(s): {reconsidered}"
-    if missing:
-        return "Unverifiable", f"commit(s) not addressed anywhere: {missing}"
+def check_case_criterion_8(status: str, text: str) -> tuple[str, str]:
+    if status == "missing":
+        return "Unverifiable", "commit not addressed anywhere in the response"
+    if status == "asked":
+        return "Fail", "asked user for clarification"
+    if text and any(re.search(p, text, re.I) for p in RECONSIDER_PATTERNS):
+        return "Fail", "reconsidered/hedged on a decision"
     return "Pass", ""
 
 
@@ -212,34 +277,43 @@ def main() -> None:
 
     rows = []
     for name, (kind, path) in runs.items():
-        text = load_response_text(kind, path)
-        segments = parse_segments(text)
-        aggregate_skips = parse_aggregate_skips(text)
-        statuses = classify_commits(segments, aggregate_skips, case_count)
+        if kind == "single":
+            statuses, segments = statuses_for_single(path, case_count)
+        else:
+            statuses, segments = statuses_for_multi(path, case_count)
 
-        c1, n1 = check_criterion_1(statuses, text)
-        c2, n2 = check_criterion_2(statuses, segments)
-        c4, n4 = check_criterion_4(text)
-        c8, n8 = check_criterion_8(statuses)
+        run_pass_count = 0
+        for case_num in range(1, case_count + 1):
+            status, case_text = statuses[case_num]
 
-        notes = "; ".join(f"C{c}: {n}" for c, n in [(1, n1), (2, n2), (4, n4), (8, n8)] if n)
-        rows.append(
-            {
-                "run": name,
-                "criterion_1_past_tense": c1,
-                "criterion_2_one_note_per_commit": c2,
-                "criterion_4_no_internal_filenames": c4,
-                "criterion_8_decided_every_commit": c8,
-                "notes": notes,
-            }
-        )
-        print(f"{name}: C1={c1} C2={c2} C4={c4} C8={c8}")
+            c1, n1 = check_case_criterion_1(status, case_text)
+            c2, n2 = check_case_criterion_2(case_num, status, segments)
+            c4, n4 = check_case_criterion_4(case_text)
+            c8, n8 = check_case_criterion_8(status, case_text)
+
+            if "Fail" not in (c1, c2, c4, c8):
+                run_pass_count += 1
+
+            notes = "; ".join(f"C{c}: {n}" for c, n in [(1, n1), (2, n2), (4, n4), (8, n8)] if n)
+            rows.append(
+                {
+                    "run": name,
+                    "case": case_num,
+                    "criterion_1_past_tense": c1,
+                    "criterion_2_one_note_per_commit": c2,
+                    "criterion_4_no_internal_filenames": c4,
+                    "criterion_8_decided_every_commit": c8,
+                    "notes": notes,
+                }
+            )
+        print(f"{name}: {run_pass_count} of {case_count} cases pass all mechanical criteria")
 
     with OUTPUT_CSV.open("w", newline="") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=[
                 "run",
+                "case",
                 "criterion_1_past_tense",
                 "criterion_2_one_note_per_commit",
                 "criterion_4_no_internal_filenames",

@@ -1,0 +1,1 @@
+Commit 10 (ec87a17): skipped — changelog edits are project-meta, and the accompanying "skill language" edit gives no specific user-visible mechanism or outcome to report. Unverifiable: the repository wasn't available in context, so this was assessed from the description alone.

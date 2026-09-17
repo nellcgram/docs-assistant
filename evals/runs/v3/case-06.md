@@ -1,0 +1,1 @@
+Commit 6 (1e3c29b): Corrected the recommender's own "what it does" description so that the advertised behavior matched what the recommender actually did, preventing users from expecting capabilities it didn't have. (Unverifiable — the commit contents weren't available to check, so the specific wording that changed isn't reflected here.)
