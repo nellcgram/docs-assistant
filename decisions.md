@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-17] — Phase 8 (context arrangement) not attempted
+**Decision:** The plan's Phase 8 — testing whether identical skill instructions score differently depending on arrangement (inline vs. referenced via `examples.md`, vs. read late in a long session) — was not run. No sixth number exists.
+
+**Why:** Time was spent instead on grounding the second skill (Phase 7) and on the mechanical/judgment grading verification (Phase 5), both of which surfaced real, concrete issues worth fixing. Phase 8 tests a different, narrower question (token arrangement sensitivity) that doesn't depend on anything built so far, so skipping it doesn't block any other phase's numbers.
+
+**Status:** Not done. Logged here explicitly, per the plan's own instruction for this exact situation, rather than left to silently disappear — see `case-study.md`'s "Context arrangement (Phase 8): not attempted" section. If picked back up, the plan's Phase 8 steps (split `SKILL.md`'s worked examples into `examples.md`, run the same 20 cases inline vs. referenced vs. late-session) are unchanged from the original.
+
 ## [2026-09-17] — Fresh 5-repeat variance run: only 9 of 20 cases hold up across all 5 reps
 **Decision:** Ran the statistical-rigor test (`scripts/run-eval.py --repeats 5`) into `evals/runs/v3/rep-01` through `rep-05` (100 calls), graded in `evals/runs/v3-stats.csv`. **9 of 20 cases pass every criterion in all 5 reps.** Commit 18 fails all 5 (wrote a note instead of skipping in 4, hedged in all 5). Commit 6 fails 4 of 5 (same skip-rule miss). Eight more otherwise-correctly-skipped commits (7, 10, 11, 12, 13, 14, 16, 20) fail at least one rep by adding an unauthorized per-commit justification clause to an otherwise bare skip line — a rule 4 violation ("a single aggregate line listing skipped commit numbers is fine; per-commit justification is not").
 
