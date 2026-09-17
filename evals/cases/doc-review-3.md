@@ -1,6 +1,6 @@
 # Doc Review
 
-## Case 1:  Doc Review Skill
+## Case 1:  README
 
 An agent skill that turns raw git commit messages into user-facing release notes, built and tested with Claude Code.
 
@@ -17,214 +17,30 @@ An agent skill that turns raw git commit messages into user-facing release notes
 - `CHANGELOG.md` — record of changes to the skill, with reasons
 - `decisions.md` — why the project is structured this way
 
-## Case #2: Decisions
+## Case #2: Doc Review Skill
 
-### [2026-09-15] — Rule 10 default-to-skip fix applied; holds in batched format, still gapped in isolated single-commit calls
-**Decision:** Applied the fix left pending by the "Ambiguous feature-vs-portfolio commits default to skip" entry below, adding a clause to rule 10 (commit 512e384): "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip." Verified with two follow-up runs: Run 9 (batched, matching Runs 5/7's format) passed 8/8 and correctly skipped commit 12. Run 10 (5 repetitions of the isolated single-commit format that caused Run 6's original regressions, run via the new scripts/run-eval.py against the API directly) confirmed the fix holds for commit 12 specifically, but 4 of the 20 cases (commits 2, 6, 10, 18) still failed a subset of reps — not by refusing to decide as in Run 6, but by deciding and then appending a hedging follow-up asking for the diff, which still trips criterion 8.
+---
+name: doc-review
+description: Use when the user asks to check a document against a checklist.
+---
 
-**Why:** The isolated single-commit format has now caused two different failure modes at two different points (Run 6's outright non-decisions, Run 10's decide-then-hedge) despite two rounds of rule tightening (rules 3/4/10, then rule 10's default-to-skip clause). This suggests the format itself, not just remaining wording gaps, makes hedging more likely — each isolated case has no other commit's context to calibrate confidence against, unlike the batched conversational format Runs 5, 7, and 9 all used.
+## Purpose
+The agent should check each rule when assessing a document.
 
-**Status:** Rule 10 clause applied (512e384). No further rule change made yet — evals/findings.md logs the specific commits/reps from Run 10. Holding off on another rule edit until it's confirmed this isn't specific to the script's call shape (a single system-prompt-plus-one-message call, no conversation, no tools) versus Claude Code's actual runtime, which is how Runs 1-9 were produced.
+## Rules
+1. Check if the document states its purpose in the first paragraph/intro. Say pass, fail, or unverifiable.
+2. Check if the document uses active instead of passive voice, and uses full sentences instead of sentence fragments. Say pass, fail, or unverifiable.
+3. Check whether the document has headings for every section. Say pass, fail, or unverifiable.
+4. Check if the document uses the correct developer or user-facing voice for its audience. Say pass, fail, or unverifiable.
+5. Check if links and code examples work. Say pass, fail, or unverifiable.
+6. Check if format is consistent (terminology, code block style, headings). Say pass, fail, or unverifiable.
+7. When an item doesn’t apply — for example, if there are no links, no code samples, no sections that need headings, say so plainly; do not mark the item as fail. Say pass, fail, or unverifiable.
 
-## [2026-09-15] — Mechanical criteria split out from judgment criteria for scripted grading
-**Decision:** Added scripts/check-mechanical.py to grade rubric Version 2 criteria 1 (past tense), 2 (one note per commit), 4 (no internal filenames), and 8 (decided every commit without asking or hedging) automatically from run output text, writing evals/runs/mechanical-results.csv. Criteria 3, 6, and 7 stay hand-graded in evals/runs/judgment-grades.csv. Retagged evals/rubric.md's Version 2 criteria 3, 6, and 7 from "mechanical" to "judgment" to match (commit a432401).
+## Case #3: Decisions
 
-**Why:** Criteria 1, 2, 4, and 8 can be checked with text pattern matching alone; criteria 3 (skip-rule correctness), 6 (conflict-flag/unverifiable), and 7 (factual accuracy plus specific mechanism) all require comparing the response against what the actual commit means, which a script can't do. Automating the mechanical half makes re-grading past runs and grading Run 10's 100 case files (5 reps × 20 commits) tractable, since only the judgment half needs to be graded by hand.
+### Rule 10 default-to-skip fix applied; holds in batched format, still gapped in isolated single-commit calls [2026-09-15]
+**Decision:** I applied the fix left pending by the "Ambiguous feature-vs-portfolio commits default to skip" entry below, adding a clause to rule 10 (commit 512e384): "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip." I verified with two follow-up runs: Run 9 (batched, matching Runs 5/7's format) passed 8/8 and correctly skipped commit 12. Run 10 (5 repetitions of the isolated single-commit format that caused Run 6's original regressions, run via the new scripts/run-eval.py against the API directly) confirmed the fix holds for commit 12 specifically, but 4 of the 20 cases (commits 2, 6, 10, 18) still failed a subset of reps: not by refusing to decide as in Run 6, but by deciding and then appending a hedging follow-up asking for the diff, which still trips criterion 8.
 
-**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, v3-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). evals/rubric.md criterion 5 was found still tagged "mechanical" (the a432401 retagging pass missed it, despite it being graded in judgment-grades.csv, not checked by the script) and has since been corrected to "judgment."
+**Why:** The isolated single-commit format has now caused two different failure modes at two different points (Run 6's outright non-decisions, Run 10's decide-then-hedge) despite two rounds of rule tightening (rules 3/4/10, then rule 10's default-to-skip clause). This suggests the format itself, not just remaining wording gaps, makes hedging more likely. Each isolated case has no other commit's context to calibrate confidence against, unlike the batched conversational format Runs 5, 7, and 9 all used.
 
-## [2026-09-15] — Unverifiable does not disqualify a commit from the pass count
-**Decision:** For a run's "Passed every criteria: X of N" summary line, a commit counts toward X as long as none of its criteria are marked Fail. A criterion marked Unverifiable does not disqualify it.
-
-**Why:** Unverifiable usually means either the criterion doesn't apply to that commit (e.g. criterion 5's fallback check, when no fallback exists in that commit) or the model correctly followed the skill's rule to flag rather than guess against an inaccessible repo — neither is a fault in the response. Disqualifying on Unverifiable would make it nearly impossible for any commit in this test set to ever count, since almost every commit hits Unverifiable on criterion 3, 5, or 6 for reasons unrelated to response quality. run-08.md already used this convention ("4 of 5," where commits 1, 2, 4, 8 count despite criterion 3 and 5 being Unverifiable, and only commit 12 is excluded for its actual Fails), but run-06/grading.md's "0 of 20" summary didn't apply it — the "1, 4, 8, 19" group has zero Fails and should have counted.
-
-**Status:** Applied retroactively: run-06/grading.md corrected to "4 of 20." Logged in CHANGELOG.md and evals/findings.md.
-
-## [2026-09-15] — Ambiguous feature-vs-portfolio commits default to skip
-**Decision:** When a commit description could mean either the book-recommendation feature itself or its portfolio/project-level presence, and nothing in the wording favors one reading over the other, default to skip.
-
-**Why:** Run 8 wrote a release note for commit 12 (6fce484, "Take Book Recommendations project offline"), repeating the exact misclassification Run 4 made and Run 7 avoided — with no rule change in between. Rule 10's worked example names this ambiguity but only says to "pick the reading better supported by the wording," with no tiebreak for the case where the wording doesn't favor either reading, which is why this same commit has flipped between write and skip across runs (write in Run 1, wrongly write in Run 4, no answer in Run 6, correctly skip in Run 7, wrongly write in Run 8). Skip is the safer default here since it matches the existing posture that portfolio/eval/project-meta changes are skipped regardless of visibility (2026-09-14 9:05 PM decision below), and a missed release note is a smaller error than fabricating one for a change a skill user never sees.
-
-**Status:** Logged in evals/findings.md (Run 8) and CHANGELOG.md. Not yet applied to SKILL.md rule 10 or evals/rubric.md — pending.
-
-## [2026-09-15] — Run 7 confirmed Run 6 was a batching artifact; skill hardened anyway against isolated-call ambiguity
-**Decision:** Ran the same 20 commits batched in one pass (Run 7) to resolve the open item from the Run 6 entry below. It passed 7/7 cleanly, confirming Run 6's regressions were produced by running each commit as an isolated single-commit call, not by a wording gap that only shows up under batching. Despite that, edited SKILL.md rules 3 and 4 and added rule 10, and added evals/rubric.md Version 2 criterion 8, because the underlying behavior — stopping to ask the user instead of deciding, and writing per-commit essays instead of "no entry" for skips — isn't something a caller can be relied on to avoid by always batching requests.
-
-**Why:** Case-10 and case-12 (evals/runs/run-06/) show the model generalizing rule 3's "flag the discrepancy back to the user" language, written for a verified-commit-vs-description conflict, to any ambiguous description with no conflict at all. Case-03 shows a correctly-skipped commit still getting a paragraph re-litigating the call. Both are things a single, non-batched request could trigger regardless of how the prompt is phrased. Separately, no rule ever told the model to decide rather than ask — that check existed only as Version 1 rubric criterion 1, retired at Run 4 without a matching SKILL.md rule ever being written to replace it.
-
-**Status:** Applied to SKILL.md rules 3, 4, and new rule 10; evals/rubric.md Version 2 criterion 8 added to match. Logged in CHANGELOG.md. Not yet committed to git. Open item: re-run the isolated single-commit format (as Run 6 did) against the updated skill to confirm the fix actually closes the gap, rather than assuming from the rule wording alone.
-
-## [2026-09-15] — Run 6 findings logged; no skill or rubric fix decided yet, format change suspected
-**Decision:** Logged Run 6's regressions (no-answer responses, verbose skip write-ups standing in for "no entry," present-tense hedging) in findings.md without editing SKILL.md or evals/rubric.md yet.
-
-**Why:** Run 6 was run as 20 separate single-commit cases instead of one batched 20-commit conversation like Run 5. Run 5, batched, passed cleanly; Run 6, run per-commit, regressed on behavior the current rubric doesn't cleanly score (hedging, asking for input instead of deciding, verbosity, tense drift in non-release-note prose). It isn't yet clear whether this is a real skill-wording gap or an artifact of running each commit in isolation with no other commit's context to calibrate against. Editing the skill now risks fixing a test-harness artifact instead of an actual behavior problem.
-
-**Status:** Logged in CHANGELOG.md and evals/findings.md under Run 6. Open item: re-run the same 20 commits batched, as Run 5 was, to see if the regression reproduces before deciding on a skill or rubric fix.
-
-## [2026-09-15] — Run 5 confirmed the Run 4 fixes hold; skill and rubric left unchanged
-**Decision:** Made no further edits to SKILL.md or evals/rubric.md after Run 5 scored 7/7 on the Version 2 criteria — the repo-check stop condition and the portfolio/eval/meta skip rule added after Run 4 both held on a fresh session re-run of the same 20 test-case commits.
-
-**Why:** Run 4 had scored well on its own rubric but still turned out to need a rule fix afterward (the stop-condition gap wasn't caught by grading). Run 5 exists to re-test the same commits against the tightened rules before treating the skill as stable, rather than trusting Run 4's score alone.
-
-**Status:** Logged in CHANGELOG.md under Run 5. evals/runs/run-05.md and run-05-output.md hold the grading and output.
-
-## [2026-09-14 9:05 PM] — Portfolio-site and eval/project-meta commits are skipped regardless of visibility
-**Decision:** Reinstated a project-scope skip condition: a commit is skipped if it's a portfolio-site, eval, or project-meta change even when its effect is visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Added a worked "meta example" alongside the existing "technical example" so the rule isn't just a stated principle.
-
-**Why:** The 2026-09-12 6:06 PM decision below dropped an earlier project-scope rule as redundant with the general visibility check, assuming portfolio/eval commits would always fail that check on their own. Run 4 disproved this — "Take Book Recommendations project offline," "Removed agentic AI section from portfolio site," and "Move run-01 results into docs so it publishes to the site" all passed the visibility check and were wrongly written up as release notes for the book-recommendation skill.
-
-**Status:** Applied to SKILL.md rule 4 and evals/rubric.md criterion 3 (commits a04b71b, 2b85564, bc6eef7, 60a077a). Logged in CHANGELOG.md. Open item: the worked example only covers the portfolio-page case; "took the whole skill offline" and "published eval results to the site" are still ambiguous and not yet covered by an example.
-
-## [2026-09-14 8:49 PM] — Repo-check rule needed a stop condition, not just permission to check
-**Decision:** Tightened skill rule 3 so it only checks a repo already known in context, never searches the filesystem or guesses at repo locations, and marks the commit unverifiable if not immediately accessible. Matching rubric criterion 6 now grades for this stop condition explicitly, not just conflict-flagging.
-
-**Why:** Run 4 scored 7/7 on the existing rubric, but the underlying behavior was wrong: once repo-checking was allowed (Run 4's earlier repo-check rule), the model kept trying to locate a repo instead of falling back to unverifiable when none was accessible — the test-case hashes are synthetic and don't resolve to a real repo. The rubric's "Unverifiable" outcome already existed for this case, but nothing in the skill told the model to stop and land there.
-
-**Status:** Applied to SKILL.md rule 3 and evals/rubric.md criterion 6 (commits a04b71b, 2b85564, bc6eef7). Logged in CHANGELOG.md.
-
-## [2026-09-14 <6:35 PM>] — Commit #1's input wording was fixed after landing on it by mistake meant for #19
-**Decision:** Restored evals/cases/release-notes-20.md commit #1's description to describe its own real change (specifying the exact heading to look for in the already-read file) instead of the #19-shaped wording it had picked up.
-
-**Why:** The 2:50 PM edit intended for commits #4 and #19 landed on #1 instead of #19 in its first pass; #19 was then separately and correctly rewritten in the next commit to nearly the same content, so #1 and #19 ended up as near-duplicates in the current release-notes-20.md. Caught before Run 4 used the file.
-
-**Status:** Applied to evals/cases/release-notes-20.md; logged in CHANGELOG.md under Run 4. Checked evals/gold/release-notes.md, evals/cases/raw-commits.md, and evals/runs/run-01 through run-03 output files for the same problem — none needed changes.
-
-## [2026-09-14 6:06 PM] — Version 1 rubric must stay exactly as graded, not get retroactive fixes
-**Decision:** Restored evals/rubric.md's "Version 1 (Runs 1-3)" section to the original wording actually used to grade those runs — reverted criterion 4 to "Are developer-facing commits correctly skipped (no note at all)?" (no example) and removed criterion 7 (mechanism/outcome), since neither existed in that form when Runs 1-3 were graded.
-
-**Why:** After splitting the rubric into Version 1/Version 2, the Version 1 section had been overwritten with Version 2's improved wording (skip-rule example, mechanism/outcome criterion). That makes old findings citing criterion numbers (e.g. "Criterion 4 failed") misleading — a reader would assume the improved criteria applied at grading time when they didn't.
-
-**Status:** Applied to evals/rubric.md.
-
-## [2026-09-14 <2:50 PM>] — Fixing the skill won't add missing detail
-**Decision:** I decided to change the input commit list, not the skill rules.
-
-**Why:** I had already tried changing the skill rules between versions 1, 2, and 3 with imprecise wording resulting. I talked to Claude and realized because I was not asking the skill to check actual commits (only using user input), the skill lacked context Git normally gave it, so it needed better input to run on specifically for commits 4 and 19. 
-
-**Status:** Applied edits to release-notes-20.md for commits 4 and 19; gold file reconciled 2026-09-14 6:06 PM.
-
-## [2026-09-14 2:28 PM] — Skip rule depends on visible effect, not how technical a commit sounds
-**Decision:** Commit 19 (a pre-run check against the already-read-books file) should not have been skipped, even though its description sounds like an internal implementation detail — it changes which books the recommender shows the user.
-
-**Why:** Run 3 findings showed this commit was wrongly marked skip. The skip rule is about whether the *effect* is visible to the user, not about whether the commit's own description uses technical-sounding language.
-
-**Status:** Logged in evals/findings.md (Run 3). Logged to skill and rubric.
-
-## [2026-09-14 2:28 PM] — A technically-accurate release note that omits the specific outcome still fails
-**Decision:** A release note counts as a failure if it's vaguely accurate but drops the specific mechanism or outcome of the commit (for example, describing "adjusted when it asked" without saying what default was applied), not only if it's factually wrong.
-
-**Why:** Three commits in Run 3 went through two rounds of revision and were still judged too imprecise compared to the actual commit — the model kept generalizing away the specific default or check that made the note useful.
-
-**Status:** Logged in evals/findings.md (Run 3). Logged in skill. Logged in rubric.
-
-## [2026-09-14 1:31 PM] — Broadened "don't check other repos" to "don't check any repo"
-**Decision:** Rewrote the rule from "Do not check other repos for the release notes commit hashes; use only the raw commits the user gives you" to "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes."
-
-**Why:** Run 2 showed the model still tried to look up the commits itself even under the narrower wording from Run 1.
-
-**Status:** Applied to SKILL.md; logged in CHANGELOG.md under Run 2.
-
-## [2026-09-14 12:06 PM] — Changelog entries must quote the exact old/new rule text and cite a commit hash
-**Decision:** Rewrote CHANGELOG.md so each entry is grouped under the commit hash that made the change and states the literal before/after rule wording, instead of being grouped loosely by run number with paraphrased summaries.
-
-**Why:** A paraphrased changelog entry can't be checked against what the rule actually said before and after; quoting the exact text makes each fix verifiable.
-
-**Status:** Applied to CHANGELOG.md; used as the format for all later changelog entries.
-
-## [2026-09-14 11:54 AM] — Skill does one job (release notes); changelog is tracked by hand, separately
-**Decision:** Removed the "Rules for changelog" section that had been added to SKILL.md and reverted its description to mention only release notes. The skill generates release notes only; changelog entries documenting the skill's own edits are written directly into CHANGELOG.md, not generated by the skill.
-
-**Why:** Loading both release-note rules and changelog rules into one skill made it unclear which rule set a given run was actually following, and complicated grading. Splitting them keeps the skill's job — and its evaluation — to one thing.
-
-**Status:** Applied to SKILL.md and CHANGELOG.md.
-
-## [2026-09-14 11:31 AM] — Skipped commits get no entry at all, not a SKIP line (reverses 2026-09-12 4:35 PM decision below)
-**Decision:** Changed the skill's skip rule and format rule so a skipped commit produces no output at all, removing the earlier "SKIP; <reason>" line requirement.
-
-**Why:** Run 1 grading showed the rubric's actual requirement was "no note at all" for developer-facing commits. The SKILL.md skip rule and the rubric contradicted each other, and the model followed the skill's SKIP-line instruction correctly but still failed the rubric criterion. The SKIP-line was useful while hand-writing gold answers but is wrong for what the shipped skill should output.
-
-**Status:** Applied to SKILL.md. Supersedes the 2026-09-12 4:35 PM decision below (kept for history).
-
-## [2026-09-14 11:31 AM] — Added rules for tense, internal file names, and checking other repos
-**Decision:** Added three new SKILL.md rules: write all release notes in past tense only; never use internal file names (skill, rubric, eval, findings) in release notes; don't check other repos to verify commit hashes, use only what the user provides.
-
-**Why:** Run 1 found the model mixed tenses, referenced internal file names, and stopped mid-run to ask about looking up commits elsewhere — none of these were forbidden by the skill at the time.
-
-**Status:** Applied to SKILL.md.
-
-## [2026-09-14 10:13 AM] — Numbered the rubric criteria
-**Decision:** Changed evals/rubric.md from bulleted criteria to a numbered list.
-
-**Why:** Numbering lets findings reference a specific criterion by number (e.g., "Criterion 4 failed") instead of restating it each time.
-
-**Status:** Applied to evals/rubric.md; used throughout Run 1-3 findings.
-
-## [2026-09-12 6:06 PM] — Project-scope skip rule dropped as redundant; skip conditions consolidated
-**Decision:** A rule limiting release notes to book-recommendations-assistant commits only (added 5:26 PM) was removed about 18 minutes later; the "skip if a user of the book recommender would never notice" condition and the "always write a SKIP line" requirement were merged back into one combined skip rule, and the ordering rule was generalized from "book-recs commits" to "input commits."
-
-**Why:** The project-scope rule was redundant — a commit from the portfolio site or eval project is already something a book-recommender user would never notice, so the general skip condition already covered it.
-
-**Status:** Applied to SKILL.md across three edits (4bff7ca added the scope rule, 46f8733 removed it and merged skip conditions, b2810f4 restored the "would never notice" wording alongside the SKIP-line rule).
-
-## [2026-09-12 5:25 PM] — Standardized how commits are cited in release notes
-**Decision:** Reformatted commit citations from "#4 5da846a - sentence" to "Commit 4 (5da846a): sentence."
-
-**Why:** Needed one consistent citation format before generating and grading multiple release-note runs.
-
-**Status:** Applied to evals/gold/release-notes.md; encoded the next day as the "Format answers like this" rule in SKILL.md.
-
-## [2026-09-12 5:08 PM] — Silent defaults must be stated explicitly
-**Decision:** Added a skill rule: "When a skill silently defaults to something, say that a default was applied."
-
-**Why:** A default applied without being called out is indistinguishable from a bug or a lucky guess — for example, the recommender falling back to the contemporary genre when no genre was given needs to say so, not just act on it.
-
-**Status:** Applied to SKILL.md from its first draft; carried through all later revisions and reinforced by the 2026-09-14 2:28 PM decision above on commit 4.
-
-## [2026-09-12 4:43 PM] — Skip developer-facing commits from release notes
-**Decision:** Commits that only touch internal files (eval templates, example lists, moved-but-not-changed content) are excluded from
-release notes entirely — not given a note explaining the skip, just absent.
-
-**Why:** While hand-writing gold answers, two commits (adding example entries to already-read-example.md, moving a rubric into the evals folder) had no effect a user of the skill would ever see. Writing a release note for either would describe a change that doesn't exist from the reader's side.
-
-**Status:** Applied in gold answers for cases #18 and #20. Written into SKILL.md as the skip rule.
-
-## [2026-09-12 4:35 PM] — Commits that produce no release notes are "skip"
-**Decision:** For a commit that should produce no release note, the correct gold answer is SKIP plus a one-line reason, not omitting the line. 
-
-**Why:** This matters for scoring: an absent line and a "verified-no-note-needed" line would otherwise look identical to a grader.
-
-**Status:** Corrected evals/gold/release-notes.md to include why skipping commits.
-
-## [2026-09-12 4:20 PM] — 
-**Decision:** Release notes voice should tell user what changed and why, not give technical details such as skill edits.
-
-**Why:** These are user-facing, not developer-facing.
-
-**Status:** Rewrote release-notes.md to correct voice across all entries.
-
-## Case #3: Skill for release notes
-
-   ---
-   name: release-notes
-   description: Use when the user asks for release notes generated from commit messages.
-   ---
-
-   ### Rules
-
-1. Make tone of release notes user-facing; include what changed and why it matters. Example: "The skill now stops to check already-read file, which prevents the skill from running without exclusion filtering."
-2. List release notes or entries in the same order as the input commits.
-3. When a commit hash is given, try to check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct. Only check the repo if it is known in context; do not search the filesystem or guess at repo locations. If not immediately accessible, mark unverifiable and still write or skip the entry using the description given. Do not stop the response to ask which reading is correct.
-4. Skip a commit if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone; a portfolio visitor is not a user of the book-recommendation skill. Otherwise, skip a commit if the effect is not visible to a user of the book-recommendation skill. Do not add an entry for either kind of skip, and do not write a paragraph explaining, defending, or reconsidering a skip decision. The commit is simply left out. A single aggregate line listing skipped commit numbers is fine; per-commit justification is not. If the commit sounds technical and internal but it changes something for that user, include it.
-   - Technical example: A commit adding "a pre-run check against the already-read-books file" sounds like an internal implementation detail, but it changes which books the recommender shows; include it, don't skip it.
-   - Meta example: a commit described as "Removed agentic AI section from portfolio site" is a project meta-change that can be skipped.
-5. When a skill silently defaults to something, say that a default was applied.
-6. Format release notes answers like this: "Commit 20 (f244f58): Sentence here."
-7. Write all release notes in the past tense only.
-8. Do not use internal file names (for example skill, rubric, eval, findings) in release notes.
-9. A release note fails if either:
-   a. It's factually wrong, or
-   b. It's accurate but vague; it leaves out the specific mechanism or outcome.
-Examples:
-   - Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
-   - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
-10. Do not stop to ask the user to disambiguate a commit before finishing the response; decide using the rules above. Example: "Take Book Recommendations project offline" could mean the portfolio listing was pulled (skip) or the skill itself was taken down (write). Pick the reading better supported by the wording, write or skip accordingly, and flag the uncertainty in one clause if it matters. Don't ask which reading is correct. When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip.
+**Status:** I applied rule 10 (512e384) but made no further rule change. Evals/findings.md logs the specific commits/reps from Run 10. I will hold off on another rule edit until it's confirmed this isn't specific to the script's call shape (a single system-prompt-plus-one-message call, no conversation, no tools) versus Claude Code's actual runtime, which is how Runs 1-9 were produced.
