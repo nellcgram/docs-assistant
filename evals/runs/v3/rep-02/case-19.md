@@ -1,0 +1,1 @@
+Commit 19 (b971722): The recommender now checked your already-read list before generating suggestions, so books you have already finished were filtered out instead of being recommended back to you. (Commit contents not verifiable here; note written from the provided description.)

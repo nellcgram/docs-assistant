@@ -1,0 +1,1 @@
+Commit 2 (2d10267): Fixed the formatting of the "other books by this author" line shown with each recommendation, so that line displayed correctly alongside the recommended title. (Unverified — the commit itself wasn't accessible here, so this is based on the description given; the exact formatting change isn't specified in it.)

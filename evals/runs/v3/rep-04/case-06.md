@@ -1,0 +1,1 @@
+Commit 6 (1e3c29b): The book recommender's own "what it does" summary was corrected so it matched the recommender's actual behavior, so you no longer saw a description that promised something different from what you got. (Unverified — the commit contents were not accessible, so this entry reflects the description provided.)

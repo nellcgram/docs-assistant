@@ -1,0 +1,1 @@
+Commit 2 (2d10267): Corrected the formatting of the "other books by this author" line in each recommendation, so that list rendered correctly instead of appearing malformed. (Unverified — the commit itself was not accessible, so this entry reflects the description as given; the exact formatting defect is not specified in it.)

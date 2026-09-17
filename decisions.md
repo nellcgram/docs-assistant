@@ -1,5 +1,47 @@
 # Decisions
 
+## [2026-09-17] — Fresh 5-repeat variance run: only 9 of 20 cases hold up across all 5 reps
+**Decision:** Ran the statistical-rigor test (`scripts/run-eval.py --repeats 5`) into `evals/runs/v3/rep-01` through `rep-05` (100 calls), graded in `evals/runs/v3-stats.csv`. **9 of 20 cases pass every criterion in all 5 reps.** Commit 18 fails all 5 (wrote a note instead of skipping in 4, hedged in all 5). Commit 6 fails 4 of 5 (same skip-rule miss). Eight more otherwise-correctly-skipped commits (7, 10, 11, 12, 13, 14, 16, 20) fail at least one rep by adding an unauthorized per-commit justification clause to an otherwise bare skip line — a rule 4 violation ("a single aggregate line listing skipped commit numbers is fine; per-commit justification is not").
+
+**Why:** Rule 4 is explicit that a skip gets no entry or one bare aggregate line, never a reason attached to an individual commit, and the skill does this across a wide set of commits under no current rule change.
+
+**Status:** Applied. `evals/runs/v3-stats.csv`, `mechanical-results.csv`, and `judgment-grades.csv` all reflect this run. No SKILL.md or rubric edit made from this finding yet — logged here and in findings.md as an open item.
+
+## [2026-09-17] — Run 1 vs Run 5 is the second number, not Run 6
+**Decision:** The first number is Run 1 (0 of 20, `evals/runs/run-01.md`, graded against the Version 1 rubric). The second number is **Run 5 (19 of 20, `evals/runs/run-05.md`, graded against the Version 2 rubric)** — commit 18 hedged ("I'm not confident; let me know if you want it included") instead of deciding. Run 6 (4 of 20) is not used as the second number.
+
+**Why:** Run 1 and Run 5 were both run the same way — one batched request covering all 20 commits in a single conversation — so the only thing that changed between them is the skill itself (fixed after Run 1's findings, and again after Run 4's). Run 6 deliberately changed the call format to 20 isolated single-commit API calls to stress-test robustness; pairing it with Run 1 would credit or blame the skill for a format change it didn't cause, mixing two variables into one number. Run 6 belongs with the Phase 6 consistency story, not with Phase 3's diagnose-fix-reverify number.
+
+**Status:** Applied. This is the pairing case-study.md should cite for Phase 3's "second number" — 19 of 20.
+
+## [2026-09-17] — Grading CSVs stay cumulative at evals/runs/, not split per-run inside each run's own folder
+**Decision:** `evals/runs/mechanical-results.csv` and `evals/runs/judgment-grades.csv` hold every graded run in one file each, distinguished by a `run` column and a `case` column — not a separate copy of each file inside `evals/runs/<run>/`, which is what the original project plan describes.
+
+**Why:** A hiring manager reading this project needs to compare scores across runs — that's the entire point of Phases 2-6 (first number vs. second number, Run 8 vs. Run 9, consistency across reps). One file per run, scattered across folders, makes that comparison harder: you'd have to open and reconcile a dozen separate CSVs by hand instead of filtering one. A single file with a `run` column is the standard shape for this kind of data.
+
+**Status:** Applied; not planned to change. A deliberate deviation from the plan's literal file layout, not an oversight.
+
+## [2026-09-17] — Write/skip ground truth for all 20 test commits
+**Decision:** The correct write/skip split for `evals/cases/release-notes-20.md`: **write** commits 1, 2, 4, 8, 19 (5 commits); **skip** everything else, including commit 6 (1e3c29b, "Edited skill 'what it does' to be accurate" — an internal SKILL.md self-description fix, never seen by a user of the recommender) and commit 12 (6fce484, ambiguous, covered by the default-to-skip rule below).
+
+**Why:** SKILL.md rule 4 skips a commit if its effect isn't visible to a user of the book-recommendation skill or if it's a portfolio-site/eval/project-meta change; commit 6 and 12 both fall under that even though they read as plausible feature changes at a glance.
+
+**Status:** Applied. `run-08.md` and `run-09.md` graded against this ground truth for all 20 commits: `run-08.md` is 19 of 20 (commit 12's misclassification fails), `run-09.md` is 20 of 20.
+
+## [2026-09-17] — Mechanical and judgment grading, cross-checked
+**Decision:** `scripts/check-mechanical.py` grades criteria 1, 2, 4, and 8 automatically, one row per case per run, into `evals/runs/mechanical-results.csv`. Criteria 3, 5, 6, and 7 need judgment against the actual commit content and are hand-graded into `evals/runs/judgment-grades.csv`, same row-per-case layout. Criterion 8 has both a mechanical half (did it explicitly ask for clarification — keyword-detectable) and a judgment half (did it silently attach an unauthorized reason to a skip without asking — not reliably keyword-detectable, since a bare, aggregate-shaped line can still carry an attached per-commit reason), so it's graded by both methods together rather than by the script alone.
+
+**Why:** Automating the mechanical half makes grading every case of every run tractable; keeping the judgment half separate and hand-graded is what makes the combined score trustworthy, since a script pattern-matching on wording can't tell a legitimate aggregate skip line from one that still carries a hidden justification.
+
+**Status:** Applied across every graded run (4 through v3).
+
+## [2026-09-17] — Every run graded one row per case, out of N; no more run-level aggregate judgments
+**Decision:** Added a grading rule to `evals/rubric.md`: every run is graded one row per case, out of N (N = number of input commits in that run). A whole run may never be graded as a single "applies to all commits" aggregate judgment again, even when every case happens to score the same.
+
+**Why:** Grading a whole run as one holistic judgment can miss a violation buried in one of 20 commits in a way that grading case-by-case can't — and it makes runs impossible to compare case-for-case against each other. Locking in one consistent shape prevents both problems.
+
+**Status:** Applied to `evals/rubric.md`, and to every run graded since.
+
 ## [2026-09-15] — Rule 10 default-to-skip fix applied; holds in batched format, still gapped in isolated single-commit calls
 **Decision:** Applied the fix left pending by the "Ambiguous feature-vs-portfolio commits default to skip" entry below, adding a clause to rule 10 (commit 512e384): "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip." Verified with two follow-up runs: Run 9 (batched, matching Runs 5/7's format) passed 8/8 and correctly skipped commit 12. Run 10 (5 repetitions of the isolated single-commit format that caused Run 6's original regressions, run via the new scripts/run-eval.py against the API directly) confirmed the fix holds for commit 12 specifically, but 4 of the 20 cases (commits 2, 6, 10, 18) still failed a subset of reps — not by refusing to decide as in Run 6, but by deciding and then appending a hedging follow-up asking for the diff, which still trips criterion 8.
 
@@ -12,7 +54,7 @@
 
 **Why:** Criteria 1, 2, 4, and 8 can be checked with text pattern matching alone; criteria 3 (skip-rule correctness), 6 (conflict-flag/unverifiable), and 7 (factual accuracy plus specific mechanism) all require comparing the response against what the actual commit means, which a script can't do. Automating the mechanical half makes re-grading past runs and grading Run 10's 100 case files (5 reps × 20 commits) tractable, since only the judgment half needs to be graded by hand.
 
-**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, v3-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). evals/rubric.md criterion 5 was found still tagged "mechanical" (the a432401 retagging pass missed it, despite it being graded in judgment-grades.csv, not checked by the script) and has since been corrected to "judgment."
+**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, run-10-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). evals/rubric.md criterion 5 was found still tagged "mechanical" (the a432401 retagging pass missed it, despite it being graded in judgment-grades.csv, not checked by the script) and has since been corrected to "judgment."
 
 ## [2026-09-15] — Unverifiable does not disqualify a commit from the pass count
 **Decision:** For a run's "Passed every criteria: X of N" summary line, a commit counts toward X as long as none of its criteria are marked Fail. A criterion marked Unverifiable does not disqualify it.
@@ -133,13 +175,6 @@
 
 **Status:** Applied to SKILL.md.
 
-## [2026-09-14 10:13 AM] — Numbered the rubric criteria
-**Decision:** Changed evals/rubric.md from bulleted criteria to a numbered list.
-
-**Why:** Numbering lets findings reference a specific criterion by number (e.g., "Criterion 4 failed") instead of restating it each time.
-
-**Status:** Applied to evals/rubric.md; used throughout Run 1-3 findings.
-
 ## [2026-09-12 6:06 PM] — Project-scope skip rule dropped as redundant; skip conditions consolidated
 **Decision:** A rule limiting release notes to book-recommendations-assistant commits only (added 5:26 PM) was removed about 18 minutes later; the "skip if a user of the book recommender would never notice" condition and the "always write a SKIP line" requirement were merged back into one combined skip rule, and the ordering rule was generalized from "book-recs commits" to "input commits."
 
@@ -176,7 +211,7 @@ release notes entirely — not given a note explaining the skip, just absent.
 
 **Status:** Corrected evals/gold/release-notes.md to include why skipping commits.
 
-## [2026-09-12 4:20 PM] — 
+## [2026-09-12 4:20 PM] — Release notes speak to the user, not to a developer
 **Decision:** Release notes voice should tell user what changed and why, not give technical details such as skill edits.
 
 **Why:** These are user-facing, not developer-facing.

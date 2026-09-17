@@ -1,6 +1,8 @@
 # Rubric
 Important: After Version 1 runs 1-3, criterion 1 was deleted so runs 4-on use Version 2
 
+Grading rule: every run is graded one row per case, out of N (N = number of input commits in that run). Never grade a whole run as a single "applies to all commits" aggregate judgment, even if every case happens to score the same — write the N rows.
+
 ## Criteria Version 2 (Run 4-on):
 1. Is the response in past tense?
 Outcomes: Pass, fail, unverifiable
