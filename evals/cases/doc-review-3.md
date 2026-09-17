@@ -1,6 +1,6 @@
 # Doc Review
 
-## Case 1:  Docs Assistant
+## Case 1:  Doc Review Skill
 
 An agent skill that turns raw git commit messages into user-facing release notes, built and tested with Claude Code.
 
