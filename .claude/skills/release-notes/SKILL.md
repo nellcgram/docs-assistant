@@ -1,9 +1,9 @@
-   ---
-   name: release-notes
-   description: Use when the user asks for release notes generated from commit messages.
-   ---
+---
+name: release-notes
+description: Use when the user asks for release notes generated from commit messages.
+---
 
-   ## Rules
+## Rules
 
 1. Make tone of release notes user-facing; include what changed and why it matters. Example: "The skill now stops to check already-read file, which prevents the skill from running without exclusion filtering."
 2. List release notes or entries in the same order as the input commits.

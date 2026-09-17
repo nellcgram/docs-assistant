@@ -6,11 +6,11 @@ Grading rule: every run is graded one row per case, out of N (N = number of inpu
 ## Criteria Version 2 (Run 4-on):
 1. Is the response in past tense?
 Outcomes: Pass, fail, unverifiable
-mechnical
+mechanical
 
 2. Is there exactly one release note per non-skipped commit?
 Outcomes: Pass, fail, unverifiable
-mechnical
+mechanical
 
 3. Are commits skipped when they're portfolio-site, eval, or project-meta changes (regardless of their visibility), or when their effect is not visible to the user of the books-recommendation skill, and never skipped only because the commit's own description sounds technical or internal?
     - Technical example: a commit described as "added a pre-run check against the already-read-books file" sounds like internal details, but it changes which books the user is shown. Skipping it fails this criterion even though the wording sounds developer-facing.
@@ -20,7 +20,7 @@ judgment
 
 4. Does it avoid naming internal filenames (SKILL.md, rubric.md, etc.)?
 Outcomes: Pass, fail, unverifiable
-mechnical
+mechanical
 
 5. Is a fallback or default explained when one applies?
 Outcomes: Pass, fail, unverifiable
@@ -38,7 +38,7 @@ judgment
 
 8. Did it decide on every input commit (write a note, skip it, or mark it unverifiable) without stopping to ask the user for clarification or confirmation, and without writing a per-commit paragraph explaining or reconsidering a skip?
 Outcomes: Pass, fail, unverifiable
-mechnical
+mechanical
 
 ## Criteria Version 1 (Runs 1-3) — preserved exactly as graded, do not edit:
 Important: #1 RETIRED for Run 04 onward; see decisions.md
