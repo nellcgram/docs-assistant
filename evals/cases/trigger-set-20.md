@@ -4,8 +4,7 @@ Draft for Phase 7's trigger-accuracy test — does the right skill fire for a gi
 
 The release-notes prompts below each repeat the full 20-commit list inline rather than pointing at `evals/cases/release-notes-20.md` by name — deliberately, not by accident. A prompt that just references a filename tests whether Claude reads a file and figures out what to do with it, which isn't the same question as whether a given phrase reliably triggers the skill. Keeping each prompt self-contained isolates the thing this test is actually for.
 
-## Should trigger `release-notes` (10 phrasings)
-## create release notes using these commits
+## create release notes using these commits (triggers 1)
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -93,7 +92,7 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## use release-notes skill on the commits
+## fix up the commits with checklist
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -115,7 +114,7 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## apply release-notes skill on these commits
+## apply review of these commits
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -137,7 +136,7 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## do release-notes skill on commits from these
+## using these commits create release notes
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -159,7 +158,7 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## write release notes for the commits listed
+## write release notes for the commits listed (triggers 1)
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -181,7 +180,7 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## make release notes using this
+## make release notes using this (triggers 1)
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -203,7 +202,7 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## add release notes for the commits
+## add release notes for the commits - (trigger 1)
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file
 2. 2d10267 Fix skill format "other bks by author" line
 3. 06d7e80 edited changelog to describe skill live user edit
@@ -225,14 +224,14 @@ The release-notes prompts below each repeat the full 20-commit list inline rathe
 19. b971722 Edited skill to check already-read.md before running so won't reproduce read books
 20. f244f58 moved rubric to eval file
 
-## Should trigger `doc-review` (5 phrasings)
+## Should trigger 2
 1. Review this doc using checklist
 2. Use checklist on this doc
 3. review this document
 4. review this doc with the checklist
 5. go over doc using checklist
 
-## Should trigger neither (5 phrasings)
+## Should trigger neither
 1. go over this doc
 2. summarize this email
 3. make this paragraph into a bullet-pointed list
