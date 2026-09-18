@@ -1,9 +1,12 @@
-   ---
-   name: release-notes
-   description: Use when the user asks for release notes generated from commit messages.
-   ---
+---
+name: release-notes
+description: Use when the user asks for release notes generated from commit messages.
+---
 
-   ## Rules
+## Purpose
+The agent should check each rule when assessing a document.
+
+## Rules
 
 1. Make tone of release notes user-facing; include what changed and why it matters. Example: "The skill now stops to check already-read file, which prevents the skill from running without exclusion filtering."
 2. List release notes or entries in the same order as the input commits.
@@ -22,3 +25,4 @@ Examples:
    - Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
    - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 10. Do not stop to ask the user to disambiguate a commit before finishing the response; decide using the rules above. Example: "Take Book Recommendations project offline" could mean the portfolio listing was pulled (skip) or the skill itself was taken down (write). Pick the reading better supported by the wording, write or skip accordingly, and flag the uncertainty in one clause if it matters. Don't ask which reading is correct. When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip.
+11. Follow the shared rules in house-style.md

@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 docs-assistant-plan.pdf
+.DS_Store
+docs-asst-bk-recs.code-workspace

@@ -1,5 +1,12 @@
 # Decisions
 
+## [2026-09-17] — Phase 8 (context arrangement) not attempted
+**Decision:** The plan's Phase 8 — testing whether identical skill instructions score differently depending on arrangement (inline vs. referenced via `examples.md`, vs. read late in a long session) — was not run. No sixth number exists.
+
+**Why:** Time was spent instead on grounding the second skill (Phase 7) and on the mechanical/judgment grading verification (Phase 5), both of which surfaced real, concrete issues worth fixing. Phase 8 tests a different, narrower question (token arrangement sensitivity) that doesn't depend on anything built so far, so skipping it doesn't block any other phase's numbers.
+
+**Status:** Not done. Logged here explicitly, per the plan's own instruction for this exact situation, rather than left to silently disappear — see `case-study.md`'s "Context arrangement (Phase 8): not attempted" section. If picked back up, the plan's Phase 8 steps (split `SKILL.md`'s worked examples into `examples.md`, run the same 20 cases inline vs. referenced vs. late-session) are unchanged from the original.
+
 ## [2026-09-17] — Fresh 5-repeat variance run: only 9 of 20 cases hold up across all 5 reps
 **Decision:** Ran the statistical-rigor test (`scripts/run-eval.py --repeats 5`) into `evals/runs/v3/rep-01` through `rep-05` (100 calls), graded in `evals/runs/v3-stats.csv`. **9 of 20 cases pass every criterion in all 5 reps.** Commit 18 fails all 5 (wrote a note instead of skipping in 4, hedged in all 5). Commit 6 fails 4 of 5 (same skip-rule miss). Eight more otherwise-correctly-skipped commits (7, 10, 11, 12, 13, 14, 16, 20) fail at least one rep by adding an unauthorized per-commit justification clause to an otherwise bare skip line — a rule 4 violation ("a single aggregate line listing skipped commit numbers is fine; per-commit justification is not").
 
@@ -54,7 +61,7 @@
 
 **Why:** Criteria 1, 2, 4, and 8 can be checked with text pattern matching alone; criteria 3 (skip-rule correctness), 6 (conflict-flag/unverifiable), and 7 (factual accuracy plus specific mechanism) all require comparing the response against what the actual commit means, which a script can't do. Automating the mechanical half makes re-grading past runs and grading Run 10's 100 case files (5 reps × 20 commits) tractable, since only the judgment half needs to be graded by hand.
 
-**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, run-10-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). evals/rubric.md criterion 5 was found still tagged "mechanical" (the a432401 retagging pass missed it, despite it being graded in judgment-grades.csv, not checked by the script) and has since been corrected to "judgment."
+**Status:** Applied: scripts/check-mechanical.py and scripts/run-eval.py added; evals/runs/mechanical-results.csv and evals/runs/judgment-grades.csv created; runs 4 through 10 graded with this split (evals/runs/grading-total.md, run-10-stats.csv), which is what surfaced and corrected Run 6's "0 of 20" summary-line error (see the entry below). evals/rubric.md criterion 5 was found still tagged "mechanical" (the a432401 retagging pass missed it, despite it being graded in judgment-grades.csv, not checked by the script) and has since been corrected to "judgment." (`grading-total.md` itself was later removed [2026-09-17] once its Run 7 entry was found to have a stray, uncorrected error and the individual `run-NN.md` files plus `evals/runs/README.md` had become the more reliable source.)
 
 ## [2026-09-15] — Unverifiable does not disqualify a commit from the pass count
 **Decision:** For a run's "Passed every criteria: X of N" summary line, a commit counts toward X as long as none of its criteria are marked Fail. A criterion marked Unverifiable does not disqualify it.
