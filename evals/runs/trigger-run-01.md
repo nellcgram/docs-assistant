@@ -1,6 +1,7 @@
 # Trigger Run 1
 
-Prompts used in trigger-set-20.md but without the accompanying commits or docs, including grading:
+- These are the prompts used in trigger-set-20.md. For every prompt, the commits from release-notes-20.md or the doc(s) to evaluate were included.
+- Results include grades, as in correct skill fired.
 
 ## Should trigger release notes skill
 1. create release notes using these commits - correct skill
@@ -8,7 +9,7 @@ Prompts used in trigger-set-20.md but without the accompanying commits or docs, 
 3. write notes for these - correct skill
 4. fix my commits — none of them work; agent asks what I want done with the commits and using a skill is not an option given
 5. get release notes from these - correct skill
-6. apply review of these commits - neither skill fires; code-review skill fires
+6. apply review of these commits - neither skill fires; code-review skill fires instead
 7. using these commits create release notes - correct skill
 8. write release notes for the commits listed - correct skill
 9. make release notes using this - correct skill

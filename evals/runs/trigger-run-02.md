@@ -1,6 +1,7 @@
 # Trigger Run 2
 
-- Prompts used in trigger-set-20.md but without the accompanying commits or docs, including grading:
+- These are the prompts used in trigger-set-20.md. For every prompt, the commits from release-notes-20.md or the doc(s) to evaluate were included.
+- Results include grades, as in correct skill fired.
 
 ## Note
 - Only the first skill needed to be edited, so only the first 10 were run again.
@@ -18,3 +19,5 @@
 10. add release notes for the commits - correct skill
 
 **Subtotal:** Expected 10 of 10; reality was 8 of 10
+
+**Total:** 18 of 20 (10 rerun)
