@@ -1,5 +1,15 @@
 # Decisions
 
+## [2026-09-18] — Trigger description reword didn't move the result: fourth number is 18 of 20 both times
+**Decision:** Prompts 4 ("fix my commits") and 6 ("apply review of these commits") were written on purpose as indirect phrasings that should trigger release-notes, and that expectation stands. After the one description reword Step I calls for (commit 1b78776), trigger run 2 gave the same result as run 1: both prompts still didn't trigger. Both count as misses, so release-notes is 8 of 10 and the total is **18 of 20** in both runs. The before/after comparison is the finding: the reword changed nothing. No second reword has been done.
+
+**Why:** The reword added explicit verbs to a description whose passing prompts already used them, so it couldn't help prompts that never say "release notes". Under the Phase 3 taxonomy this is "the spec never addressed this situation" (see `evals/findings.md`, 2026-09-18), which is a fixable cause, so a second reword covering indirect phrasings is a legitimate next move. It isn't required: Step I allows one round, and a perfect score isn't the goal. The risk is false triggers on other commit-related requests and overlap with the built-in code-review skill, and the 5-prompt "neither" group can't detect that. Any second attempt should be re-run on the same 20 prompts as `trigger-run-03.md`, with runs 1 and 2 left as they are.
+
+**Status:** Applied. The trigger-run subtotals and the runs README were corrected to 8 of 10 and 18 of 20 to match the per-prompt lines. Open items:
+- Whether to try a second description reword, or stop here and report the null result.
+- `trigger-run-01.md` says the prompts were run without the commits or docs, and `trigger-run-02.md` says they were included. State which is true for each run, because if they differ, the before/after changes two things at once.
+- Each prompt was run once, so a one- or two-prompt difference is within run-to-run noise.
+
 ## [2026-09-17] — Phase 8 (context arrangement) not attempted
 **Decision:** The plan's Phase 8 — testing whether identical skill instructions score differently depending on arrangement (inline vs. referenced via `examples.md`, vs. read late in a long session) — was not run. No sixth number exists.
 

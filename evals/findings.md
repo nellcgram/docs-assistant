@@ -1,6 +1,21 @@
 # Findings
 Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
+## Trigger runs 1 and 2 [2026-09-18]
+Trigger test, 20 prompts (`evals/cases/trigger-set-20.md`), run before and after rewording the release-notes `description:` (`evals/runs/trigger-run-01.md`, `evals/runs/trigger-run-02.md`). doc-review (5 prompts) and the "neither" group (5 prompts) matched expectations in run 1 and were not re-run.
+
+Prompts 4 ("fix my commits") and 6 ("apply review of these commits") did not trigger release-notes in either run. In run 1, prompt 4 got a clarifying question and prompt 6 fired the built-in code-review skill. In run 2, prompt 4 behaved the same and prompt 6 fired nothing (the agent said it couldn't review commits that don't exist in the repo).
+
+**Expectation:** both prompts were written on purpose as indirect phrasings that should trigger release-notes, so both count as misses. The release-notes subtotal is 8 of 10 in both runs, and the 20-prompt total is 18 of 20 in both.
+
+**Cause: the spec never addressed indirect phrasings** (the first of the three causes). The description only covers explicit requests. Neither prompt says "release notes" or "notes", and the eight prompts that do passed in both runs. The reword added more explicit verbs ("create, write, generate, add"), which is why it changed nothing: it targeted phrasings that were already passing. Prompt 6 also collides with the built-in code-review skill in run 1, a competing description this project doesn't control.
+
+Under the Phase 3 approach, a "spec never addressed this" cause is one where the wording gets edited, so a second description reword aimed at these indirect phrasings is the plan-consistent next step. It carries a real risk of false triggers on other commit-related requests, and the 5-prompt "neither" group is too small to detect that. Whether to attempt it is open, tracked in `decisions.md` (2026-09-18).
+
+**Caveats on the comparison:**
+- `trigger-run-01.md` says the prompts were run without the accompanying commits or docs. `trigger-run-02.md` says the commits and docs were included. If both are accurate, the before/after differs in two ways at once (description and input), not just the description.
+- Each prompt was run once, so a one- or two-prompt difference is within run-to-run noise.
+
 ## v3 variance [2026-09-17]
 5 repetitions of all 20 cases (`scripts/run-eval.py --repeats 5`, `evals/runs/v3/rep-01` through `rep-05`), graded in `evals/runs/v3-stats.csv`. **9 of 20 cases pass every criterion in all 5 reps.**
 
