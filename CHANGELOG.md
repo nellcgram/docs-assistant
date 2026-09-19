@@ -1,5 +1,14 @@
 # Changelog
 
+## Trigger runs 1 and 2 [2026-09-18] — Phase 7 number 4: description reword did not change the result
+Trigger test, 20 prompts from `evals/cases/trigger-set-20.md`, run before (`evals/runs/trigger-run-01.md`) and after (`evals/runs/trigger-run-02.md`) the `description:` edit below. Only the 10 release-notes prompts were re-run, since only that skill's description changed. Prompts 4 ("fix my commits") and 6 ("apply review of these commits") did not trigger the skill in either run, so the reword made no difference to the outcome.
+
+### Commit: 1b78776, [2026-09-18] - release-notes `description:` reworded (Phase 7 Step I)
+- Changed: Old: "Use when the user asks for release notes generated from commit messages." New: "Use when the user asks to create, write, generate, add release notes from commit messages." Why: trigger run 1 had release-notes mismatches, and Step I says to reword only the `description:` line. Result: no improvement (see above). The new wording stays in place, but it is not evidence of a fix.
+
+### Commit: 1b78776, [2026-09-18] - doc-review rule 2 grammar
+- Changed: Old: "Follow the shared rules in house-style.md" New: "Use house-style.md rules". Why: grammar cleanup, same commit as the description edit. No behavior change intended, and doc-review was not re-scored after it.
+
 ## v3 variance [2026-09-17] — Phase 6 number: 9 of 20 cases pass all 5 reps
 5 repetitions of all 20 cases via `scripts/run-eval.py --repeats 5` (`evals/runs/v3/rep-01` through `rep-05`, graded in `evals/runs/v3-stats.csv`). **9 of 20 cases pass every criterion in all 5 reps.** Commit 18 (b50af03) fails all 5 (wrote a note instead of skipping in 4, hedged in all 5). Commit 6 (1e3c29b) fails 4 of 5, the same skip-rule miss — SKILL.md rule 4 says an internal self-description fix like this should be skipped. Eight more otherwise-correctly-skipped commits (7, 10, 11, 12, 13, 14, 16, 20) fail at least one rep by attaching a per-commit reason clause to an otherwise bare skip — a rule 4 violation ("a single aggregate line... is fine; per-commit justification is not"). No SKILL.md or rubric edit made from this yet.
 
