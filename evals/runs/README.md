@@ -20,6 +20,8 @@ Source: [v3.md](v3.md), hand-graded.
 **4. Trigger accuracy: 18 of 20** (Phase 7). 
 Source: [trigger-run-01.md](trigger-run-01.md) and [trigger-run-02.md](trigger-run-02.md) got same response.
 
+**5. Hard cases: 4 of 10** (Phase 7). 
+
 ## Supporting totals
 
 These aren't among the six numbers, but the plan requires them.
