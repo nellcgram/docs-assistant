@@ -17,8 +17,8 @@ Source: [run-05.md](run-05.md). Run 5 is used instead of Run 6 because Run 6 cha
 **3. First scripted run: 15 of 20** (Phase 4)
 Source: [v3.md](v3.md), hand-graded.
 
-**4. Trigger accuracy: 17 of 20** (Phase 7). Half done.
-Source: [trigger-run-01.md](trigger-run-01.md). This is the "before" only: release-notes 7 of 10, doc-review 5 of 5, neither 5 of 5. There is no `trigger-run-02.md` yet, so there is no "after" number.
+**4. Trigger accuracy: 18 of 20** (Phase 7). 
+Source: [trigger-run-01.md](trigger-run-01.md) and [trigger-run-02.md](trigger-run-02.md) got same response.
 
 ## Supporting totals
 
@@ -45,6 +45,7 @@ What changed since the previous run, and the score.
 - **Run 10: 16 of 20 clean in all 5 repeats.** Same skill, one call per commit, 5 repeats. [run-10-stats.csv](run-10-stats.csv)
 - **v3: 15 of 20.** First scripted run, current skill. [v3.md](v3.md)
 - **v3 variance: 9 of 20 clean in all 5 repeats.** Same skill, 5 repeats. This is the current consistency number. [v3-stats.csv](v3-stats.csv)
-- **Trigger 1: 17 of 20.** Trigger test, 20 prompts, before rewording descriptions. [trigger-run-01.md](trigger-run-01.md)
+- **Trigger 1: 18 of 20.** Trigger test, 20 prompts, before rewording descriptions. [trigger-run-01.md](trigger-run-01.md)
+- **Trigger 2: 18 of 20.** Trigger test, 20 prompts, after rewording descriptions had same results. [trigger-run-02.md](trigger-run-02.md)
 
 Runs 6–10 are iteration history, kept as evidence of the diagnose-fix-verify process. They aren't wrong or superseded. [case-study.md](../../case-study.md) explains which numbers the write-up cites.
