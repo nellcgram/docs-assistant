@@ -8,4 +8,4 @@ The agent should check each rule when assessing a document.
 
 ## Rules
 1. Check if the document states its purpose in the first paragraph/intro. Say pass, fail, or unverifiable.
-2. Follow the shared rules in house-style.md
+2. Use house-style.md rules

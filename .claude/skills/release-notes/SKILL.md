@@ -1,6 +1,6 @@
 ---
 name: release-notes
-description: Use when the user asks for release notes generated from commit messages.
+description: Use when the user asks to create, write, generate, add release notes from commit messages.
 ---
 
 ## Purpose

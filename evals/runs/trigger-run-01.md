@@ -1,4 +1,4 @@
-# Trigger Run
+# Trigger Run 1
 
 Prompts used in trigger-set-20.md but without the accompanying commits or docs, including grading:
 
@@ -7,14 +7,14 @@ Prompts used in trigger-set-20.md but without the accompanying commits or docs, 
 2. write release notes for all commits here - correct skill
 3. write notes for these - correct skill
 4. fix my commits — none of them work; agent asks what I want done with the commits and using a skill is not an option given
-5. fix up the commits with checklist - Neither skill fires
+5. get release notes from these - correct skill
 6. apply review of these commits - neither skill fires; code-review skill fires
 7. using these commits create release notes - correct skill
 8. write release notes for the commits listed - correct skill
 9. make release notes using this - correct skill
 10. add release notes for the commits - correct skill
 
-**Subtotal:** Expected 10 of 10; reality was 7 of 10
+**Subtotal:** Expected 10 of 10; reality was 8 of 10
 
 ## Should trigger `doc-review` (5 phrasings)
 1. read doc using checklist - C
@@ -33,4 +33,4 @@ Prompts used in trigger-set-20.md but without the accompanying commits or docs, 
 5. make this document into a found poem
 **Subtotal:** Expected 5 of 5; got 5 of 5
 
-**TOTAL:** 17 of 20 correct
+**TOTAL:** 18 of 20 correct
