@@ -22,7 +22,7 @@
 - This is engineering log and will need to be shortened for case study
 - Why was it built?
 
-**Main points so far:**
+**Main points of the decisions.md entries I read (context for the review, not flags):**
 - Skip rule is about visible effect, not how technical the wording sounds (2026-09-14 2:28 PM)
 - Vague-but-accurate notes still fail — need specific mechanism/outcome (2026-09-14 2:28 PM)
 - Repo-check needs an explicit stop condition, not just permission to check (2026-09-14 8:49 PM)

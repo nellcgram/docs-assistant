@@ -1,5 +1,7 @@
 # Doc Review
 
+Each case is a snapshot of the file as it stood when I reviewed it. The files have changed since. Case 2 is the skill before `house-style.md` was extracted, and Case 3 is one entry from `decisions.md`, not the whole file.
+
 ## Case 1:  README
 
 ```

@@ -30,7 +30,7 @@ judgment
 Outcomes: Pass, fail, unverifiable
 judgment
 
-7. Is the release note both factually correct AND includes the specific mechanism or outcome 
+7. Is the release note both factually correct AND includes the specific mechanism or outcome?
     - Example: Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
     - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 Outcomes: Pass, fail, unverifiable
@@ -59,5 +59,4 @@ Outcomes: Pass, fail, unverifiable
 Outcomes: Pass, fail, unverifiable
 
 6. Is a fallback or default explained when one applies?
-Unverifiable
 Outcomes: Pass, fail, unverifiable

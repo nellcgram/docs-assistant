@@ -1,6 +1,6 @@
 # Hard Cases: 10 Inputs
 
-## docs-review skill tricky input
+## doc-review skill tricky input
 1. review doc with commits 
 2. make doc shorter
 3. fill in doc details
