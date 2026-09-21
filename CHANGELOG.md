@@ -15,7 +15,7 @@ I renamed the scripted run `v3` to Run 11 and the CI run `v4` to `run-12`, so ev
 A GitHub Action now re-runs the 20-case eval on every push that touches `.claude/skills/` or `shared/`, and it fails the check if the pass rate drops below 0.75.
 - **`.github/workflows/eval.yml`:** The workflow runs `run-eval.py`, `check-mechanical.py`, and then the gate. The API key is a repository secret and never appears in the file.
 - **`scripts/check-pass-rate.py` (new):** It reads `mechanical-results.csv`, scores only the run the job just produced (`--run run-12`), and exits nonzero below the minimum. It also fails when no rows match, so a run that produced nothing can't pass.
-- **Testing:** I broke `SKILL.md` on purpose in five temporary ways and reverted every one. Only the last break failed the check (0.10), and `evals/findings.md` has the results. The skill and shared files are byte-identical before and after the tests.
+- **Testing:** I broke `SKILL.md` on purpose in five temporary ways and reverted every one. Only the last break failed the check (0.10), and `evals/findings.md` has the results and screenshots of the failing and passing runs. The skill and shared files are byte-identical before and after the tests.
 
 ## 2026-09-19: Shared rules and hard-input handling
 The hard-cases run showed that neither skill pointed to `shared/hard-surfaces.md` and that `house-style.md` held checklist items only doc-review used.

@@ -30,7 +30,7 @@ These aren't among the five numbers, but the plan requires them.
 - **Phase 5, mechanical vs. manual grading:** I reconciled them case by case. The comparison caught wrong summaries in Runs 5, 6, 8, and 9, which I corrected in place. Sources: [mechanical-results.csv](mechanical-results.csv), [judgment-grades.csv](judgment-grades.csv), [decisions.md](../../decisions.md).
 - **Phase 6, cases passing all 5 repeats: 9 of 20.** Source: [run-11-stats.csv](run-11-stats.csv). This predates the shared-rules change (see [decisions.md](../../decisions.md)).
 - **Phase 6, same measure on an earlier skill (Run 10): 16 of 20.** Source: [run-10-stats.csv](run-10-stats.csv).
-- **CI failing once and passing once:** a deliberately broken skill scored 0.10 (2 of 20) and failed the check (commit `58ba015`). After the revert the identical skill scored 0.85 (17 of 20) and passed (commit `12e8829`). Sources: [findings.md](../findings.md), `.github/workflows/eval.yml`, and the GitHub Actions run logs, which the repo doesn't store.
+- **CI failing once and passing once:** a deliberately broken skill scored 0.10 (2 of 20) and failed the check (commit `58ba015`). After the revert the identical skill scored 0.85 (17 of 20) and passed (commit `12e8829`). Sources: [findings.md](../findings.md), `.github/workflows/eval.yml`, and screenshots of the GitHub Actions pages: the [run list](../screenshots/all%20workflows%20error%20message.png), the [failing log](../screenshots/log%20error%20message.png), the [passing run list](../screenshots/fixed%20skill%201.png), and the [passing log](../screenshots/fixed%20skill%202_log.png).
 
 ## Every run
 

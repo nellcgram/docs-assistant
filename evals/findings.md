@@ -18,6 +18,22 @@ A GitHub Action re-runs the eval on each push and fails the check below a 0.75 p
 
 The override run failed the check at the pass-rate step, not on a crash. Two other early runs also failed because the API credit balance ran out, so I didn't count them.
 
+Screenshots of the GitHub Actions pages are in `evals/screenshots/`. They were taken while the CI run was still named `v4`, so the logs show `--run v4`, which is now `run-12`.
+
+Run #8 (commit `58ba015`, the override) failed, while runs #4 to #7, the four mild breaks, passed:
+
+![GitHub Actions run list: run #8 failed and runs #7, #6, #5, #4 passed](screenshots/all%20workflows%20error%20message.png)
+
+The log for run #8 shows the failure at the gate, after `run-eval.py` and `check-mechanical.py` both succeeded:
+
+![Log of failed run #8: check-pass-rate.py reported a pass rate of 0.10, below the minimum 0.75](screenshots/log%20error%20message.png)
+
+Run #9 (commit `12e8829`) passed after the revert:
+
+![GitHub Actions run list: run #9 passed above the failed run #8](screenshots/fixed%20skill%201.png)
+
+![Log of passing run #9: every step, including check-pass-rate.py, succeeded](screenshots/fixed%20skill%202_log.png)
+
 - **The check catches large regressions but not subtle ones (model limitation).** Four of the five breaks scored 0.80 to 0.85, above the threshold, because the model followed the most specific rule and ignored the bad ones.
 - **The `shared/` files back up `SKILL.md` (redundancy, not a defect).** `shared/hard-surfaces.md` already says "Never ask about a commit," and `house-style.md` already bans internal file names. Deleting the skill's own copy therefore changed nothing, and only an override aimed at the shared files got through.
 - **The same skill scored differently on two runs (run-to-run noise).** The correct skill scored 0.95, then 0.85 after the revert, with identical files. One case is worth 0.05, so two or three flips is normal. This is why the threshold sits at 0.75 and not 0.90 (see `decisions.md`).

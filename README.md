@@ -16,7 +16,7 @@ This project builds two Claude Code skills, `release-notes` and `doc-review`, an
 
 A 5-repeat run found that only 9 of 20 cases pass every time, so the skill is correct more often than it is consistent. That run predates moving the shared rules into `shared/house-style.md`.
 
-A GitHub Action now re-runs the 20 cases whenever a skill or shared file changes, and fails the check below a 0.75 pass rate. A deliberately broken skill scored 0.10 and failed it, and the fixed skill scored 0.85 and passed. The check grades only the four mechanical criteria, so it catches large regressions, not subtle ones: four of my five test breaks scored 0.80 to 0.85 and passed. The judgment criteria are still hand-graded. See `evals/findings.md` for the full test.
+A GitHub Action now re-runs the 20 cases whenever a skill or shared file changes, and fails the check below a 0.75 pass rate. A deliberately broken skill scored 0.10 and failed it, and the fixed skill scored 0.85 and passed. The check grades only the four mechanical criteria, so it catches large regressions, not subtle ones: four of my five test breaks scored 0.80 to 0.85 and passed. The judgment criteria are still hand-graded. See `evals/findings.md` for the full test, with screenshots of the failing and passing runs.
 
 ## The two skills
 

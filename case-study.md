@@ -95,7 +95,23 @@ To test it, I broke `SKILL.md` on purpose five ways and reverted each one ([`fin
 | Added an override: write no notes, only ask | **0.10 (2/20)** | **failed** |
 | Reverted to the correct skill | 0.85 (17/20) | passed |
 
-Four simple breaks passed because `shared/hard-surfaces.md` and `house-style.md` repeat the skill's key rules, so removing or contradicting one copy did nothing. Only an override aimed at the shared files got through. The check failed at the pass-rate step, not on a crash, in commit `58ba015`, and passed again after the revert in commit `12e8829`. The identical correct skill scored 0.95 before the tests and 0.85 after, which is run-to-run noise (one case is worth 0.05). That is why the threshold sits at 0.75 and not 0.90, which would have failed a good skill. The GitHub Actions logs aren't stored in the repo, so the scores above come from `findings.md`. Two early runs also failed because my API credit ran out, and I didn't count them.
+Four simple breaks passed because `shared/hard-surfaces.md` and `house-style.md` repeat the skill's key rules, so removing or contradicting one copy did nothing. Only an override aimed at the shared files got through. The check failed at the pass-rate step, not on a crash, in commit `58ba015`, and passed again after the revert in commit `12e8829`. The identical correct skill scored 0.95 before the tests and 0.85 after, which is run-to-run noise (one case is worth 0.05). That is why the threshold sits at 0.75 and not 0.90, which would have failed a good skill. Two early runs also failed because my API credit ran out, and I didn't count them.
+
+The workflow history shows the pattern. Runs #4 to #7 are four mild breaks that all passed, and run #8 (commit `58ba015`) is the override that failed:
+
+![GitHub Actions run list: run #8, the override break, failed, while runs #7, #6, #5, and #4, the four mild breaks, passed](evals/screenshots/all%20workflows%20error%20message.png)
+
+The log for run #8 shows the failure came from the gate itself: every earlier step succeeded, and `check-pass-rate.py` reported `FAIL: pass rate 0.10 is below the minimum 0.75` and `2 of 20 cases pass all mechanical criteria (0.10)`.
+
+![Log of failed run #8: the run-eval and check-mechanical steps passed, then check-pass-rate.py failed with "pass rate 0.10 is below the minimum 0.75"](evals/screenshots/log%20error%20message.png)
+
+After I reverted the override, run #9 (commit `12e8829`, "fixed skill, done testing") passed, with every step including the gate green:
+
+![GitHub Actions run list: run #9, "fixed skill, done testing," passed, directly above the failed run #8](evals/screenshots/fixed%20skill%201.png)
+
+![Log of passing run #9: every step, including check-pass-rate.py, succeeded](evals/screenshots/fixed%20skill%202_log.png)
+
+These screenshots were taken while the CI run was still named `v4`, which is why the logs show `--run v4`. I later renamed it `run-12` (see [`decisions.md`](decisions.md)), and no score changed.
 
 ## What this doesn't cover
 
