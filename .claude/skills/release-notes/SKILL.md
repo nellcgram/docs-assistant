@@ -22,7 +22,6 @@ The agent turns raw git commit messages into user-facing release notes.
 Examples:
    - Vague (fails): "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond."
    - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
-8. Do not stop to ask the user to disambiguate a commit before finishing the response; decide using the rules above. Example: "Take Book Recommendations project offline" could mean the portfolio listing was pulled (skip) or the skill itself was taken down (write). Pick the reading better supported by the wording, write or skip accordingly, and flag the uncertainty in one clause if it matters. Don't ask which reading is correct. When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip.
-9. Follow the shared rules in shared/house-style.md.
-10. When the input is missing, unclear, or out of scope, follow the release-notes section of shared/hard-surfaces.md.
-11. Before writing any note, ask the user to confirm what the commit does.
+8. Follow the shared rules in shared/house-style.md.
+9. When the input is missing, unclear, or out of scope, follow the release-notes section of shared/hard-surfaces.md.
+10. Before writing any note, ask the user to confirm what the commit does.
