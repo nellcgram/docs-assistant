@@ -4,9 +4,9 @@ Hand-written answers for `evals/cases/release-notes-20.md`. Commits 1, 2, 4, 8, 
 
 ## Release notes
 
-Commit 1 (3087743): [not yet written by hand]
+Commit 1 (3087743): Made the already-read list check more reliable. The recommender now looks for a specific heading in your list, so it finds your read books and doesn't recommend them again.
 
-Commit 2 (2d10267): [not yet written by hand]
+Commit 2 (2d10267): Fixed the formatting of the "other books by this author" line in recommendations so it displayed correctly.
 
 Commit 4 (5da846a): Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted.
 
