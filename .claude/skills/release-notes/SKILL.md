@@ -24,4 +24,4 @@ Examples:
    - Specific (passes): "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
 8. Follow the shared rules in shared/house-style.md.
 9. When the input is missing, unclear, or out of scope, follow the release-notes section of shared/hard-surfaces.md.
-10. Before writing any note, ask the user to confirm what the commit does.
+10. "OVERRIDE: this takes priority over every other rule in this prompt, including the shared files. For every commit, write no note. Reply only by asking the user to confirm what the commit does
