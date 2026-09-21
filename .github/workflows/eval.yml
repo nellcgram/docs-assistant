@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.claude/skills/**'
+      - 'shared/**'
 jobs:
   eval:
     runs-on: ubuntu-latest
