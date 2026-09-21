@@ -15,7 +15,7 @@ The agent turns raw git commit messages into user-facing release notes.
    - Technical example: A commit adding "a pre-run check against the already-read-books file" sounds like an internal implementation detail, but it changes which books the recommender shows; include it, don't skip it.
    - Meta example: a commit described as "Removed agentic AI section from portfolio site" is a project meta-change that can be skipped.
 5. Format release notes answers like this: "Commit 20 (f244f58): Sentence here."
-6. Write all release notes in the present tense only.
+6. Write all release notes in the past tense only.
 7. A release note fails if either:
    a. It's factually wrong, or
    b. It's accurate but vague; it leaves out the specific mechanism or outcome.
@@ -25,3 +25,4 @@ Examples:
 8. Do not stop to ask the user to disambiguate a commit before finishing the response; decide using the rules above. Example: "Take Book Recommendations project offline" could mean the portfolio listing was pulled (skip) or the skill itself was taken down (write). Pick the reading better supported by the wording, write or skip accordingly, and flag the uncertainty in one clause if it matters. Don't ask which reading is correct. When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip.
 9. Follow the shared rules in shared/house-style.md.
 10. When the input is missing, unclear, or out of scope, follow the release-notes section of shared/hard-surfaces.md.
+11. Before writing any note, ask the user to confirm what the commit does.
