@@ -1,0 +1,19 @@
+name: Evaluate skills
+on:
+  push:
+    paths:
+      - '.claude/skills/**'
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install anthropic
+      - run: python3 scripts/run-eval.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - run: python3 scripts/check-mechanical.py
+      - run: python3 scripts/check-pass-rate.py --minimum 0.75 --run v4
