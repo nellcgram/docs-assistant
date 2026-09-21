@@ -1,6 +1,6 @@
 # Raw Commit Log
 
-The real commit history the 20 synthetic test cases in `release-notes-20.md` are modeled on (hashes there are fabricated for a controlled, non-lookupable eval — see `decisions.md`, "Replaced real commit hashes with synthetic ones"). Kept as-is, terse messages and all, for traceability back to the source.
+This is real commit history that the 20 synthetic test cases in `release-notes-20.md` are modeled on. Hashes there are fabricated for a controlled, non-lookupable eval; see `decisions.md`, "Replaced real commit hashes with synthetic ones." I kept them as-is for traceability back to the source.
 
 f68c6dd Added run 2 update
 55be225 Added run 1 update

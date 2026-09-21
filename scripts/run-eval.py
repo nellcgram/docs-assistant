@@ -39,7 +39,7 @@ def load_system_prompt() -> str:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--name", default="v4", help="output folder under evals/runs/")
+    parser.add_argument("--name", default="run-12", help="output folder under evals/runs/")
     parser.add_argument(
         "--repeats",
         type=int,

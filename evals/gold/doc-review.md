@@ -1,6 +1,6 @@
 # Doc Review Gold
 
-Hand-written findings for `evals/cases/doc-review-3.md`. Each case is a snapshot of a file as it stood when I reviewed it, so the current files differ. A response should raise the findings below, and the rule numbers refer to the doc-review skill's checklist as it stood in Case 2.
+These are hand-written findings for `evals/cases/doc-review-3.md`. Each case is a snapshot of a file as it stood when I reviewed it, so the current files differ. A response should look like the findings below. The rule numbers refer to the doc-review skill's checklist as it stood in Case 2.
 
 ## Case 1: README
 

@@ -7,7 +7,7 @@ the response addressed the commit, and none of the four criteria is "Fail".
 "Unverifiable" doesn't count against a case.
 
 The CSV holds every scripted run in the repo's history, so pass --run to score
-only the run this job just produced (for example --run v4). Without it, old
+only the run this job just produced (for example --run run-12). Without it, old
 runs would dilute the rate and a real regression could go unnoticed.
 
 The nonzero exit code is what makes a GitHub Actions step, and so the check,
@@ -44,7 +44,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--run",
-        help="only score this run and its -rep-NN repeats (e.g. v4); default: every run",
+        help="only score this run and its -rep-NN repeats (e.g. run-12); default: every run",
     )
     parser.add_argument("--csv", type=Path, default=DEFAULT_CSV, help="results file to read")
     return parser.parse_args()

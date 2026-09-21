@@ -2,47 +2,73 @@
 
 ## The problem
 
-Turning a raw git commit message into a release note a user can actually read is a translation problem with no obvious spec: which commits matter to a user, what tense to write in, how to handle a commit whose hash can't be verified, what to do when a description is genuinely ambiguous. Without writing that spec down and testing it against real cases, "generate release notes" just means "guess, inconsistently, every time." This project builds that spec — a Claude Code skill — the way you'd build anything meant to be trusted: write a first version, test it against real cases, diagnose exactly why it fails, fix it, and keep re-testing until the failures stop.
+Turning a raw git commit message into a release note that a user can read has no obvious spec. Someone must decide which commits matter to a user, what tense to use, how to handle a commit that can't be verified, and what to do when a description is ambiguous. Without a written and tested spec, "generate release notes" means "guess, inconsistently, every time."
 
-## First number (Phase 2): 0 of 20
+I built that spec as a Claude Code skill, the way I would build any software I want to trust. I wrote a first version, ran it against real cases, diagnosed each failure, fixed the spec, and re-ran it. I then built a second skill, `doc-review`, and put an automated check around both.
 
-The first version of the skill ([`.claude/skills/release-notes/SKILL.md`](.claude/skills/release-notes/SKILL.md)) was run against 20 real commit descriptions ([`evals/cases/release-notes-20.md`](evals/cases/release-notes-20.md)) in a fresh session, and the output was scored by hand against a 6-criterion rubric ([`evals/rubric.md`](evals/rubric.md), Version 1). Result, recorded in [`evals/runs/run-01.md`](evals/runs/run-01.md): **0 of 20 cases passed every criterion.** The skill had no rule against checking other repos for the real commit (so it stopped mid-run to ask), no tense requirement (notes drifted between past and present), and no rule against naming internal files like `SKILL.md` in user-facing output. None of that is a surprising result — it's what a first draft with no rules yet should produce. The point of Phase 2 isn't to pass; it's to generate a concrete, gradable failure to diagnose.
+## Results at a glance
 
-## Diagnosis and second number (Phase 3): 0 of 20 → 19 of 20
+| Phase | What I measured | Result |
+|---|---|---|
+| 2 | First version of `release-notes` | 0 of 20 |
+| 3 | After diagnosing and fixing the spec | 19 of 20 |
+| 4 | First scripted run (one API call per commit) | 15 of 20 |
+| 6 | Cases that pass in all 5 repeats | 9 of 20 |
+| 7 | Whether the right skill fires (before and after a reword) | 18 of 20, then 18 of 20 |
+| 7 | Handling of missing, unclear, and out-of-scope input | 3 of 10 |
+| 9 | CI check on a deliberately broken skill | failed at 0.10, passed at 0.85 once fixed |
 
-Every failure in Run 1 was attributed to one of three causes in [`evals/findings.md`](evals/findings.md): a spec gap (the skill never addressed the situation), a spec ambiguity (addressed but unclearly), or a model limitation (the spec was clear and the model just didn't follow it). Almost all of Run 1's failures were spec gaps — nothing forbade checking other repos, nothing required past tense, nothing barred internal filenames. Each gap became a rule, logged in [`CHANGELOG.md`](CHANGELOG.md) with the literal old/new wording. For example, after Run 4 still misclassified portfolio-site and internal-eval commits as user-facing:
+[evals/runs/README.md](evals/runs/README.md) links every number to the file behind it.
+
+## Phase 2: 0 of 20
+
+I ran the first version of the skill ([SKILL.md](.claude/skills/release-notes/SKILL.md)) against 20 real commit descriptions ([release-notes-20.md](evals/cases/release-notes-20.md)) and graded each response against a rubric ([rubric.md](evals/rubric.md), Version 1). Zero cases passed every criterion ([run-01.md](evals/runs/run-01.md)). The skill had no rule against checking other repos, no tense requirement, and no ban on naming internal files. A first draft with no rules should fail this way, and the failures gave me concrete things to diagnose.
+
+## Phase 3: 0 of 20 to 19 of 20
+
+I traced every failure to one of three causes in [findings.md](evals/findings.md): a gap (the skill never addressed the situation), an ambiguity (it addressed it unclearly), or a model limitation (the skill was clear and the model ignored it). Most of Run 1's failures were gaps. I turned each gap into a rule and logged the old and new wording in [CHANGELOG.md](CHANGELOG.md). For example, Run 4 still wrote notes for portfolio-site and eval commits:
 
 > Old: *"Skip a commit if the effect is not visible to the user."*
-> New: *"Skip a commit if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Otherwise, skip a commit if the effect is not visible to a user of the book-recommendation skill."*
+> New: *"Skip a commit if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone. A portfolio visitor is not a user of the book-recommendation skill."*
 
-It took more than one round to get there — Run 2 still tried to look up commits externally under narrower wording; Run 3 caught notes that were accurate but too vague to be useful; Run 4 caught the portfolio/meta misclassification above. By Run 5 ([`evals/runs/run-05.md`](evals/runs/run-05.md)), run under the same conditions as Run 1 (one batched request, all 20 commits, fresh session — the only thing that changed is the skill), the result was **19 of 20**. The one exception, commit 18, hedged instead of deciding ("I'm not confident; let me know if you want it included") — a real, specific failure that's still visible in the file rather than smoothed over. (Run 6, which also appears in the project history around this time, changed the *call format* to one commit per API call rather than testing a further skill revision — it belongs to the consistency story in Phase 6, not this comparison; see [`decisions.md`](decisions.md), "Run 1 vs Run 5 is the second number, not Run 6.")
+It took five runs to reach 19 of 20 ([run-05.md](evals/runs/run-05.md)). The one miss, commit 18, hedged ("I'm not confident; let me know") instead of deciding, and the file still shows it.
 
-## Automating the run (Phase 4): 15 of 20
+Run 6 scored 4 of 20 with no skill change, because I switched to one API call per commit. Run 7, batched again, scored 20 of 20, so the call format caused the drop. I paired Run 1 with Run 5 because only the skill changed between them ([decisions.md](decisions.md)).
 
-Once the skill was demonstrably solid under manual testing, the harness was automated: [`scripts/run-eval.py`](scripts/run-eval.py) reads the skill and the 20 cases and calls the API directly, once per case, instead of a human copying a prompt into a fresh session and pasting the reply back out. The methodological shift here is real — a script now runs the cases, though grading was still done by hand at this point. The result, in [`evals/runs/v3.md`](evals/runs/v3.md): **15 of 20.** This is lower than Run 5's 19 of 20, and the gap is informative rather than alarming: this run used *isolated single-commit API calls* (one call per commit, no shared conversation) instead of one batched request covering all 20. Commit 6 failed outright (wrote a note for an internal SKILL.md self-description fix that should have been skipped), and four more commits failed by attaching an unauthorized reason to an otherwise-correct skip decision — a rule the skill states plainly ("a single aggregate line listing skipped commit numbers is fine; per-commit justification is not") but doesn't reliably follow once each commit is judged in isolation, with no other commit's context to calibrate against.
+## Phase 4: 15 of 20
 
-## Automating grading, partially (Phase 5): the check earns its keep
+[run-eval.py](scripts/run-eval.py) calls the API once per commit, where before I pasted prompts into a fresh session by hand. The scripted run (Run 11) scored 15 of 20 ([run-11.md](evals/runs/run-11.md)). The gap from Run 5 comes from the call format. Each commit is judged alone, and the model wrote a note for commit 6 that it should have skipped and attached reasons to four correct skips, which rule 4 forbids.
 
-[`scripts/check-mechanical.py`](scripts/check-mechanical.py) automates 4 of the 8 rubric criteria — the ones checkable from text alone (past tense, one note per commit, no internal filenames, decided without asking). The other 4 need judgment against what the actual commit means and stay hand-graded in [`evals/runs/judgment-grades.csv`](evals/runs/judgment-grades.csv). The honest version of this story isn't "the two methods agreed" — it's that reconciling them, case by case, actually caught real mistakes rather than just confirming everything was fine. Comparing the corrected script's output against every previously hand-graded run found that `run-05.md`'s original "7 of 7" summary was wrong (it had graded the whole run as one holistic judgment and missed commit 18's hedge entirely), and that `run-08.md` and `run-09.md` had only ever graded their *written* commits, never checking whether their 14–15 *skipped* commits were actually correct to skip. All three were corrected in place, with the original numbers kept visible next to the fix (see [`decisions.md`](decisions.md)). That a systematic, case-by-case check surfaced errors invisible to a well-intentioned holistic read is the actual evidence the grading method is sound — not that it never needed to find anything.
+## Phase 5: automated grading, cross-checked by hand
 
-## Consistency, not just correctness (Phase 6): 9 of 20 clean across 5 reps
+[check-mechanical.py](scripts/check-mechanical.py) grades 4 of the 8 rubric criteria that need only the text: tense, one note per commit, no internal file names, and no asking. A person grades the other four in [judgment-grades.csv](evals/runs/judgment-grades.csv). Reconciling the two methods case by case caught real errors. The original Run 5 summary ("7 of 7") had missed commit 18's hedge, and Runs 8 and 9 had never checked whether their skipped commits were correct skips. I corrected all three in place and kept the original numbers visible.
 
-A single pass/fail isn't the same question as "does this hold up on repeat." [`evals/runs/v3-stats.csv`](evals/runs/v3-stats.csv) runs all 20 cases 5 times each (100 calls via `scripts/run-eval.py --repeats 5`) and asks, per case, how many of 5 tries passed. **9 of 20 cases pass cleanly in all 5 reps.** The shakiest case is commit 18 (`b50af03`), which fails *all 5* — it wrote a release note instead of skipping in 4 of them, and hedged (asked for more information instead of deciding) in every single one. Commit 6 (`1e3c29b`) fails 4 of 5, wrongly writing a note for the same kind of internal self-description fix Phase 4 already caught once. Beyond those two, 8 more commits that are correctly skipped in every rep still fail at least one rep anyway, all from the same root cause: attaching a reason to a skip decision that the rule says should be a bare line. That's a consistent, specific, and still-open finding — not a new bug, but stronger evidence for a known one, logged rather than quietly fixed on the spot.
+## Phase 6: consistency
 
-## A second skill, grounded the same way (Phase 7)
+A single pass doesn't show whether the skill holds up on repeat. I ran all 20 cases 5 times each (100 calls, [run-11-stats.csv](evals/runs/run-11-stats.csv)), and only 9 cases passed every time. Commit 18 failed all 5 repeats, and commit 6 failed 4. Eight more correct skips failed at least one repeat by attaching a reason to a bare skip. That is a model limitation, since the rule is clear, so I logged it and made no edit.
 
-A second skill, `doc-review`, was built the same way as the first: not from imagined rules, but from hand-reviewing 3 real documents (`README.md`, `decisions.md`, and the `doc-review` skill file itself — [`evals/cases/doc-review-3.md`](evals/cases/doc-review-3.md)), writing down what an editor would actually flag ([`evals/gold/doc-review.md`](evals/gold/doc-review.md)), and turning the repeated patterns into a checklist ([`.claude/skills/doc-review/checklist.md`](.claude/skills/doc-review/checklist.md)) before writing the skill's rules. Notably, the gold-standard review of `README.md` flagged that it didn't describe how to run evals or add a new case — exactly the kind of gap this case study and a results index are meant to close.
+## Phase 7: a second skill, trigger accuracy, and hard inputs
 
-**What this phase doesn't have:** the plan called for a fourth number (trigger-wording accuracy, before/after a `description:` fix) and a fifth number (hard-input handling — empty input, wrong skill named, unreadable content). Neither was completed — `evals/cases/trigger-set-20.md` and `evals/cases/hard-cases-10.md` exist but weren't run and scored to completion. The `shared/house-style.md` extraction (moving rules common to both skills into one place, rather than stating them twice) also wasn't done. These are honestly incomplete, not silently dropped — they're the clearest next steps if this project continues.
+I built `doc-review` from three real documents. I reviewed each by hand ([doc-review-3.md](evals/cases/doc-review-3.md)), wrote the review an editor would give ([gold/doc-review.md](evals/gold/doc-review.md)), and turned the repeated patterns into a [checklist](.claude/skills/doc-review/checklist.md) before writing any rule.
 
-## Context arrangement (Phase 8): not attempted
+- **Trigger accuracy: 18 of 20 before and after a reword** ([trigger-run-01.md](evals/runs/trigger-run-01.md), [trigger-run-02.md](evals/runs/trigger-run-02.md)). Two prompts never said "release notes" and missed both times. The reword targeted phrasings that already worked, so it changed nothing.
+- **Hard inputs: 3 of 10** ([hard-cases-run-01.md](evals/runs/hard-cases-run-01.md)). The skills often guessed at a vague request or did an out-of-scope task instead of asking or declining. Neither skill pointed to [hard-surfaces.md](shared/hard-surfaces.md), so I fixed that and added bullets for wrong-language and wrong-skill inputs. The skill descriptions still don't cover vague prompts, and I left that gap open.
 
-The plan's Phase 8 — testing whether identical instructions score differently depending on token arrangement (inline vs. referenced vs. late in a long session) — was not run. Per the plan's own instruction for this exact situation, that omission is logged explicitly rather than left to silently disappear: see `decisions.md`, "Phase 8 (context arrangement) not attempted." A sixth number was never produced.
+I also moved the rules both skills share into [house-style.md](shared/house-style.md), so each rule lives in one place.
 
-## A safety net (Phase 9): not built
+## Phase 8: not attempted
 
-No CI workflow exists. The plan calls for a GitHub Action that re-runs the eval on every skill change and fails the check below a pass-rate threshold, with a screenshot of it actually catching a deliberately broken skill. None of that was built. This is the most consequential open item: everything in this case study is evidence gathered by hand, once, rather than a guarantee that stays true as the skill keeps changing.
+I did not test whether identical instructions score differently depending on where they sit in the context, so this phase has no number. I spent the time on the second skill and on verifying the grading, which surfaced more concrete problems.
+
+## Phase 9: the CI safety net
+
+A [GitHub Action](.github/workflows/eval.yml) re-runs the 20 cases when a skill or shared file changes and fails the check below a 0.75 pass rate. To test it, I broke the skill on purpose five ways. Four mild breaks scored 0.80 to 0.85 and passed, because the shared files repeat the skill's key rules. An override that told the model to write no notes and only ask scored 0.10 and failed. After I reverted it, the same skill scored 0.85 and passed. The identical correct skill scored 0.95 before the tests and 0.85 after the revert, which is why the threshold sits at 0.75 and not 0.90. [findings.md](evals/findings.md) has the full table.
 
 ## What this doesn't cover
 
-Three real limits, stated plainly rather than implied away. First, the mechanical checker can verify tense, filenames, and explicit clarification requests, but it structurally cannot tell a legitimate bare skip line from one that quietly carries an unauthorized justification — that distinction requires reading intent, not matching keywords, so it stays hand-graded and is the exact thing Phase 6 found the skill still getting wrong. Second, without CI (Phase 9), nothing stops a future skill edit from silently reintroducing a fixed bug — every number in this document is a snapshot, not a running guarantee. Third, this project never established whether the *skill description* reliably triggers the right skill at the right time (Phase 7's incomplete fourth number) — a skill that behaves well once invoked but never gets invoked is still a real gap. None of these are hidden: each is logged in `decisions.md` or `findings.md` with the specific file it affects, which is the actual point of grounding every claim in this document in a file someone else can open and check.
+- **The check catches large regressions, not subtle ones.** Four of my five test breaks passed. A person still reviews small changes, and the four judgment criteria stay hand-graded.
+- **The Run 11 scores predate the shared-rules change.** I have not re-scored the skill since I moved rules into `shared/`, apart from the CI runs.
+- **The 5-repeat result is still open.** Correct skips still pick up unwanted reasons, and I made no edit.
+- **Skill descriptions don't cover vague prompts.** Two release-notes trigger prompts and four hard-case inputs show this gap.
+- **`doc-review` has no scored rubric yet.** Everything for that skill is graded by hand, and `check-mechanical.py` covers only `release-notes`.
+- **Phase 8 was not run.**

@@ -17,4 +17,4 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       - run: python3 scripts/check-mechanical.py
-      - run: python3 scripts/check-pass-rate.py --minimum 0.75 --run v4
+      - run: python3 scripts/check-pass-rate.py --minimum 0.75 --run run-12

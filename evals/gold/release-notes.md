@@ -1,6 +1,6 @@
 # Release Notes Gold
 
-Hand-written answers for `evals/cases/release-notes-20.md`. Commits 1, 2, 4, 8, and 19 get a note, and every other commit is skipped. A skipped commit gets no entry, per rule 4 of the skill (see `decisions.md`, "Write/skip ground truth").
+These are hand-written answers for `evals/cases/release-notes-20.md`. Commits 1, 2, 4, 8, and 19 get a note while every other commit is skipped. A skipped commit gets no entry, per rule 4 of the skill (see `decisions.md`, "Write/skip ground truth").
 
 ## Release notes
 

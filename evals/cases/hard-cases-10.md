@@ -9,7 +9,7 @@
 
 ## release-notes skill tricky input
 1. do the notes thing
-2. use docs-review to turn commits into release notes
+2. use doc-review to turn commits into release notes
 3. make commits better
 4. review commits against checklist
 5. commit notes

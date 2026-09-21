@@ -41,7 +41,7 @@ Outcomes: Pass, fail, unverifiable
 mechanical
 
 ## Criteria Version 1 (Runs 1-3) — preserved exactly as graded, do not edit:
-Important: #1 RETIRED for Run 04 onward; see decisions.md
+Important: #1 RETIRED for Run 04 onward; see CHANGELOG.md
 
 1. Did it run through the skill without interrupting for user feedback (for ex. asking if I wanted to find the commits in another repo)
 Outcomes: Pass, fail, unverifiable

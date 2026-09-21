@@ -4,8 +4,8 @@
 - Example: "Checked your already-read list before recommending, so you were not shown books you had already read."
 
 ## Rule 4
-   - Technical example: A commit adding "a pre-run check against the already-read-books file" sounds like an internal implementation detail, but it changes which books the recommender shows; include it, don't skip it.
-   - Meta example: a commit described as "Removed agentic AI section from portfolio site" is a project meta-change that can be skipped.
+   - Technical example: A commit adding "a pre-run check against the already-read-books file" sounds like an internal implementation detail, but it changes which books the recommender shows; include it instead of skipping it.
+   - Meta example: a commit described as "Removed agentic AI section from portfolio site" is a project meta-change that you can skip.
 
    ## Rule 9
    Examples:

@@ -1,69 +1,68 @@
 # Changelog
 
-Every edit to a skill or its rubric, newest first. Each entry gives the old wording, the new wording, and the reason. Scores are in `evals/runs/README.md`, and failure causes are in `evals/findings.md`. Where a run led to no edit, a short entry says so.
+This file lists every change to a skill, its rubric, or the eval tooling, newest first. Rule changes quote the old and new wording and give the reason. Scores are in `evals/runs/README.md`, failure causes are in `evals/findings.md`, and the reasoning is in `decisions.md`.
 
-## 2026-09-19 — Phase 7 cleanup: shared rules and hard surfaces (Steps E and J)
-The hard-cases run showed that neither skill pointed to `shared/hard-surfaces.md`, and that `house-style.md` held doc-review checklist items no other skill used.
-- **Release-notes rule 5.** Old: "When a skill silently defaults to something, say that a default was applied." New: "Moved to shared/house-style.md, rule 3 (state when a default was applied)."
-- **Release-notes rule 8.** Old: "Do not use internal file names (for example skill, rubric, eval, findings) in release notes." New: "Moved to shared/house-style.md, rule 1 (no internal file names)." I kept rules 5 and 8 as numbered pointers so "rule 10" in the run history still means the same rule.
-- **Release-notes rule 11.** Old: "Follow the shared rules in house-style.md" New: "Follow the shared rules in shared/house-style.md." The agent couldn't find the file without the path.
-- **Release-notes rule 12, new.** "When the input is missing, unclear, or out of scope, follow the release-notes section of shared/hard-surfaces.md."
-- **Release-notes rule 1 example.** Old: "The skill now stops to check already-read file, which prevents the skill from running without exclusion filtering." New: "Checked your already-read list before recommending, so you were not shown books you had already read." The old example was in present tense and named "the skill," against rules 7 and 8.
-- **Release-notes Purpose.** Old: "The agent should check each rule when assessing a document." New: "The agent turns raw git commit messages into user-facing release notes." The old line was copied from doc-review.
-- **Doc-review rules.** Old: rule 1 (purpose stated up front) and rule 2, "Use house-style.md rules". New: rules 1 to 6, one per checklist item; rule 7, which says to mark an item that doesn't apply as unverifiable instead of fail; rule 8, the `shared/house-style.md` reference; and rule 9, the `hard-surfaces.md` reference. Doc-review's Purpose now says it checks a document against `checklist.md`.
-- **`shared/house-style.md`.** Old: nine rules, six of them doc-review checklist items. New: three rules both skills use: no internal file names (for example SKILL.md, rubric.md, findings.md), no apologizing for limitations, and state when a default was applied.
-- **`shared/hard-surfaces.md`, release-notes section.** New opening line: "These bullets cover the whole request. Once the request contains any commit, decide every commit under rules 3, 4, and 10 (write, skip, or mark unverifiable). Never ask about a commit, and never offer to reconsider a skip if the user sends more detail." Its "ask" bullets pulled against rule 10, "decide, don't ask." The "Unclear" bullet's parenthetical about rule 10 is gone.
-- **`shared/hard-surfaces.md`, new bullets.** Release-notes and doc-review each gained "Wrong skill named": say which skill handles the task, then continue or ask for the input. Doc-review also gained "Wrong language": say the checklist assumes English and ask whether to review anyway. Step J lists both cases, and the file had no bullet for either.
-- **Eval files.** I added the missing question mark to rubric criterion 7 and removed a stray line in Version 1 criterion 6. Grading is unchanged. I rewrote `evals/gold/release-notes.md` to match the skill: five commits get notes (1, 2, 4, 8, 19), the other 15 get no entry, and commits 1 and 2 are still marked "not yet written by hand." The hard-cases heading now says "doc-review."
-- **Scripts.** `scripts/run-eval.py` now includes the shared files in the model's prompt, because the API otherwise sees only SKILL.md and the moved rules would silently disappear. It also takes `--name` and refuses to overwrite a response file. `scripts/check-mechanical.py` now flags any `.md` file name, finds later scripted runs, and no longer counts an unaddressed commit as a pass. It reproduces all 340 earlier rows unchanged.
+## 2026-09-21: Release-notes rules renumbered
+I removed the two pointer rules (old rules 5 and 8) from `release-notes/SKILL.md`, because `shared/house-style.md` already states them. The remaining rules moved up, so the old rules 10, 11, and 12 are now rules 8, 9, and 10. I also changed the rule 1 example to "…so you will not be shown books you've already read." Earlier entries and run files use the rule numbers in force at the time.
 
-## 2026-09-19 — Hard cases run 1 (no skill edit)
-The hard-cases test scored 3 of 10 and changed no skill or rubric wording. The run added `shared/hard-surfaces.md`, filled in `evals/cases/hard-cases-10.md`, and added `tools/read-commits.md`, which documents the input format from a real `git log` run. It also corrected `trigger-run-01.md`, which wrongly said the prompts ran without their commits or docs.
+## 2026-09-21: Run names standardized (no skill edit)
+I renamed the scripted run `v3` to Run 11 and the CI run `v4` to `run-12`, so every run follows the `run-NN` pattern. I also renamed `run-06/grading.md` to `run-06.md` and `hard-cases-01.md` to `hard-cases-run-01.md`.
+- **Scripts:** `run-eval.py` now defaults to `--name run-12`, and `check-mechanical.py` no longer recognizes `vN` names.
+- **Data and docs:** The CSV row labels and every link now use the new names, and no score changed.
+- **Test input:** `evals/cases/hard-cases-10.md` now says "doc-review," the skill's actual name.
 
-## 2026-09-18 — Trigger reword and a doc-review edit (commit 1b78776)
-- **Release-notes `description:`** (Phase 7 Step I). Old: "Use when the user asks for release notes generated from commit messages." New: "Use when the user asks to create, write, generate, add release notes from commit messages." Why: trigger run 1 had release-notes misses. Result: 18 of 20 before and after, so the new wording stays but isn't a fix.
-- **Doc-review rule 2.** Old: "Follow the shared rules in house-style.md". New: "Use house-style.md rules". Why: grammar cleanup. It went beyond Step I's description-only scope, and I didn't re-score doc-review afterward.
+## 2026-09-21: CI check added (no skill edit)
+A GitHub Action now re-runs the 20-case eval on every push that touches `.claude/skills/` or `shared/`, and it fails the check if the pass rate drops below 0.75.
+- **`.github/workflows/eval.yml`:** The workflow runs `run-eval.py`, `check-mechanical.py`, and then the gate. The API key is a repository secret and never appears in the file.
+- **`scripts/check-pass-rate.py` (new):** It reads `mechanical-results.csv`, scores only the run the job just produced (`--run run-12`), and exits nonzero below the minimum. It also fails when no rows match, so a run that produced nothing can't pass.
+- **Testing:** I broke `SKILL.md` on purpose in five temporary ways and reverted every one. Only the last break failed the check (0.10), and `evals/findings.md` has the results. The skill and shared files are byte-identical before and after the tests.
 
-## 2026-09-17 — v3 and v3 variance (no skill edit)
-The first scripted run scored 15 of 20, and the 5-repeat run found 9 of 20 cases clean in every rep. Both failed on rule 4 (per-commit reasons attached to skips, and commits 6 and 18 written up instead of skipped). Rule 4 is already clear, so I logged the failures and didn't rewrite it.
+## 2026-09-19: Shared rules and hard-input handling
+The hard-cases run showed that neither skill pointed to `shared/hard-surfaces.md` and that `house-style.md` held checklist items only doc-review used.
+- **Release-notes rules 5 and 8:** They now point to `shared/house-style.md` (defaults must be stated, and no internal file names). They keep their numbers so "rule 10" in the run history still means the same rule.
+- **Release-notes rule 11:** "Follow the shared rules in house-style.md" became "Follow the shared rules in shared/house-style.md," because the agent couldn't find the file without the path.
+- **Release-notes rule 12 (new):** "When the input is missing, unclear, or out of scope, follow the release-notes section of shared/hard-surfaces.md."
+- **Release-notes rule 1 example:** The old example used the present tense and named "the skill," which broke the skill's own rules. The new example reads: "Checked your already-read list before recommending, so you were not shown books you had already read."
+- **Release-notes Purpose:** The old text was copied from doc-review. The new text reads: "The agent turns raw git commit messages into user-facing release notes."
+- **Doc-review:** The skill now has one rule per checklist item and a rule that marks non-applicable items unverifiable. It also references both shared files.
+- **`shared/house-style.md`:** I cut it from nine rules to the three that both skills use.
+- **`shared/hard-surfaces.md`:** The release-notes section now says "decide every commit… Never ask about a commit," because its "ask" bullets contradicted rule 10. Both skills gained a "wrong skill named" case, and doc-review gained "wrong language."
+- **Gold file:** I rewrote `evals/gold/release-notes.md` to match the skill (5 commits get notes and 15 are skipped).
+- **Scripts:** `run-eval.py` now sends the shared files to the model, because the API otherwise sees only `SKILL.md`. It also takes `--name` and refuses to overwrite a response. `check-mechanical.py` now flags any `.md` file name and no longer counts an unaddressed commit as a pass, and it reproduces all 340 earlier rows unchanged.
 
-## 2026-09-15 — Rule 10 default-to-skip clause (commit 512e384)
-Run 8 wrote a note for commit 12 ("Take Book Recommendations project offline"), which Run 7 had correctly skipped, with no rule change in between. Rule 10 gave no tiebreak when neither reading was better supported.
-- **Old:** "...Pick the reading better supported by the wording, write or skip accordingly, and flag the uncertainty in one clause if it matters. Don't ask which reading is correct."
-- **New:** the same text, plus "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip."
+## 2026-09-19: Hard cases run 1 (no skill edit)
+The run scored 3 of 10. I added `shared/hard-surfaces.md` and `tools/read-commits.md` (the real input format). I also corrected `trigger-run-01.md`, which had wrongly said the prompts ran without their commits.
+
+## 2026-09-18: Trigger reword and a doc-review edit
+- **Release-notes `description:`** The old text read "Use when the user asks for release notes generated from commit messages." The new text reads "Use when the user asks to create, write, generate, add release notes from commit messages." The score stayed at 18 of 20 before and after, so I kept the reword although it wasn't a fix.
+- **Doc-review rule 2:** I cleaned up the grammar, which went beyond the description-only scope of that step. I did not re-score doc-review.
+
+## 2026-09-17: Run 11, the first scripted run (no skill edit)
+Run 11 scored 15 of 20, and its 5-repeat variant had 9 of 20 cases clean in all 5 repeats. Both failed on rule 4: the model attached reasons to skips and wrote up commits 6 and 18 instead of skipping them. The rule is already clear, so I logged the failures and didn't rewrite it.
+
+## 2026-09-15: Rule 10 default-to-skip (commit 512e384)
+Run 8 wrote a note for commit 12 ("Take Book Recommendations project offline"), which Run 7 had skipped, because rule 10 had no tiebreak.
+- **Added:** "When a description could mean either the feature itself or its portfolio/project-level presence with no stronger signal, default to skip."
 - **Result:** Run 9 scored 20 of 20.
 
-## 2026-09-15 — Mechanical grading added
-I added `scripts/check-mechanical.py`, which scores rubric criteria 1 (past tense), 2 (one note per commit), 4 (no internal filenames), and 8 (decided without asking) from the run text and writes `evals/runs/mechanical-results.csv`. A person grades criteria 3, 5, 6, and 7 into `evals/runs/judgment-grades.csv`. The script reads single-commit runs by filename and strips verification disclaimers before checking tense. I retagged criteria 3, 5, 6, and 7 from "mechanical" to "judgment" in `evals/rubric.md`. The first retagging (commit a432401) missed criterion 5. Regrading Runs 4 through 9 with the script corrected Run 6's summary from 0 of 20 to 4 of 20.
+## 2026-09-15: Mechanical grading added
+`scripts/check-mechanical.py` scores criteria 1, 2, 4, and 8 from the response text into `mechanical-results.csv`. A person grades criteria 3, 5, 6, and 7 into `judgment-grades.csv`. Regrading with this split corrected Run 6 from 0 of 20 to 4 of 20.
 
-## 2026-09-15 — Fixes after Run 6 (Run 7 confirmed the format caused the regression)
-- **Rule 3, unverifiable is no longer a reason to stop and ask.** The "flag the discrepancy" wording was written for a verified conflict, but Run 6 stretched it to any ambiguous description (`evals/runs/run-06/`, cases 10 and 12). Old: "...If not immediately accessible, mark unverifiable." New: "...If not immediately accessible, mark unverifiable and still write or skip the entry using the description given. Do not stop the response to ask which reading is correct."
-- **Rule 4, a skip is left out, not explained.** Run 6 produced a paragraph re-arguing nearly every skip. Old: "...Do not add an entry for either kind of skip. If the commit sounds technical..." New: "...Do not add an entry for either kind of skip, and do not write a paragraph explaining, defending, or reconsidering a skip decision. The commit is simply left out. A single aggregate line listing skipped commit numbers is fine; per-commit justification is not. If the commit sounds technical..."
-- **New rule 10, decide, don't ask.** No rule told the model to decide instead of ask. The only check was Version 1 rubric criterion 1, which was retired at Run 4 without a replacement. New: "10. Do not stop to ask the user to disambiguate a commit before finishing the response; decide using the rules above." A worked example follows in the file. Matching rubric criterion 8 asks whether the response decided on every commit without asking or writing a per-commit paragraph.
-- **Grading correction.** Run 6's summary read "Passed every criteria: 0 of 20," but commits 1, 4, 8, and 19 had no fails. Old: "0 of 20." New: "4 of 20."
+## 2026-09-15: Fixes after Run 6
+Run 7 (batched again) scored 20 of 20, which showed the call format caused Run 6's regression. I fixed the wording anyway, because callers can't be relied on to batch.
+- **Rule 3:** I added "mark unverifiable and still write or skip the entry… Do not stop the response to ask which reading is correct."
+- **Rule 4:** I added "do not write a paragraph explaining, defending, or reconsidering a skip decision." A single aggregate line of skipped numbers is still allowed.
+- **Rule 10 (new):** "Do not stop to ask the user to disambiguate a commit before finishing the response; decide using the rules above." I also added a matching rubric criterion 8.
 
-## 2026-09-14 — Run 4 fixes
-- **Rule 4, portfolio, eval, and project-meta commits skip regardless of visibility (commit bc6eef7).** Run 4 wrote notes for three portfolio and project commits because the rule only checked visibility to "the user." Old: "Skip a commit if the effect is not visible to the user. Do not add an entry for that commit." New: "Skip a commit if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone — a portfolio visitor is not a user of the book-recommendation skill. Otherwise, skip a commit if the effect is not visible to a user of the book-recommendation skill. Do not add an entry for either kind of skip." I also added a meta example. Rubric criterion 3 changed the same way.
-- **Rule 3, the repo check gets a stop condition (commit bc6eef7).** The model kept searching for a repo instead of marking a commit unverifiable. Old: "When a commit hash is given and the repo is accessible, check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct." New: "When a commit hash is given, try to check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct. Only check the repo if it is known in context; do not search the filesystem or guess at repo locations. If not immediately accessible, mark unverifiable." Rubric criterion 6 now also asks whether the response stopped and marked unverifiable.
-- **Test input for commit 1 restored (commit 21039c5).** An edit meant for commit 19 had landed on it. Old: "Added sentence to skill to check already-read books file before running so don't produce read books." New: "Added sentence to skill specifying the exact heading to look for in the already-read file."
-- **Rule 3, the repo ban became permission to verify (commit b29e33d).** The ban only existed to keep test cases reproducible. Old: "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes." New: "When a commit hash is given and the repo is accessible, check the actual commit. If it disagrees with the provided description, don't silently pick one. Flag the discrepancy back to the user rather than guessing which is correct."
-- **Skip rule example (commit ae5dcb5).** Run 3 had skipped commit 19 for sounding technical. Added: "Example: A commit adding 'a pre-run check against the already-read-books file' sounds like internal implementation detail, but it changes which books the recommender shows; include it, don't skip it."
-- **Rubric versioned (commit 034a3c5).** Criterion 1 (never check repos) contradicted the new repo-check rule. `evals/rubric.md` now keeps Version 1 (Runs 1 to 3) exactly as graded, and Version 2 (Run 4 on) drops criterion 1 and adds a conflict-flag criterion.
-- **Synthetic hashes (commit 3091109).** The test cases used real hashes from this repo's history, which the model could look up. I replaced all 20 with synthetic ones across `evals/cases/`, `evals/gold/`, `evals/runs/`, and SKILL.md's format example.
+## 2026-09-14: Run 4 fixes
+- **Rule 4 (bc6eef7):** Portfolio, eval, and project-meta commits now skip even if someone can see them, because Run 4 wrote notes for three such commits. The old rule read "Skip a commit if the effect is not visible to the user." The new rule adds "…if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone."
+- **Rule 3 (bc6eef7):** The repo check gained a stop condition: "Only check the repo if it is known in context; do not search the filesystem… If not immediately accessible, mark unverifiable."
+- **Rule 3 (b29e33d):** The ban on checking repos became permission to verify a commit hash and flag a mismatch.
+- **Rule 4 example (ae5dcb5):** A technical-sounding commit that changes what users see is now included and not skipped.
+- **Rubric versioned (034a3c5):** I kept Version 1 (Runs 1 to 3) as graded. Version 2 (Run 4 on) drops the "never check repos" criterion and adds a conflict-flag criterion.
+- **Test inputs:** I restored commit 1's wording after an edit meant for commit 19 landed on it (21039c5). I also replaced all 20 hashes with synthetic ones so the model can't look them up (3091109).
 
-## 2026-09-14 — Run 3 test-input fixes
-Commits 4 and 19 in `release-notes-20.md` were too vague to demand a precise note. I made the inputs more specific.
-- **Commit 19 (c503947).** Old: "Added instruction to skill, check before running section." New: "Edited skill to check already-read.md before running so won't reproduce read books."
-- **Commit 4 (ceb3cc8).** Old: "Edited skill format about user being there to ask which genre." New: "Adjusted skill wording to default to contemporary genre and tell user."
-
-## 2026-09-14 — Run 2 fix (commit 4dc4c81)
-The model still tried to look commits up. Old: "Do not check other repos for the release notes commit hashes; use only the raw commits the user gives you." New: "Do not check any repo for commits before generating release notes. Use only the input the user gives you to generate release notes."
-
-## 2026-09-14 — Run 1 fixes (commit a59fc9d)
-Run 1 scored 0 of 20 because the rubric and skill disagreed.
-- **New rule against checking other repos.** New: "Do not check other repos for the commit hashes; use only the raw commits the user gives you."
-- **New tense rule.** New: "Write all release notes in the past tense only."
-- **New filename rule.** New: "Do not use internal file names (for example skill, rubric, eval, findings) in release notes."
-- **Skip rule contradiction.** The skill required a SKIP line for skipped commits, but the rubric required no note at all. Old: "Skip a commit if a user of the book recommender would never notice the change. Whenever a commit is skipped for any reason, still write a line: SKIP; <reason>. Never omit a line." New: "Skip a commit if a user of the book recommender would never notice the change. Do not add an entry for that commit."
-- **Format rule.** I removed the SKIP option from the format instruction. Old: "Format answers like this: 'Commit 20 (f244f58): Sentence here.' OR 'Commit 20 (f244f58): SKIP; <reason>.'" New: "Format answers like this: 'Commit 20 (f244f58): Sentence here.'"
-- **Findings duplicate (commit 16c67f5).** Findings entry 2 restated entry 3 and gave conflicting guidance. I deleted it and renumbered the rest.
+## 2026-09-14: Runs 1 to 3 fixes
+- **Run 1 (a59fc9d) scored 0 of 20 because the skill and rubric disagreed.** I added "Write all release notes in the past tense only," a rule against internal file names, and a rule against checking other repos. I removed the SKIP line, because the rubric wanted no note at all for a skipped commit.
+- **Run 2 (4dc4c81):** "Do not check other repos" became "Do not check any repo," because the model still looked commits up.
+- **Run 3:** Commits 4 and 19 in the test file were too vague to demand a precise note, so I made them specific.

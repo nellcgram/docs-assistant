@@ -1,8 +1,8 @@
 # Trigger Test: 20 Prompts
 
-Draft for Phase 7's trigger-accuracy test — does the right skill fire for a given prompt, independent of whether its output is any good.
+Draft for Phase 7's trigger-accuracy test: does the right skill fire for a given prompt, independent of whether its output is good?
 
-The release-notes prompts below each repeat the full 20-commit list inline rather than pointing at `evals/cases/release-notes-20.md` by name — deliberately, not by accident. A prompt that just references a filename tests whether Claude reads a file and figures out what to do with it, which isn't the same question as whether a given phrase reliably triggers the skill. Keeping each prompt self-contained isolates the thing this test is actually for.
+The release-notes prompts given below each deliberately repeat the full 20-commit list inline instead of pointing at `evals/cases/release-notes-20.md` by name. A prompt that only references a filename tests whether Claude reads a file and figures out what to do with it, which isn't the same question as whether a given phrase reliably triggers the skill. Keeping each prompt self-contained isolates the thing this test is actually for.
 
 ## create release notes using these commits; expected: release-notes skill
 1. 3087743 Added sentence to skill specifying the exact heading to look for in the already-read file

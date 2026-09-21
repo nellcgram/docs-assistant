@@ -12,7 +12,7 @@ The agent checks a document against the checklist in checklist.md and reports th
 3. Check if the document has headings for every section (item 3). Say pass, fail, or unverifiable.
 4. Check if the document uses the correct developer or user-facing voice for its audience (item 4). Say pass, fail, or unverifiable.
 5. Check if links and code examples work (item 5). Say pass, fail, or unverifiable.
-6. Check if format is consistent in terminology, code block style, and headings (item 6). Say pass, fail, or unverifiable.
-7. When an item doesn't apply, for example when the document has no links, no code samples, or no sections that need headings, say so plainly and mark it unverifiable. Do not mark the item as fail.
+6. Check if the document's format is consistent in terminology, code block style, and headings (item 6). Say pass, fail, or unverifiable.
+7. When a checklist rule doesn't apply, for example when the document has no links, no code samples, or  sections that need headings, say so and mark it unverifiable. Do not mark the item as fail.
 8. Follow the shared rules in shared/house-style.md.
 9. When the input is missing, unclear, or out of scope, follow the doc-review section of shared/hard-surfaces.md.

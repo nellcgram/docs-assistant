@@ -78,8 +78,6 @@ PRESENT_TENSE_RE = re.compile(
 )
 GERUND_SENTENCE_RE = re.compile(r"(?:^|[.!?]\s+)([A-Z][a-z]+ing)\b")
 RUN_NUMBER_RE = re.compile(r"run-(\d+)")
-# Scripted runs: v3, v4, and so on. All use the Version 2 rubric.
-SCRIPTED_RUN_RE = re.compile(r"^v\d+$")
 # Verification disclaimers ("Note: I could not verify this commit against the
 # repository, since it isn't accessible...") are correctly present tense since
 # they describe current verification status, not the commit's effect. They
@@ -113,11 +111,11 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
         name = f.stem.removesuffix("-output")
         runs[name] = ("single", f)
     for d in RUNS_DIR.iterdir():
-        if not (d.is_dir() and (d.name.startswith("run-") or SCRIPTED_RUN_RE.match(d.name))):
+        if not (d.is_dir() and d.name.startswith("run-")):
             continue
         # A run folder can hold a single run's case files directly (the
         # non-repeat run) AND rep-*/ subfolders (a --repeats run) at the same
-        # time, as v3 and v4 do — check both, don't stop at the first match.
+        # time, as run-11 and run-12 do — check both, don't stop at the first match.
         if any(d.glob("case-*.md")):
             runs[d.name] = ("multi", d)
         for rep_dir in sorted(d.glob("rep-*")):
@@ -125,8 +123,6 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
                 runs[f"{d.name}-{rep_dir.name}"] = ("multi", rep_dir)
 
     def run_num(name: str) -> int:
-        if re.match(r"^v\d+", name):
-            return 4  # Scripted runs use the Version 2 rubric, same as run-04-on.
         m = RUN_NUMBER_RE.search(name)
         return int(m.group(1)) if m else -1
 
