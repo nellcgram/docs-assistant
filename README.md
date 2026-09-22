@@ -1,40 +1,60 @@
 # Docs Assistant
 
-This project is two Claude Code skills — `release-notes` and `doc-review` — built and evaluated the same way real production skills should be: write a first version, test it against real cases, diagnose exactly why it fails, fix it, and keep testing until the failures stop and stay stopped.
+This project builds two Claude Code skills, `release-notes` and `doc-review`, and evaluates them the way you would test production software. I wrote a first version of each skill, ran it against real cases, diagnosed why it failed, fixed the spec, and re-ran it.
 
-**Start here:** [`case-study.md`](case-study.md) is the full write-up — every number this project produced, why it is what it is, and a specific file backing up each claim. [`evals/runs/README.md`](evals/runs/README.md) is a quick one-line-per-run scoreboard if you just want the numbers without the narrative.
+**Start here:** [case-study.md](case-study.md) is the full write-up, with a file behind every claim. [evals/runs/README.md](evals/runs/README.md) lists every score in one line each.
 
-## What's here
+## Results
 
-**`release-notes`** takes a batch of raw git commit messages and turns them into user-facing release notes: past tense, only the commits a user of the thing being changed would actually notice, and honest about anything it couldn't verify. Its test cases are modeled on a real feature — the book-recommendation feature on [nellcgram.github.io](../nellcgram.github.io) — so "would a user notice this" is a real question with a real answer, not a hypothetical. It went through ten rounds of testing and fixing before it held up consistently — that whole process, including the fresh mistakes it caught along the way, is in `CHANGELOG.md` and `decisions.md`.
+| # | What it measures | Result |
+|---|---|---|
+| 1 | First version of `release-notes` | 0 of 20 cases |
+| 2 | After diagnosing and fixing the spec | 19 of 20 |
+| 3 | First scripted run | 15 of 20 |
+| 4 | Whether the right skill fires (before and after rewording) | 18 of 20, then 18 of 20 |
+| 5 | Handling of missing, unclear, and out-of-scope input | 3 of 10 |
 
-**`doc-review`** checks a document against a short checklist (states its purpose up front, active voice, consistent formatting, and so on) and reports pass, fail, or not applicable per item. It was grounded the same way as the first skill: by hand-reviewing three real documents from this repo before writing a single rule. It doesn't have scripted grading yet — everything for this skill is still graded by hand.
+A 5-repeat run found that only 9 of 20 cases pass every time, so the skill is correct more often than it is consistent. That run predates moving the shared rules into `shared/house-style.md`.
 
-Both skills are meant to be evaluated with the same kind of harness: hand-picked test cases, a rubric with plain pass/fail/unverifiable criteria, and a script that automates the parts of grading that can be automated (tense, formatting, whether it asked for clarification instead of deciding) while leaving judgment calls (is this skip decision actually correct, is this note specific enough) to a human. Right now that's only fully built out for release-notes. `tools/` (descriptions of tools a skill can use) exists but is still empty, and a shared rules file for both skills was planned but never actually written.
+A GitHub Action now re-runs the 20 cases whenever a skill or shared file changes, and fails the check below a 0.75 pass rate. A deliberately broken skill scored 0.10 and failed it, and the fixed skill scored 0.85 and passed. The check grades only the four mechanical criteria, so it catches large regressions, not subtle ones: four of my five test breaks scored 0.80 to 0.85 and passed. The judgment criteria are still hand-graded. See `evals/findings.md` for the full test, with screenshots of the failing and passing runs.
+
+## The two skills
+
+**`release-notes`** turns raw git commit messages into user-facing release notes. The notes use the past tense, and they cover only changes a user of the product would notice. The skill also flags anything it couldn't verify. The test cases come from a real feature, the book-recommendation feature on [nellcgram.github.io](https://nellcgram.github.io), so "would a user notice this?" has a real answer. It took ten rounds of testing to hold up. `CHANGELOG.md` and `decisions.md` record each mistake it made along the way.
+
+**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply. I grounded it by hand-reviewing three real documents from this repo before writing any rule. Everything for this skill is still graded by hand.
+
+Both skills share rules in `shared/house-style.md`. `shared/hard-surfaces.md` says what each should do when input is missing, unclear, or out of scope. `tools/read-commits.md` documents the input format `release-notes` expects.
 
 ## Running it yourself
 
-You'll need an Anthropic API key:
+You need an Anthropic API key:
 
 ```
 export ANTHROPIC_API_KEY="sk-..."
 pip install anthropic --break-system-packages
 ```
 
-Then, from the repo root (both scripts are currently hardcoded to the release-notes skill, its 20-case file, and `evals/runs/v3/` — not yet general-purpose):
+Then run these from the repo root:
 
-- `python3 scripts/run-eval.py` runs all 20 release-notes test cases once and saves each response to `evals/runs/v3/`.
-- `python3 scripts/run-eval.py --repeats 5` runs them 5 times each (100 calls total) to check consistency, saving into `evals/runs/v3/rep-01/` through `rep-05/`.
-- `python3 scripts/check-mechanical.py` grades every saved run against the automatable rubric criteria and writes `evals/runs/mechanical-results.csv`, one row per case per run.
+- `python3 scripts/run-eval.py --name run-12` runs the 20 release-notes cases once and saves each response to `evals/runs/run-12/`. The script never overwrites an existing response, so give each run a new name.
+- `python3 scripts/run-eval.py --name run-12 --repeats 5` runs each case 5 times (100 calls) into `evals/runs/run-12/rep-01/` through `rep-05/`.
+- `python3 scripts/check-mechanical.py` grades every saved release-notes run on the automatable criteria and writes `evals/runs/mechanical-results.csv`. It only handles release-notes, because doc-review has no rubric yet.
+- `python3 scripts/check-pass-rate.py --minimum 0.75 --run run-12` reads that CSV, scores only the `run-12` run, and exits with an error if the pass rate is below the minimum. The CI check runs this last.
 
-Judgment criteria (does this note say what actually happened, was this the right commit to skip) still need a human reading the output next to the actual commit — that grading goes into `evals/runs/judgment-grades.csv` by hand.
+A person still grades the judgment criteria, such as whether a skip was correct. Those grades go into `evals/runs/judgment-grades.csv`.
 
-## How it's organized
+To run the check on GitHub, add your key as a repository secret named `ANTHROPIC_API_KEY` (Settings, then Secrets and variables, then Actions). Never put the key in the workflow file. Each CI run makes about 20 API calls.
 
-- `.claude/skills/release-notes/` and `.claude/skills/doc-review/` hold each skill's actual instructions.
-- `evals/cases/` has the test inputs — commit descriptions for release-notes, real documents for doc-review.
-- `evals/gold/` has hand-written "what a correct answer looks like" for a few cases, written before either skill existed, so the skill was built to match human judgment rather than the other way around.
-- `evals/rubric.md` is the scoring criteria, versioned (rules changed partway through, so old runs are still graded against what was actually true when they ran).
-- `evals/runs/` holds every test run's raw output and score, oldest to newest.
-- `evals/findings.md`, `CHANGELOG.md`, and `decisions.md` are the running record of what went wrong, what changed in response, and why — the actual evidence trail behind every number in `case-study.md`.
-- `scripts/` has the two automation tools described above.
+## How the repo is organized
+
+- `.claude/skills/` holds each skill's instructions.
+- `shared/` holds the rules both skills follow and the hard-input expectations.
+- `tools/` describes the real input the skill receives.
+- `evals/cases/` holds the test inputs.
+- `evals/gold/` holds hand-written correct answers, written before the skills existed so the skills were built to match human judgment.
+- `evals/rubric.md` holds the scoring criteria. It is versioned, so old runs stay graded against the rules that applied at the time.
+- `evals/runs/` holds every run's output and score.
+- `evals/findings.md`, `CHANGELOG.md`, and `decisions.md` record what went wrong, what changed, and why.
+- `scripts/` holds the eval runner, the mechanical grader, and the pass-rate gate.
+- `.github/workflows/eval.yml` runs all three on every push that touches `.claude/skills/` or `shared/`.

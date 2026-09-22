@@ -1,31 +1,32 @@
 # Doc Review Gold
 
+These are hand-written findings for `evals/cases/doc-review-3.md`. Each case is a snapshot of a file as it stood when I reviewed it, so the current files differ. A response should look like the findings below. The rule numbers refer to the doc-review skill's checklist as it stood in Case 2.
+
 ## Case 1: README
 
 **Issues:**
-- Description should include doc review and that the eval harness tests skills
-- Why was the agent built; are commits not strong enough?
-- Should decisions.md be left out of project since this is for the case study?
+- The Structure list omits `scripts/` (which holds the eval runner) and `case-study.md`.
+- The Structure descriptions are sentence fragments. They should be full sentences (rule 2).
+- `decisions.md` should not be listed. It is an engineering log, and the README is for the case study.
 
 **Missing:**
-- Skills included — list each skill (doc-review, release-notes) with a one-liner on what it does.
-- How to run evals — command(s) to run the eval harness, where cases/gold files live (evals/cases/, evals/gold/), and how grading works (you mentioned mechanical vs. judgment grading split).
-- Adding a new eval case — the convention for naming/structuring case + gold files, since that's a repeatable task.
-- Directory structure — brief map of key folders (skills/, evals/cases/, evals/gold/).
-- Requirements/setup — any dependencies, API keys, or Claude Code version assumptions.
+- How to run evals: the command that runs the eval harness, and how grading works (some criteria are graded mechanically, others by human judgment).
+- Requirements and setup: the API key and the Claude Code version the project assumes.
+
+The opening line states the purpose, so rule 1 passes.
 
 ## Case 2: Skill
-- Should there be any intro to the skill that says what it does?
-- Can the Rules' wording be cut down at all?
 
-## Case 3: Decisions.md
-- This is engineering log and will need to be shortened for case study
-- Why was it built?
+**Issues:**
+- The Purpose section is unnecessary. It only says the agent should check each rule, which the Rules section already says.
+- "Say pass, fail, or unverifiable" repeats in all seven rules. It should appear once, above the list.
+- Rule 7 contradicts itself. It says not to mark an inapplicable item as fail, then lists fail as an option again. It should name the outcome for an inapplicable rule.
+- Rule 2 bundles two checks (active voice, full sentences), so one outcome cannot report both.
+- Rule 5 cannot be verified without running the links and code. It should expect "unverifiable" when the reviewer cannot run them.
 
-**Main points so far:**
-- Skip rule is about visible effect, not how technical the wording sounds (2026-09-14 2:28 PM)
-- Vague-but-accurate notes still fail — need specific mechanism/outcome (2026-09-14 2:28 PM)
-- Repo-check needs an explicit stop condition, not just permission to check (2026-09-14 8:49 PM)
-- Portfolio/eval/meta commits skip regardless of visibility (2026-09-14 9:05 PM)
-- Isolated single-commit calls induce hedging/asking that batched calls don't — a call-format artifact, not just a wording gap (Run 6 → Run 7 → Run 10, spanning three entries)
-- Splitting mechanical vs. judgment grading to make scoring scale (2026-09-15)
+## Case 3: Decisions
+
+**Issues:**
+- This entry is engineering-log detail and needs shortening for the case study. It should keep the decision, the reason, and the status.
+- It should cut the run numbers, commit hashes, script name, and the list of failing commits.
+- It should drop the first-person "I" and the passive "until it's confirmed" for plain active statements.

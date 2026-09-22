@@ -1,128 +1,100 @@
 # Findings
-Below are the reasons why ouputs failed, grouped by what numbers matched each result.
 
-## v3 variance [2026-09-17]
-5 repetitions of all 20 cases (`scripts/run-eval.py --repeats 5`, `evals/runs/v3/rep-01` through `rep-05`), graded in `evals/runs/v3-stats.csv`. **9 of 20 cases pass every criterion in all 5 reps.**
+This file explains why each test run failed, newest first. I gave every failure one of three causes: a gap (the skill never addressed the situation), an ambiguity (the skill addressed it unclearly), or a model limitation (the skill was clear and the model ignored it). I fixed gaps and ambiguities in the skill and logged each fix in `CHANGELOG.md`. I logged model limitations and made no edit. Rule numbers refer to the skill as it stood at the time. On 2026-09-21 the skill was renumbered, and `CHANGELOG.md` explains how.
 
-Commit 18 (b50af03) fails all 5 reps: wrote a release note instead of skipping in 4 of them, and hedged (asked for more detail) in all 5. Commit 6 (1e3c29b) fails 4 of 5 — the same skip-rule miss named in the `v3` entry below. Both are known-unstable cases under the isolated-call format.
+## CI safety net (2026-09-21)
 
-Eight more commits that are otherwise correctly skipped in every rep (7, 10, 11, 12, 13, 14, 16, 20) fail at least one rep anyway, each by attaching an unauthorized per-commit reason to an otherwise bare skip line — the same rule 4 violation the `v3` entry below documents for commit 20. No SKILL.md or rubric edit made from this finding yet.
+A GitHub Action re-runs the eval on each push and fails the check below a 0.75 pass rate. To test it, I broke `SKILL.md` on purpose in five ways.
 
-## v3 [2026-09-17]
-Single non-repeat scripted run (`scripts/run-eval.py`), graded one row per case in `evals/runs/v3.md` per the grading rule added to `evals/rubric.md`. 15 of 20 passed every criterion.
+| Change to the skill | Pass rate | Check |
+|---|---|---|
+| None (correct skill) | 0.95 (19/20) | passed |
+| Deleted rules 7 to 10 | 0.80 (16/20) | passed |
+| Reversed rule 6 to "present tense" | 0.85 (17/20) | passed |
+| Added "ask the user first," left rule 8 ("never ask") in place | 0.85 (17/20) | passed |
+| Deleted rule 8, kept "ask the user first" | 0.85 (17/20) | passed |
+| Added an explicit override: write no notes, only ask | **0.10 (2/20)** | **failed** |
+| Reverted to the correct skill | 0.85 (17/20) | passed |
 
-Commit 6 (1e3c29b) failed criterion 3: wrote a release note for a fix to the skill's own "what it does" description, which is internal/developer-facing — SKILL.md's self-description is never seen by a user of the recommender.
+The override run failed the check at the pass-rate step, not on a crash. Two other early runs also failed because the API credit balance ran out, so I didn't count them.
 
-Commits 10 (ec87a17), 11 (1ac826a), 18 (b50af03), and 20 (f244f58) failed criterion 8: each added a per-commit reason clause for its skip decision, which rule 4 explicitly bars ("A single aggregate line listing skipped commit numbers is fine; per-commit justification is not"), and commit 18 additionally asked to reconsider. This is the same isolated-call decide-then-hedge pattern Run 10 identified below — a fresh data point for an already-identified failure mode, not a new spec gap.
+Screenshots of the GitHub Actions pages are in `evals/screenshots/`. They were taken while the CI run was still named `v4`, so the logs show `--run v4`, which is now `run-12`.
 
-## Run 8/9 completed to full 20-case grading [2026-09-17]
-`run-08.md` and `run-09.md` are graded one row per case, all 20, per the write/skip ground truth in decisions.md: `run-08.md` is **19 of 20** (only commit 12's misclassification fails), `run-09.md` is **20 of 20**.
+Run #8 (commit `58ba015`, the override) failed, while runs #4 to #7, the four mild breaks, passed:
 
-## Run 10 [2026-09-15]
-Ran evals/cases/release-notes-20.md through scripts/run-eval.py as 20 isolated single-commit API calls, 5 repetitions (evals/runs/run-10/rep-01 through rep-05), to close the open item from the "Run 7 confirmed..." decision (decisions.md, 2026-09-15): confirm whether the rule 10 default-to-skip fix actually holds under the isolated-call format that caused Run 6's regressions, rather than assuming from the rule text alone. Per-case pass rate is in evals/runs/run-10-stats.csv.
+![GitHub Actions run list: run #8 failed and runs #7, #6, #5, #4 passed](screenshots/all%20workflows%20error%20message.png)
 
-### The decide-then-hedge pattern
-16 of 20 commits passed all 5 reps. Commits 2 (2d10267, failed 4 of 5 reps) and 10 (ec87a17, failed 1 of 5) show a failure mode distinct from Run 6's outright refusal to decide: the response does write a note or skip, satisfying rule 10 on its face, but then appends a hedging sentence asking for the diff or confirmation — e.g. commit 2, rep 1: "The message says only that the line's format was fixed, so the specific formatting change ... isn't captured here; if you can share the diff, I'll sharpen the entry." That trailing request still trips criterion 8 (mechanical-results.csv's clarify-pattern check matches "share the diff").
+The log for run #8 shows the failure at the gate, after `run-eval.py` and `check-mechanical.py` both succeeded:
 
-### A real skip-rule miss, not just hedging
-Commit 6 (1e3c29b, failed 3 of 5 reps) wrongly wrote a release note treating a fix to the skill's own "what it does" summary as user-visible, instead of skipping it as an internal/meta change. Commit 18 (b50af03, failed 3 of 5 reps) mixed both patterns: one rep correctly skipped but still asked for clarification, two reps wrongly wrote a note.
+![Log of failed run #8: check-pass-rate.py reported a pass rate of 0.10, below the minimum 0.75](screenshots/log%20error%20message.png)
 
-### Not yet fixed
-No SKILL.md or rubric edit made from these results. See decisions.md 2026-09-15 entry — the working theory is that the isolated single-commit format itself (no other commit's context, no conversation) makes hedging more likely independent of rule wording, so a further rule change is being held until that's confirmed rather than the script's call shape.
+Run #9 (commit `12e8829`) passed after the revert:
 
-## Run 9 [2026-09-15]
-Passed all 8 Version 2 criteria (evals/runs/run-09.md). Commit 12 (6fce484) was correctly folded into the aggregate skip line, with no release note and no reconsidering language — confirms the rule 10 default-to-skip clause (commit 512e384) fixed the exact misclassification Run 8 had.
+![GitHub Actions run list: run #9 passed above the failed run #8](screenshots/fixed%20skill%201.png)
 
-### Rubric tagging gap found while automating grading
-While adding scripts/check-mechanical.py, evals/rubric.md's Version 2 criterion 5 ("Is a fallback or default explained when one applies?") was found still tagged "mechanical," but it isn't checked by the script (which only covers criteria 1, 2, 4, 8) and is graded by hand in evals/runs/judgment-grades.csv alongside criteria 3, 6, 7. The a432401 fix that retagged 3, 6, 7 from "mechanical" to "judgment" missed criterion 5. Corrected in evals/rubric.md to "judgment."
+![Log of passing run #9: every step, including check-pass-rate.py, succeeded](screenshots/fixed%20skill%202_log.png)
 
-## Run 8 [2026-09-15]
-Commits 1, 2, 4, 8 passed all Version 2 criteria (evals/runs/run-08.md). Commit 12 (6fce484, "Take Book Recommendations project offline") failed criteria 3 and 8: the response wrote a release note treating it as a book-recommendation feature change, when gold and the 2026-09-14 9:05 PM decision treat this as a portfolio/project-level change to skip. The entry also included a parenthetical weighing both readings ("...leaves some ambiguity about whether this meant discontinuing the feature itself versus removing its portfolio listing; this reads as the former"), which reads as reconsidering the call rather than a single flagged clause, failing criterion 8.
+- **The check catches large regressions but not subtle ones (model limitation).** Four of the five breaks scored 0.80 to 0.85, above the threshold, because the model followed the most specific rule and ignored the bad ones.
+- **The `shared/` files back up `SKILL.md` (redundancy, not a defect).** `shared/hard-surfaces.md` already says "Never ask about a commit," and `house-style.md` already bans internal file names. Deleting the skill's own copy therefore changed nothing, and only an override aimed at the shared files got through.
+- **The same skill scored differently on two runs (run-to-run noise).** The correct skill scored 0.95, then 0.85 after the revert, with identical files. One case is worth 0.05, so two or three flips is normal. This is why the threshold sits at 0.75 and not 0.90 (see `decisions.md`).
+- **The workflow missed shared-file edits (gap, fixed).** It watched only `.claude/skills/`, although the eval also sends `shared/` to the model. It now watches both.
 
-### Not a new wording gap
-Rule 10 and the skip rule were unchanged between Run 7 (evals/runs/run-07.md, passed 7/7, correctly skipped commit 12) and this run — same skill, same batched-prompt format, same input. Rule 10's own worked example describes this exact ambiguity ("could mean the portfolio listing was pulled (skip) or the skill itself was taken down (write)") but only tells the model to "pick the reading better supported by the wording," with no tiebreak for when neither reading is more supported than the other. That leaves this specific commit's classification unstable run to run: written in Run 1, wrongly written in Run 4, no answer in Run 6, correctly skipped in Run 7, wrongly written again here. See decisions.md 2026-09-15 entry ("Ambiguous feature-vs-portfolio commits default to skip") for the fix direction.
+## Hard cases run 1 (2026-09-19): 3 of 10
 
-## Run 6 [2026-09-15]
-Run 6 was run as 20 separate single-commit cases (evals/runs/run-06/case-01.md through case-20.md) instead of one batched 20-commit conversation like Run 5. Three failure modes showed up that Run 5 did not have:
+I scored ten tricky inputs, five per skill, against `shared/hard-surfaces.md` (`evals/runs/hard-cases-run-01.md`). Doc-review scored 1 of 5 and release-notes scored 2 of 5.
 
-### Several commits got no answer at all
-Commits 2 (2d10267), 6 (1e3c29b), 10 (ec87a17), 12 (6fce484), and 18 (b50af03) produced neither a release note nor a skip decision — the response stopped and asked the user to supply more detail or pick between readings instead of doing what Runs 1-5 did (make the call from the description given). For example, commit 12 ends with "Tell me which reading is correct (or point me at the repo), and I'll finalize or drop the entry," and commit 10 ends with "Rather than guess, could you either confirm the repo location... or tell me what the skill-language edit changed." The skill's "unverifiable" outcome was meant to mark a release note that can't be confirmed against the repo, not license to stop and ask instead of landing on skip-or-write.
+- **Neither `SKILL.md` pointed to `hard-surfaces.md` (gap, fixed).** A loaded skill therefore had no instruction to ask for missing input or to say an input was out of scope. This explains most of the eight failures.
+- **The skill descriptions don't cover vague or out-of-scope prompts (gap, still open).** No skill loaded for doc-review inputs 2, 4, and 5 or release-notes input 3, so the agent simply did the task.
+- **`hard-surfaces.md` had no bullet for a wrong-language document or a wrong skill name (gap, fixed).** I added both.
+- **The `house-style.md` reference had no path (ambiguity, fixed).** The agent could not find the file.
+- **Release-notes input 4 ("review commits against checklist") went to doc-review (unresolved).** That routing may be reasonable, but I scored it a fail because the response guessed instead of asking.
 
-### Skipped commits still resulted in full write-up files, not "no entry"
-Nearly every commit correctly identified as skippable (3, 5, 7, 9, 11, 13, 14, 15, 16, 17, 20) still generated a multi-paragraph file restating the skip rule, flagging unverifiability, and inviting the user to override the call — instead of "no entry," which is what the skip rule says and what Run 5 actually did (one line: "Skipped (no visible effect...): 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20"). No single rubric criterion scores this directly, but it's a sharp behavior regression from Run 5.
+Each input ran once, so a one-input difference is within noise.
 
-### Many responses were not in past tense
-The release notes themselves (commits 1, 4, 8, 19) stayed in past tense and were fine. The skip explanations and clarifying-question responses were written in present tense throughout — e.g., commit 3: "Editing the changelog is a project-meta change. It doesn't alter..."; commit 16: "Moving run-01 results into docs so it publishes to the site affects..."; commit 7: "'Edited skill formatting' describes a change... Nothing... points to...". The past-tense rule was written with release notes in mind and doesn't obviously cover this new category of skip/clarification prose.
+## Trigger runs (2026-09-18): 18 of 20 both times
 
-### Likely cause, not yet confirmed
-Run 5's single batched pass made a judgment call on every ambiguous commit and flagged only one (commit 18) as uncertain. Running each commit as its own isolated case seems to have pushed the model toward hedging and asking rather than deciding, with no other commit's context to calibrate against. Worth re-running Run 6 batched, the way Run 5 was, before deciding whether this is a skill-wording gap or an artifact of the isolated-case format.
+I ran 20 prompts before and after rewording the release-notes `description:` (`trigger-run-01.md`, `trigger-run-02.md`). Doc-review (5 of 5) and the "neither" group (5 of 5) passed both times.
 
-### Root cause identified, skill updated [2026-09-15]
-Run 7 (evals/runs/run-07.md) re-ran the same 20 commits batched, as planned, and passed 7/7 — confirming the regression was produced by isolated single-commit calls, not a wording gap that only surfaces under batching. Tracing the two failure modes above to specific rule text:
-- The no-answer responses (case-10, case-12 in evals/runs/run-06/) came from rule 3's "flag the discrepancy back to the user rather than guessing" — written for a verified commit disagreeing with its description, but with no scope fence, so the model generalized it to any ambiguous description with no conflict at all.
-- The per-commit skip essays (case-03) came from rule 4 barring an entry but never barring prose about the decision.
-- Neither failure mode was ever explicitly forbidden anywhere in SKILL.md's history — the closest check, Version 1 rubric criterion 1 ("ran through without interrupting for user feedback"), was retired at Run 4 with no matching skill rule written to replace it.
+Prompts 4 ("fix my commits") and 6 ("apply review of these commits") missed both times. This was a gap, because neither prompt says "release notes" and the eight prompts that do say it passed. The reword targeted phrasings that already worked, so it changed nothing. Each prompt ran once.
 
-Fixed by tightening rule 3 (mark unverifiable and still write/skip, don't stop to ask), tightening rule 4 (no per-commit skip essays, aggregate line ok), and adding rule 10 (decide, don't ask, with a worked example on commit 12's ambiguity). Matching evals/rubric.md Version 2 criterion 8 added. See decisions.md 2026-09-15 entry. Not yet re-verified with a new isolated-case run.
+## Run 11 (2026-09-17): 15 of 20, then 9 of 20 clean across 5 repeats
 
-Commits 1, 4, 8, and 19 were acceptable. 
+Run 11 was the first scripted run (one API call per commit). Its 5-repeat variant (`run-11-stats.csv`) found 9 of 20 cases that passed every criterion in all 5 repeats.
 
-### Summary line corrected, [2026-09-15] - Unverifiable doesn't disqualify a commit from the pass count
-run-06/grading.md originally read "Passed every criteria: 0 of 20." That was wrong: the "commits 1, 4, 8, 19" group has zero Fails across all 8 criteria (criterion 5 is Unverifiable, everything else Pass), and criterion 5 being Unverifiable there isn't a shortcoming — no fallback applies to any of those four commits, so there's nothing to explain. Run 08.md already established the working convention for this ("4 of 5," where commits 1, 2, 4, 8 count as passing despite criterion 3 and 5 being Unverifiable, and only commit 12's actual Fails exclude it). Applying that same convention to Run 6, the correct total is 4 of 20, not 0. See decisions.md 2026-09-15 entry ("Unverifiable does not disqualify a commit from the pass count").
+- **Eight correct skips fail at least one repeat (model limitation).** Commits 7, 10, 11, 12, 13, 14, 16, and 20 attach a reason to a bare skip, although rule 4 says outright that per-commit justification is not allowed.
+- **Commit 6 (1e3c29b) fails 4 of 5 repeats.** The model writes a note for a fix to the skill's own description, which users never see.
+- **Commit 18 (b50af03) fails all 5 repeats.** The model writes a note instead of skipping in 4 repeats and hedges in all 5.
 
-## Run 4 [2026-09-14]
-## For all entries:
-- Criterion 3 was originally graded Pass, which was wrong: the response wrote release notes for commits 12 (6fce484, "Take Book Recommendations project offline"), 14 (f21345d, "Removed agentic AI section from portfolio site"), and 16 (8a39d5e, "Move run-01 results into docs so it publishes to the site") — all portfolio-site/project-meta changes that a book-recommendation skill user would never see. The rubric at the time only checked visibility to "the user," and these commits are visible to a portfolio site visitor, so they slipped through grading. This was found afterward, not caught by the original grading pass, and is why the skip rule and rubric criterion 3 were rewritten to skip portfolio/eval/project-meta commits regardless of visibility, with a worked meta example added. run-04.md has since been corrected to Criterion 3: Fail.
-- Criterion 6 was marked Unverifiable because this run's own prompt told the model not to check any repo, so no verification was attempted either way. Separately (not from this run's grading), it was later found that the repo-check rule itself had no stop condition — once repo-checking was allowed, the model could keep searching for a repo instead of falling back to unverifiable when none was accessible. That gap was fixed afterward even though nothing in Run 4 exercised or caught it directly.
-- The grading summary line originally read "Passed every criteria: 7 of 7," which contradicted its own breakdown (Criterion 6: Unverifiable, and, per the point above, Criterion 3 should have read Fail). After the criteria were corrected, the summary line itself still needed fixing — it briefly read "0 of 8" (Version 2 has 7 criteria, not 8, and the project's convention for a run that doesn't pass everything is the single-letter "O," not a fraction, per run-01.md and run-02.md). Corrected to "O."
+I made no edit. My working theory is that one call per commit invites hedging, because each call has no other commit to calibrate against.
 
-Commits 1, 2, 4, 8, and 19 were acceptable.
+## Runs 8 to 10 (2026-09-15)
 
-## Run 3 [2026-09-14]
-## For all entries:
-- Criterion 4 failed because it removed commit #19 which was still user-facing, not developer-facing.
+- **Run 8 scored 19 of 20.** Commit 12 flipped from skip to write with no change to the skill. This was a gap, because rule 10 gave no tiebreak when neither reading was better supported. I fixed it with a default-to-skip clause.
+- **Run 9 scored 20 of 20.**
+- **Run 10 scored 16 of 20 clean across 5 repeats.** Commits 2 and 10 decide correctly and then add a hedge such as "if you can share the diff, I'll sharpen the entry." Commits 6 and 18 missed as described under Run 11. This was a model limitation, so I made no edit.
+- **I fixed a rubric tag.** Criterion 5 was tagged "mechanical" although a person grades it, so it is now "judgment."
 
-- Across 2 commits, the language is less precise than the actual commits:
- 1. Commit 4 (5da846a)
-- V1: It was marked skip in version 1 but it should not have been
-- V2 Revised too vaguely: "Clarified that the recommender asked which genre when a user was present to answer."
-- V3 revised less vaguely but missing information: "Adjusted when the recommender asked which genre you were interested in, so it only asked while you were available to respond"
-- It should say: "Adjusted when the recommender asked which genre you were interested in: defaulted to contemporary genre when you were not available, and told you it had defaulted."
+## Run 6 (2026-09-15): 4 of 20
 
- Commit 19 (b971722)
- - V1 Original: "The skill now checks the already-read file before running, so it won't proceed without applying exclusion filtering."
-- Revised V2: "Commit 19 (b971722): Added a check that ran before the recommender started, so it stopped and told the user if something needed was missing."
-- Revised V3: Skipped completely.
-- It should say: "Checked the file of already read books before running, so the result won't produce books the user has already read."
+Run 6 sent one call per commit instead of one batch. It produced three new failures (`evals/runs/run-06/`).
 
-Commit 1, 4, 8, 12 were acceptable.
+- **Five commits got no answer (ambiguity).** For commits 2, 6, 10, 12, and 18, the response asked the user to pick a reading. Rule 3's "flag the discrepancy" was written for verified conflicts, and the model stretched it to any ambiguous commit.
+- **Nearly every skip came with a paragraph defending it (ambiguity).** Rule 4 said "no entry" but never barred writing about the decision.
+- **Prose around skips used the present tense (gap).** The tense rule covered notes only.
 
-## Run 2 [2026-09-14]
-## For all entries:
-1. Criterion 1 failed because the prompt did not specify "do not look up the commits." The AI wanted to look up the actual commits for release notes, not use the input I gave it.
-2. Criterion 6 was unverifiable since there were no fallbacks or defaults applied.
+Run 7 (batched again) scored 20 of 20, so the call format caused the regression. I fixed the wording anyway.
 
-## Run 1 [2026-09-14]
+## Run 5 (2026-09-14): 19 of 20
 
-### Entry 1: Commits 1 and 8
-What went wrong: User stopped the AI after it tried to find the commit hashes in another repo, and had to re-write the prompt to say "only use these commits" (Criterion 1).
-Entry was not in past tense (Criterion 2) and used internal file names (Criterion 3). There was exactly 1 release note so Criterion 3 passed and there was no fallback or default mentioned so Criterion 6 was unverifiable. Criterion 4 was unverifiable since this was not a developer-facing commit.
+Commit 18 hedged ("I'm not confident; let me know") instead of deciding. This was a gap, because no rule said to decide instead of ask. I added rule 10.
 
-Skill lack of clarity: The skill did not forbid the AI from checking other repos; it did not request the answer be in past tense; it did not forbid use of internal file names in results.
+## Run 4 (2026-09-14): 17 of 20
 
-### Entry 2: Commits 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 15, 16, 17, 18, 20
- What went wrong: User stopped the AI after it tried to find the commit hashes in another repo, and had to re-write the prompt to say "only use these commits" (Criterion 1).
-Entry was not in past tense (Criterion 2) and used internal file names (Criterion 3). There was exactly 1 release note and no fallback or default mentioned so Criterion 3 passed and Criterion 6 was unverifiable. 
-Skill lack of clarity: The skill did not forbid the AI from checking other repos; it did not request the answer be in past tense; it did not forbid use of internal file names in results. Criterion 4 did not match the skill: the skill says "skip" and also "Whenever a commit is skipped for any reason, still write a line: SKIP," so results followed the skill and wrote the line but failed the overall skip criterion.
+- **Portfolio and project-meta commits got notes (gap).** Commits 12, 14, and 16 changed the portfolio or the project, but the skip rule only checked visibility to "the user." My first grading missed this, and regrading caught it.
+- **The repo-check rule had no stop condition (gap).** The model could keep hunting for a repo. Run 4 didn't trigger this, but I found it afterward.
 
-### Entry 3: Commit 12
-What went wrong: User stopped the AI after it tried to find the commit hashes in another repo, and had to re-write the prompt to say "only use these commits" (Criterion 1).
-Entry was not in past tense (Criterion 2) and used internal file names (Criterion 3). There was exactly 1 release note so Criterion 3 passed. Criterion 4 was unverifiable since this was not a developer-facing commit. Criterion 5 did not apply (no internal files involved). There was no fallback or default mentioned so Criterion 6 was unverifiable.
+## Runs 1 to 3 (2026-09-14)
 
-Skill lack of clarity: The skill did not forbid the AI from checking other repos; it did not request the answer be in past tense; it did not forbid use of internal file names in results.
-
-### Entry 4: Commit 14
-What went wrong: User stopped the AI after it tried to find the commit hashes in another repo, and had to re-write the prompt to say "only use these commits" (Criterion 1).
-Entry was not in past tense (Criterion 2) and used internal file names (Criterion 3). There was exactly 1 release note so Criterion 3 passed. Criterion 4 did not match the skill: the skill says "skip" and also "Whenever a commit is skipped for any reason, still write a line: SKIP," so results followed the skill and wrote the line but failed the overall skip criterion. Criterion 5 did not apply (no internal files involved). There was no fallback or default mentioned so Criterion 6 was unverifiable
-
-Skill lack of clarity: The skill did not forbid the AI from checking other repos; it did not request the answer be in past tense; it did not forbid use of internal file names in results.
+- **Run 1 scored 0 of 20.** Nothing forbade checking other repos, so the model tried to verify hashes elsewhere (gap). Nothing required past tense or barred internal file names (gap). The skill also said both "skip" and "always write a SKIP line," so the model followed the second rule while the rubric wanted no note (ambiguity).
+- **Run 2 also scored 0 of 20.** The model still looked commits up, because the rule only said "don't check other repos" (ambiguity).
+- **Run 3 also scored 0 of 20.** The model skipped commit 19 although users would see its effect, because the skill had no example showing that technical-sounding commits can matter (gap). Notes for commits 4 and 19 stayed vague through two revisions, so the skill now says an accurate but vague note fails (ambiguity).

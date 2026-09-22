@@ -3,9 +3,15 @@
 
 Only rubric.md's Version 2 criteria 1, 2, 4, and 8 are checked here — the ones
 that can be judged from the response text alone, without comparing against the
-actual commit content. Criteria 3, 6, and 7 need that kind of judgment call and
-are out of scope for this script. Version 1 (runs 1-3) predates these criteria
-and isn't checked either.
+actual commit content. Criteria 3, 5, 6, and 7 need that kind of judgment call
+and are out of scope for this script. Version 1 (runs 1-3) predates these
+criteria and isn't checked either.
+
+Criterion 2 only catches duplicate entries and commits the response never
+addresses. Whether a skipped commit should have been written up is criterion
+3, which a person grades. Criterion 4 flags any ".md" file name in the response.
+It doesn't flag bare words like "skill", because a release note can say "the
+skill" without naming a file.
 
 Every check here is a text heuristic, not a guarantee. Ambiguous cases are
 marked "unverifiable" rather than guessed at, matching the rubric's own
@@ -22,15 +28,9 @@ RUNS_DIR = ROOT / "evals/runs"
 CASES_PATH = ROOT / "evals/cases/release-notes-20.md"
 OUTPUT_CSV = RUNS_DIR / "mechanical-results.csv"
 
-INTERNAL_FILENAMES = [
-    "SKILL.md",
-    "rubric.md",
-    "decisions.md",
-    "changelog.md",
-    "findings.md",
-    "CLAUDE.md",
-    "already-read.md",
-]
+# Any markdown file name counts as internal, so a new file such as
+# house-style.md or hard-surfaces.md is caught without editing a list.
+INTERNAL_FILENAME_RE = re.compile(r"[\w./-]+\.md\b", re.I)
 
 CLARIFY_PATTERNS = [
     r"let me know",
@@ -111,11 +111,11 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
         name = f.stem.removesuffix("-output")
         runs[name] = ("single", f)
     for d in RUNS_DIR.iterdir():
-        if not (d.is_dir() and (d.name.startswith("run-") or d.name == "v3")):
+        if not (d.is_dir() and d.name.startswith("run-")):
             continue
         # A run folder can hold a single run's case files directly (the
         # non-repeat run) AND rep-*/ subfolders (a --repeats run) at the same
-        # time, as v3 does — check both, don't stop at the first match.
+        # time, as run-11 and run-12 do — check both, don't stop at the first match.
         if any(d.glob("case-*.md")):
             runs[d.name] = ("multi", d)
         for rep_dir in sorted(d.glob("rep-*")):
@@ -123,8 +123,6 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
                 runs[f"{d.name}-{rep_dir.name}"] = ("multi", rep_dir)
 
     def run_num(name: str) -> int:
-        if name.startswith("v3"):
-            return 4  # Phase 4's scripted run; uses the Version 2 rubric same as run-04-on.
         m = RUN_NUMBER_RE.search(name)
         return int(m.group(1)) if m else -1
 
@@ -142,12 +140,14 @@ def parse_segments(text: str) -> dict[int, list[str]]:
     return segments
 
 
-def parse_aggregate_skips(text: str) -> set[int]:
+def parse_aggregate_skips(text: str, case_count: int) -> set[int]:
     skips: set[int] = set()
     for line in text.splitlines():
         if re.search(r"\bskip", line, re.I) and ":" in line:
             _, _, tail = line.partition(":")
-            skips.update(int(n) for n in re.findall(r"\b(\d{1,2})\b", tail) if 1 <= int(n) <= 20)
+            skips.update(
+                int(n) for n in re.findall(r"\b(\d{1,2})\b", tail) if 1 <= int(n) <= case_count
+            )
     return skips
 
 
@@ -171,13 +171,15 @@ def classify_text(text: str) -> str:
     return "written"
 
 
-def statuses_for_single(path: Path, case_count: int) -> dict[int, tuple[str, str]]:
+def statuses_for_single(
+    path: Path, case_count: int
+) -> tuple[dict[int, tuple[str, str]], dict[int, list[str]]]:
     """One file holding all `case_count` commits; split it by its own 'Commit N (hash):' headers."""
     raw = path.read_text()
     parts = re.split(r"^##\s*Response.*$", raw, flags=re.M)
     text = parts[-1] if len(parts) > 1 else raw
     segments = parse_segments(text)
-    aggregate_skips = parse_aggregate_skips(text)
+    aggregate_skips = parse_aggregate_skips(text, case_count)
 
     statuses = {}
     for k in range(1, case_count + 1):
@@ -191,7 +193,9 @@ def statuses_for_single(path: Path, case_count: int) -> dict[int, tuple[str, str
     return statuses, segments
 
 
-def statuses_for_multi(dir_path: Path, case_count: int) -> dict[int, tuple[str, str]]:
+def statuses_for_multi(
+    dir_path: Path, case_count: int
+) -> tuple[dict[int, tuple[str, str]], dict[int, list[str]]]:
     """One file per commit (case-NN.md); the filename is the ground truth for
     which commit a file belongs to, so no header regex or text-joining is
     needed. Joining all files into one blob and re-splitting by a header
@@ -255,7 +259,7 @@ def check_case_criterion_2(case_num: int, status: str, segments: dict) -> tuple[
 
 
 def check_case_criterion_4(text: str) -> tuple[str, str]:
-    found = [name for name in INTERNAL_FILENAMES if re.search(re.escape(name), text)]
+    found = sorted({name for name in INTERNAL_FILENAME_RE.findall(text)}, key=str.lower)
     if found:
         return "Fail", f"named internal file(s): {found}"
     return "Pass", ""
@@ -291,7 +295,7 @@ def main() -> None:
             c4, n4 = check_case_criterion_4(case_text)
             c8, n8 = check_case_criterion_8(status, case_text)
 
-            if "Fail" not in (c1, c2, c4, c8):
+            if status != "missing" and "Fail" not in (c1, c2, c4, c8):
                 run_pass_count += 1
 
             notes = "; ".join(f"C{c}: {n}" for c, n in [(1, n1), (2, n2), (4, n4), (8, n8)] if n)
