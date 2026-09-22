@@ -4,7 +4,7 @@
 
 This project created a Claude Code skill that turned a raw git commit message into a release note a user could read. It needed to specify: write in past tense active voice, how to handle a commit whose hash can't be verified, and what to do when a description is  ambiguous. Without a spec, release notes would be inconsistent and unspecific.
 
-To create the skill, I wrote a first version, ran it against 20 real commits, diagnosed each failure, fixed the spec, and re-ran it. I automated the runs and the grading, measured how consistent the skill is, built a second skill (`doc-review`) the same way, and put a GitHub Action around both. The test commits come from a real feature, the book-recommendation skill behind [nellcgram.github.io](https://nellcgram.github.io).
+To create the skill, I wrote a first version, ran it against 20 real commits, diagnosed each failure, fixed the spec, and re-ran it. I automated the runs and the grading, measured how consistent the skill is, built a second skill (`doc-review`) grounded the same way, and put a GitHub Action around both. The test commits come from a real feature, the book-recommendation skill behind [nellcgram.github.io](https://nellcgram.github.io).
 
 ## Results at a glance
 
@@ -62,7 +62,7 @@ Rule 4 was clear, so I classed this as a model limitation, logged it, and made n
 
 ## A second skill (Phase 7)
 
-I built `doc-review` by reviewing three documents by hand ([`evals/cases/doc-review-3.md`](evals/cases/doc-review-3.md)), writing down what an editor would flag ([`evals/gold/doc-review.md`](evals/gold/doc-review.md)), and turning the repeated patterns into a checklist ([`.claude/skills/doc-review/checklist.md`](.claude/skills/doc-review/checklist.md)) before I wrote any rule in SKILL.md. That review flagged that the README never said how to run the evals, which is why the README now has a "Running it yourself" section.
+I built `doc-review` by reviewing three documents by hand ([`evals/cases/doc-review-3.md`](evals/cases/doc-review-3.md)), writing down what an editor would flag ([`evals/gold/doc-review.md`](evals/gold/doc-review.md)), and turning the repeated patterns into a checklist ([`.claude/skills/doc-review/checklist.md`](.claude/skills/doc-review/checklist.md)) before I wrote any rule in SKILL.md. I checked the skill's output against that gold file by eye, not with a scored rubric, so unlike release-notes, doc-review's own accuracy isn't one of the numbers in this case study. That review flagged that the README never said how to run the evals, which is why the README now has a "Running it yourself" section.
 
 **Trigger accuracy: 18 of 20 before and after a reword** ([`trigger-run-01.md`](evals/runs/trigger-run-01.md), [`trigger-run-02.md`](evals/runs/trigger-run-02.md)). Doc-review (5 of 5) and the "neither" group (5 of 5) passed both times. Two release-notes prompts, "fix my commits" and "apply review of these commits," never said "release notes" and missed both times. I reworded the `description:` line once:
 
