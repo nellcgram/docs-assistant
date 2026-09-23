@@ -22,9 +22,17 @@ A GitHub Action now re-runs the 20 cases whenever a skill or shared file changes
 
 **`release-notes`** turns raw git commit messages into user-facing release notes. The notes use the past tense, and they cover only changes a user of the product would notice. The skill also flags anything it couldn't verify. The test cases come from a real project of mine, a book-recommendation skill, so "would a user notice this?" has a real answer. It took ten rounds of testing to hold up. `CHANGELOG.md` and `decisions.md` record each mistake it made along the way.
 
-**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply. I grounded it by hand-reviewing three real documents from this repo before writing any rule. Everything for this skill is graded by hand, and I did not build a rubric or automated checks for it.
+**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply. I grounded it by hand-reviewing three real documents from this repo before writing any rule. Everything for this skill is graded by hand, and I did not build a rubric or automated checks for it because the point of the project was to show that the first skill could be replicated overall, not flesh out the second skill.
 
 Both skills share rules in `shared/house-style.md`. `shared/hard-surfaces.md` says what each should do when input is missing, unclear, or out of scope. `tools/read-commits.md` documents the input format `release-notes` expects.
+
+## How to make a third skill
+1. Make a folder with the skill title under 'skills' folder.
+2. Write SKILL.md
+3. Add test cases in eval/cases folder
+4. Add 'gold' cases
+5. Add a rubric
+6. Add results of running the skill to the run folder
 
 ## Running it yourself
 
