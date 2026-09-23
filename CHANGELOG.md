@@ -6,10 +6,7 @@ This file lists every change to a skill, its rubric, or the eval tooling, newest
 I removed the two pointer rules (old rules 5 and 8) from `release-notes/SKILL.md`, because `shared/house-style.md` already states them. The remaining rules moved up, so the old rules 10, 11, and 12 are now rules 8, 9, and 10. I also changed the rule 1 example to "…so you will not be shown books you've already read." Earlier entries and run files use the rule numbers in force at the time.
 
 ## 2026-09-21: Run names standardized (no skill edit)
-I renamed the scripted run `v3` to Run 11 and the CI run `v4` to `run-12`, so every run follows the `run-NN` pattern. I also renamed `run-06/grading.md` to `run-06.md` and `hard-cases-01.md` to `hard-cases-run-01.md`.
-- **Scripts:** `run-eval.py` now defaults to `--name run-12`, and `check-mechanical.py` no longer recognizes `vN` names.
-- **Data and docs:** The CSV row labels and every link now use the new names, and no score changed.
-- **Test input:** `evals/cases/hard-cases-10.md` now says "doc-review," the skill's actual name.
+I renamed `v3` to Run 11 and `v4` to `run-12` so every run follows the `run-NN` pattern, and updated the scripts, CSVs, and links to match. No score changed.
 
 ## 2026-09-21: CI check added (no skill edit)
 A GitHub Action now re-runs the 20-case eval on every push that touches `.claude/skills/` or `shared/`, and it fails the check if the pass rate drops below 0.75.
