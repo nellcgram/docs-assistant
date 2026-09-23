@@ -68,7 +68,7 @@ The hard-surfaces.md file had the skill ask about uncertainties early on but Rul
 > Old: *"Use when the user asks for release notes generated from commit messages."*
 > New: *"Use when the user asks to create, write, generate, add release notes from commit messages."*
 
-The reword changed nothing, because it added verbs the passing prompts already used ([`decisions.md`](decisions.md)).
+Only the 10 release-notes prompts were re-run, since the other skill didn't change. The reword changed nothing, because it added verbs the passing prompts already used ([`decisions.md`](decisions.md)).
 
 **Hard inputs: 3 of 10** ([`hard-cases-run-01.md`](evals/runs/hard-cases-run-01.md)). I scored ten tricky inputs, five per skill, against the matching bullet in [`shared/hard-surfaces.md`](shared/hard-surfaces.md): doc-review scored 1 of 5 and release-notes 2 of 5. My first draft recorded only which skill fired and reported 4 of 10, and rescoring against the bullets flipped two verdicts. Neither `SKILL.md` pointed to `hard-surfaces.md`, so I fixed that and added bullets for wrong-language and wrong-skill inputs. I also documented the real input format in [`tools/read-commits.md`](tools/read-commits.md). The skill descriptions still don't cover vague prompts, and I left that gap open.
 
@@ -102,7 +102,8 @@ After I reverted the override, the next run (commit `12e8829`) passed, directly 
 
 ## What the GitHub Action doesn't cover
 
-- **The check catches large regressions, not subtle ones.** It grades only the four mechanical criteria, and four of my five test breaks passed. Tone, whether the right commits were skipped, and whether a note is specific enough are judgment criteria that stay hand-graded, so automation has a real ceiling here.
+- **The check catches large regressions, not subtle ones.** It grades only the four mechanical criteria plus one guard that the five commits with a gold-file note must get one, so a skill that skips everything fails. Four of my five test breaks passed, and I added the guard after those tests, so the tests don't cover it. Tone, whether the right commits were skipped, and whether a note is specific enough are judgment criteria that stay hand-graded, so automation has a real ceiling here.
+- **Scripted runs can't test the repo-check rule.** `run-eval.py` sends the skill text and one commit to the API with no repo access, so the rule that checks a commit against its description never fires, and rubric criterion 6 is always "unverifiable" in those runs. The earlier manual runs used Claude Code, which can look at a repo, so the two kinds of run don't test exactly the same thing.
 - **The Run 11 scores predate the shared-rules change.** I have not re-scored the skill by hand since moving rules into `shared/`, apart from the CI runs.
 - **The 5-repeat result is still open.** Correct skips still pick up unwanted reasons, and I made no edit.
 - **Skill descriptions don't cover vague prompts.** Two release-notes trigger prompts and several hard-case inputs show this gap.

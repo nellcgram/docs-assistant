@@ -2,6 +2,18 @@
 
 This file lists every change to a skill, its rubric, or the eval tooling, newest first. Rule changes quote the old and new wording and give the reason. Scores are in `evals/runs/README.md`, failure causes are in `evals/findings.md`, and the reasoning is in `decisions.md`.
 
+## 2026-09-23: Default-to-skip exception and gold-write guard
+- **`shared/house-style.md` rule 3:** the old wording, "When a skill silently defaults to something, say that a default was applied," conflicted with `release-notes` rule 8 (default to skip) and rule 4 (no per-commit skip explanations). It now adds: "Exception: a default-to-skip is not announced per commit. The skill reports skips only in one aggregate line." The release-notes skill itself is unchanged.
+- **`release-notes/SKILL.md` Purpose:** it now says the skill "is written for the book-recommendation project's release notes."
+- **`scripts/check-mechanical.py`:** a new column, `gold_commit_written`, fails a case when the gold file says the commit gets a note (commits 1, 2, 4, 8, 19) but the response skipped, asked about, or missed it. It reads the commit list from `evals/gold/release-notes.md`. No run's pass count changed. It flags Run 6 case 2, which already failed criterion 8.
+- **`scripts/check-pass-rate.py`:** a new `--min-gold` gate (default 0.6). Without it, a skill that skips all 20 commits would still pass 15 of 20 (0.75). A simulated skip-everything run now fails.
+- **`evals/runs/judgment-grades.csv`:** Runs 4, 5, 6, and 7 had one row per group of commits. They now have 20 rows each, copied from the existing grades in `run-04.md` through `run-07.md`. No grade changed.
+
+## 2026-09-23: Wording fixes (no rule change)
+- **`shared/hard-surfaces.md`:** the release-notes section said to decide every commit "under rules 3, 4, and 10*", with a footnote admitting the current rule is 8. It now says "rules 3, 4, and 8" and the footnote is gone. The rule itself is unchanged.
+- **Both `SKILL.md` files:** the Purpose line said "The agent" and now says "This skill". `doc-review` rule 7 also lost a double space.
+- **Old runs:** they were scored on the earlier wording and I did not re-score them.
+
 ## 2026-09-21: Release-notes rules renumbered
 I removed the two pointer rules (old rules 5 and 8) from `release-notes/SKILL.md`, because `shared/house-style.md` already states them. The remaining rules moved up, so the old rules 10, 11, and 12 are now rules 8, 9, and 10. I also changed the rule 1 example to "…so you will not be shown books you've already read." Earlier entries and run files use the rule numbers in force at the time.
 

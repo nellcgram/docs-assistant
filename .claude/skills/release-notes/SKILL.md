@@ -4,7 +4,7 @@ description: Use when the user asks to create, write, generate, add release note
 ---
 
 ## Purpose
-The agent turns raw git commit messages into user-facing release notes.
+This skill turns raw git commit messages into user-facing release notes. It is written for the book-recommendation project's release notes.
 
 ## Rules
 

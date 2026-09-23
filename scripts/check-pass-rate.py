@@ -3,7 +3,7 @@
 
 Reads evals/runs/mechanical-results.csv, written by check-mechanical.py. A case
 passes under the same rule check-mechanical.py uses for its own per-run tally:
-the response addressed the commit, and none of the four criteria is "Fail".
+the response addressed the commit, and none of the four criteria or the gold-write guard is "Fail".
 "Unverifiable" doesn't count against a case.
 
 The CSV holds every scripted run in the repo's history, so pass --run to score
@@ -27,6 +27,7 @@ CRITERION_COLUMNS = [
     "criterion_2_one_note_per_commit",
     "criterion_4_no_internal_filenames",
     "criterion_8_decided_every_commit",
+    "gold_commit_written",
 ]
 
 # check-mechanical.py doesn't write a separate "missing" column; it shows up as
@@ -41,6 +42,12 @@ def parse_args() -> argparse.Namespace:
         type=float,
         required=True,
         help="lowest acceptable pass fraction, from 0 to 1 (e.g. 0.75)",
+    )
+    parser.add_argument(
+        "--min-gold",
+        type=float,
+        default=0.6,
+        help="lowest acceptable fraction of should-write commits that got a note (default: 0.6)",
     )
     parser.add_argument(
         "--run",
@@ -77,6 +84,16 @@ def main() -> None:
     passed = sum(case_passes(r) for r in rows)
     rate = passed / len(rows)
     print(f"{passed} of {len(rows)} cases pass all mechanical criteria ({rate:.2f})")
+
+    # A skill that skips everything would still pass about 75% of cases, so also check the
+    # commits the gold file says get a note.
+    gold_rows = [r for r in rows if r.get("gold_commit_written") in ("Pass", "Fail")]
+    if gold_rows:
+        gold_passed = sum(r["gold_commit_written"] == "Pass" for r in gold_rows)
+        gold_rate = gold_passed / len(gold_rows)
+        print(f"{gold_passed} of {len(gold_rows)} should-write commits got a note ({gold_rate:.2f})")
+        if gold_rate < args.min_gold:
+            sys.exit(f"FAIL: should-write rate {gold_rate:.2f} is below the minimum {args.min_gold:.2f}")
 
     if rate < args.minimum:
         sys.exit(f"FAIL: pass rate {rate:.2f} is below the minimum {args.minimum:.2f}")
