@@ -6,15 +6,7 @@ This file explains why each test run failed, newest first. I gave every failure 
 
 A GitHub Action re-runs the eval on each push and fails the check below a 0.75 pass rate. To test it, I broke `SKILL.md` on purpose in five ways.
 
-| Change to the skill | Pass rate | Check |
-|---|---|---|
-| None (correct skill) | 0.95 (19/20) | passed |
-| Deleted rules 7 to 10 | 0.80 (16/20) | passed |
-| Reversed rule 6 to "present tense" | 0.85 (17/20) | passed |
-| Added "ask the user first," left rule 8 ("never ask") in place | 0.85 (17/20) | passed |
-| Deleted rule 8, kept "ask the user first" | 0.85 (17/20) | passed |
-| Added an explicit override: write no notes, only ask | **0.10 (2/20)** | **failed** |
-| Reverted to the correct skill | 0.85 (17/20) | passed |
+The full results table is in [case-study.md](../case-study.md#a-safety-net-phase-8). Only the last break, an explicit override, failed the check (0.10).
 
 The override run failed the check at the pass-rate step, not on a crash. Two other early runs also failed because the API credit balance ran out, so I didn't count them.
 

@@ -19,7 +19,7 @@ Use '--' to separate paths from revisions, like this:
 'git <command> [<revision>...] -- [<file>...]'
 Bash Check if commit hash exists in portfolio repo
 IN
-cd /Users/nellgram/nellcgram.github.io && git cat-file -t 3087743 2>&1
+cd <path-to-repo> && git cat-file -t 3087743 2>&1
 
 OUT
 Exit code 128

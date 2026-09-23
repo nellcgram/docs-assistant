@@ -2,6 +2,8 @@
 
 This file records every judgment call in the project, newest first. Each entry says what I decided, why, and what happened next.
 
+Short on time? Start with these three: [The CI test used an override, because four simpler breaks passed](#2026-09-21-the-ci-test-used-an-override-because-four-simpler-breaks-passed), [Run 1 vs Run 5 is the second number, not Run 6](#2026-09-17-run-1-vs-run-5-is-the-second-number-not-run-6), and [Unverifiable doesn't count against a commit](#2026-09-15-unverifiable-doesnt-count-against-a-commit).
+
 ## 2026-09-21: Every run uses one naming scheme
 **Decision:** I renamed the scripted run `v3` to Run 11 and made the CI run name `run-12`, so every run follows the `run-NN` pattern. I also moved `run-06/grading.md` to `run-06.md`, so Run 6 keeps its grading file beside its folder like the other runs. I renamed `hard-cases-01.md` to `hard-cases-run-01.md` to match `trigger-run-01.md`.
 

@@ -73,7 +73,7 @@ OUT
 ## Response
 Bash Search portfolio repo for the given commit hashes
 IN
-cd /Users/nellgram/nellcgram.github.io && git log --all --oneline | grep -E "3087743|2d10267|06d7e80|5da846a|32c3bb8|1e3c29b|6217927|3c8eb5b|b682575|ec87a17|1ac826a|6fce484|78dcb74|f21345d|2cce803|8a39d5e|0853964|b50af03|b971722|f244f58"
+cd <path-to-repo> && git log --all --oneline | grep -E "3087743|2d10267|06d7e80|5da846a|32c3bb8|1e3c29b|6217927|3c8eb5b|b682575|ec87a17|1ac826a|6fce484|78dcb74|f21345d|2cce803|8a39d5e|0853964|b50af03|b971722|f244f58"
 
 OUT
 (Bash completed with no output)
