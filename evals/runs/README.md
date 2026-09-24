@@ -18,7 +18,7 @@ Source: [run-05.md](run-05.md). I used Run 5 instead of Run 6 because Run 6 chan
 Source: [run-11.md](run-11.md), hand-graded.
 
 **4. Trigger accuracy: 18 of 20 before and after rewording** (Phase 7)
-Source: [trigger-run-01.md](trigger-run-01.md) and [trigger-run-02.md](trigger-run-02.md). The reword changed nothing.
+Source: [trigger-run-01.md](trigger-run-01.md) and [trigger-run-02.md](trigger-run-02.md). Only the 10 release-notes prompts were re-run, since the other skill didn't change. The reword changed nothing.
 
 **5. Hard cases: 3 of 10** (Phase 7)
 Source: [hard-cases-run-01.md](hard-cases-run-01.md). Doc-review scored 1 of 5 and release-notes 2 of 5.

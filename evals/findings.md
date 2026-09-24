@@ -1,6 +1,6 @@
 # Findings
 
-This file explains why each test run failed, newest first. I gave every failure one of three causes: a gap (the skill never addressed the situation), an ambiguity (the skill addressed it unclearly), or a model limitation (the skill was clear and the model ignored it). I fixed gaps and ambiguities in the skill and logged each fix in `CHANGELOG.md`. I logged model limitations and made no edit. Rule numbers refer to the skill as it stood at the time. On 2026-09-21 the skill was renumbered, and `CHANGELOG.md` explains how.
+This file explains why each test run failed, newest first. I gave every failure one of four causes: a gap (the skill never addressed the situation), an ambiguity (the skill addressed it unclearly), a model limitation (the skill was clear and the model ignored it), or the tool or product caused the failure. I fixed gaps and ambiguities in the skill and logged each fix in `CHANGELOG.md`. I logged model limitations and made no edit. Rule numbers refer to the skill as it stood at the time. On 2026-09-21 the skill was renumbered, and `CHANGELOG.md` explains how.
 
 ## CI safety net (2026-09-21)
 
@@ -87,6 +87,6 @@ Commit 18 hedged ("I'm not confident; let me know") instead of deciding. This wa
 
 ## Runs 1 to 3 (2026-09-14)
 
-- **Run 1 scored 0 of 20.** Nothing forbade checking other repos, so the model tried to verify hashes elsewhere (gap). Nothing required past tense or barred internal file names (gap). The skill also said both "skip" and "always write a SKIP line," so the model followed the second rule while the rubric wanted no note (ambiguity).
+- **Run 1 scored 0 of 20.** Nothing forbade checking other repos, so the model tried to verify hashes elsewhere (tool-causing gap). Nothing required past tense or barred internal file names (tool-causing gap). The skill also said both "skip" and "always write a SKIP line," so the model followed the second rule while the rubric wanted no note (ambiguity).
 - **Run 2 also scored 0 of 20.** The model still looked commits up, because the rule only said "don't check other repos" (ambiguity).
 - **Run 3 also scored 0 of 20.** The model skipped commit 19 although users would see its effect, because the skill had no example showing that technical-sounding commits can matter (gap). Notes for commits 4 and 19 stayed vague through two revisions, so the skill now says an accurate but vague note fails (ambiguity).

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Check release-notes eval run outputs against the mechanical rubric criteria.
 
-Only rubric.md's Version 2 criteria 1, 2, 4, and 8 are checked here — the ones
-that can be judged from the response text alone, without comparing against the
-actual commit content. Criteria 3, 5, 6, and 7 need that kind of judgment call
-and are out of scope for this script. Version 1 (runs 1-3) predates these
-criteria and isn't checked either.
+Rubric.md's Version 2 criteria 1, 2, 4, and 8 are checked here: the ones that can be
+judged from the response text alone, without comparing against the actual commit
+content. A fifth guard, gold_commit_written, fails a case when the gold file says the
+commit gets a note but the response skipped or asked about it, so a skill that skips
+everything can't pass. Criteria 3, 5, 6, and 7 need a judgment call and are out of
+scope for this script. Version 1 (runs 1-3) predates these criteria and isn't checked
+either.
 
 Criterion 2 only catches duplicate entries and commits the response never
 addresses. Whether a skipped commit should have been written up is criterion
@@ -26,6 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RUNS_DIR = ROOT / "evals/runs"
 CASES_PATH = ROOT / "evals/cases/release-notes-20.md"
+GOLD_PATH = ROOT / "evals/gold/release-notes.md"
 OUTPUT_CSV = RUNS_DIR / "mechanical-results.csv"
 
 # Any markdown file name counts as internal, so a new file such as
@@ -97,6 +100,14 @@ QUOTED_SPAN_RE = re.compile(r"[\"“][^\"”]*[\"”]")
 # to use these words, so matching on them anywhere inside a parenthetical is
 # safe.
 DISCLAIMER_PAREN_RE = re.compile(r"\([^)]*(?:verif\w*|accessib\w*)[^)]*\)", re.I)
+
+
+def get_gold_write_set() -> set[int]:
+    """Commit numbers the gold file says get a release note (its "Commit N (hash):" lines)."""
+    return {
+        int(n)
+        for n in re.findall(r"^Commit (\d+) \(", GOLD_PATH.read_text(), flags=re.M)
+    }
 
 
 def get_case_count() -> int:
@@ -275,8 +286,28 @@ def check_case_criterion_8(status: str, text: str) -> tuple[str, str]:
     return "Pass", ""
 
 
+def check_case_gold_write(case_num: int, status: str, text: str, write_set: set[int]) -> tuple[str, str]:
+    """A commit the gold file says gets a note must get one, so skipping everything can't pass.
+
+    Judges only the first line of the commit's text. In a single-file run the last
+    commit's segment runs to the end of the response and can include the closing
+    "Skipped: ..." line, which says nothing about that commit.
+    """
+    if case_num not in write_set:
+        return "Not applicable", ""
+    if status == "missing":
+        return "Fail", "gold file says this commit gets a note, but it was missing"
+    first = text.strip().split("\n", 1)[0]
+    if any(re.search(p, first, re.I) for p in CLARIFY_PATTERNS):
+        return "Fail", "gold file says this commit gets a note, but it was asked about"
+    if SKIP_WORD_RE.search(first):
+        return "Fail", "gold file says this commit gets a note, but it was skipped"
+    return "Pass", ""
+
+
 def main() -> None:
     case_count = get_case_count()
+    write_set = get_gold_write_set()
     runs = discover_runs()
 
     rows = []
@@ -294,11 +325,12 @@ def main() -> None:
             c2, n2 = check_case_criterion_2(case_num, status, segments)
             c4, n4 = check_case_criterion_4(case_text)
             c8, n8 = check_case_criterion_8(status, case_text)
+            cg, ng = check_case_gold_write(case_num, status, case_text, write_set)
 
-            if status != "missing" and "Fail" not in (c1, c2, c4, c8):
+            if status != "missing" and "Fail" not in (c1, c2, c4, c8, cg):
                 run_pass_count += 1
 
-            notes = "; ".join(f"C{c}: {n}" for c, n in [(1, n1), (2, n2), (4, n4), (8, n8)] if n)
+            notes = "; ".join(f"C{c}: {n}" for c, n in [(1, n1), (2, n2), (4, n4), (8, n8), ("gold", ng)] if n)
             rows.append(
                 {
                     "run": name,
@@ -307,6 +339,7 @@ def main() -> None:
                     "criterion_2_one_note_per_commit": c2,
                     "criterion_4_no_internal_filenames": c4,
                     "criterion_8_decided_every_commit": c8,
+                    "gold_commit_written": cg,
                     "notes": notes,
                 }
             )
@@ -322,6 +355,7 @@ def main() -> None:
                 "criterion_2_one_note_per_commit",
                 "criterion_4_no_internal_filenames",
                 "criterion_8_decided_every_commit",
+                "gold_commit_written",
                 "notes",
             ],
         )

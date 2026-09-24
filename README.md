@@ -20,11 +20,19 @@ A GitHub Action now re-runs the 20 cases whenever a skill or shared file changes
 
 ## The two skills
 
-**`release-notes`** turns raw git commit messages into user-facing release notes. The notes use the past tense, and they cover only changes a user of the product would notice. The skill also flags anything it couldn't verify. The test cases come from a real project of mine, a book-recommendation skill, so "would a user notice this?" has a real answer. It took ten rounds of testing to hold up. `CHANGELOG.md` and `decisions.md` record each mistake it made along the way.
+**`release-notes`** turns raw git commit messages into user-facing release notes. The notes use the past tense, and they cover only changes a user of the product would notice. The skill also flags anything it couldn't verify. The test cases come from a real project of mine, a book-recommendation skill, so "would a user notice this?" has a real answer. It is written for that one project: its skip rule names the book-recommendation skill, so using it for another product would need a rewrite and new test cases. It went through ten rounds of testing and rule changes before I first ran it by script. `CHANGELOG.md` and `decisions.md` record each mistake it made along the way.
 
-**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply. I grounded it by hand-reviewing three real documents from this repo before writing any rule. Everything for this skill is graded by hand, and I did not build a rubric or automated checks for it.
+**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply. I grounded it by hand-reviewing three real documents from this repo before writing any rule. Everything for this skill is graded by hand, and I did not build a rubric or automated checks for it because the point of the project was to show that the first skill could be replicated overall, not flesh out the second skill.
 
 Both skills share rules in `shared/house-style.md`. `shared/hard-surfaces.md` says what each should do when input is missing, unclear, or out of scope. `tools/read-commits.md` documents the input format `release-notes` expects.
+
+## How to make a third skill
+1. Make a folder with the skill title under 'skills' folder.
+2. Write SKILL.md
+3. Add test cases in eval/cases folder
+4. Add 'gold' cases
+5. Add a rubric
+6. Add results of running the skill to the run folder
 
 ## Running it yourself
 
@@ -32,15 +40,17 @@ You need an Anthropic API key:
 
 ```
 export ANTHROPIC_API_KEY="sk-..."
-pip install anthropic --break-system-packages
+python3 -m venv .venv
+source .venv/bin/activate
+pip install anthropic
 ```
 
 Then run these from the repo root:
 
-- `python3 scripts/run-eval.py --name run-12` runs the 20 release-notes cases once and saves each response to `evals/runs/run-12/`. The script never overwrites an existing response, so give each run a new name.
-- `python3 scripts/run-eval.py --name run-12 --repeats 5` runs each case 5 times (100 calls) into `evals/runs/run-12/rep-01/` through `rep-05/`.
-- `python3 scripts/check-mechanical.py` grades every saved release-notes run on the automatable criteria and writes `evals/runs/mechanical-results.csv`. It only handles release-notes, because doc-review has no rubric yet.
-- `python3 scripts/check-pass-rate.py --minimum 0.75 --run run-12` reads that CSV, scores only the `run-12` run, and exits with an error if the pass rate is below the minimum. The CI check runs this last.
+- `python3 scripts/run-eval.py --name run-13` runs the 20 release-notes cases once and saves each response to `evals/runs/run-13/`. The script never overwrites an existing response, so give each run a new name.
+- `python3 scripts/run-eval.py --name run-13 --repeats 5` runs each case 5 times (100 calls) into `evals/runs/run-13/rep-01/` through `rep-05/`.
+- `python3 scripts/check-mechanical.py` grades every saved release-notes run on the automatable criteria and writes `evals/runs/mechanical-results.csv`. It only handles release-notes, because doc-review has no rubric.
+- `python3 scripts/check-pass-rate.py --minimum 0.75 --run run-13` reads that CSV, scores only the `run-13` run, and exits with an error if the pass rate is below the minimum. The CI check runs the same command last, on its own run name, `run-12`.
 
 A person still grades the judgment criteria, such as whether a skip was correct. Those grades go into `evals/runs/judgment-grades.csv`.
 
