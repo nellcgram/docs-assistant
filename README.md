@@ -16,7 +16,7 @@ This project builds two Claude Code skills, `release-notes` and `doc-review`, an
 
 A 5-repeat run found that only 9 of 20 cases pass every time, so the skill is correct more often than it is consistent. That run predates moving the shared rules into `shared/house-style.md`.
 
-A GitHub Action now re-runs the 20 cases whenever a skill or shared file changes, and fails the check below a 0.75 pass rate. A deliberately broken skill scored 0.10 and failed it, and the fixed skill scored 0.85 and passed. The check grades only the four mechanical criteria, so it catches large regressions, not subtle ones: four of my five test breaks scored 0.80 to 0.85 and passed. The judgment criteria are still hand-graded. See `evals/findings.md` for the full test, with screenshots of the failing and passing runs.
+A GitHub Action (since removed, now that the project is finished) re-ran the 20 cases whenever a skill or shared file changed, and failed the check below a 0.75 pass rate. A deliberately broken skill scored 0.10 and failed it, and the fixed skill scored 0.85 and passed. The check grades only the four mechanical criteria, so it catches large regressions, not subtle ones: four of my five test breaks scored 0.80 to 0.85 and passed. The judgment criteria are still hand-graded. See `evals/findings.md` for the full test, with screenshots of the failing and passing runs.
 
 ## The two skills
 
@@ -50,11 +50,11 @@ Then run these from the repo root:
 - `python3 scripts/run-eval.py --name run-13` runs the 20 release-notes cases once and saves each response to `evals/runs/run-13/`. The script never overwrites an existing response, so give each run a new name.
 - `python3 scripts/run-eval.py --name run-13 --repeats 5` runs each case 5 times (100 calls) into `evals/runs/run-13/rep-01/` through `rep-05/`.
 - `python3 scripts/check-mechanical.py` grades every saved release-notes run on the automatable criteria and writes `evals/runs/mechanical-results.csv`. It only handles release-notes, because doc-review has no rubric.
-- `python3 scripts/check-pass-rate.py --minimum 0.75 --run run-13` reads that CSV, scores only the `run-13` run, and exits with an error if the pass rate is below the minimum. The CI check runs the same command last, on its own run name, `run-12`.
+- `python3 scripts/check-pass-rate.py --minimum 0.75 --run run-13` reads that CSV, scores only the `run-13` run, and exits with an error if the pass rate is below the minimum.
+
 
 A person still grades the judgment criteria, such as whether a skip was correct. Those grades go into `evals/runs/judgment-grades.csv`.
 
-To run the check on GitHub, add your key as a repository secret named `ANTHROPIC_API_KEY` (Settings, then Secrets and variables, then Actions). Never put the key in the workflow file. Each CI run makes about 20 API calls.
 
 ## How the repo is organized
 
@@ -67,4 +67,4 @@ To run the check on GitHub, add your key as a repository secret named `ANTHROPIC
 - `evals/runs/` holds every run's output and score.
 - `evals/findings.md`, `CHANGELOG.md`, and `decisions.md` record what went wrong, what changed, and why.
 - `scripts/` holds the eval runner, the mechanical grader, and the pass-rate gate.
-- `.github/workflows/eval.yml` runs all three on every push that touches `.claude/skills/` or `shared/`.
+- The GitHub Action that ran all three on every push was removed on 2026-09-25 when the project was finished. [`evals/findings.md`](evals/findings.md) keeps the record and screenshots of it failing once and passing once.

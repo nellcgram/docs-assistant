@@ -4,13 +4,13 @@ This file explains why each test run failed, newest first. I gave every failure 
 
 ## CI safety net (2026-09-21)
 
-A GitHub Action re-runs the eval on each push and fails the check below a 0.75 pass rate. To test it, I broke `SKILL.md` on purpose in five ways.
+A GitHub Action re-ran the eval on each push and failed the check below a 0.75 pass rate. I removed the workflow and its API key secret on 2026-09-25 when the project was finished, so the screenshots below are the only record. To test it, I broke `SKILL.md` on purpose in five ways.
 
 The full results table is in [case-study.md](../case-study.md#a-safety-net-phase-8). Only the last break, an explicit override, failed the check (0.10).
 
 The override run failed the check at the pass-rate step, not on a crash. Two other early runs also failed because the API credit balance ran out, so I didn't count them.
 
-Screenshots of the GitHub Actions pages are in `evals/screenshots/`. They were taken while the CI run was still named `v4`, so the logs show `--run v4`, which is now `run-12`.
+Screenshots of the GitHub Actions pages are in `evals/screenshots/`. They were taken while the CI run was still named `v4`, so the logs show `--run v4`, the name before the `run-NN` pattern.
 
 Run #8 (commit `58ba015`, the override) failed, while runs #4 to #7, the four mild breaks, passed:
 
@@ -39,7 +39,7 @@ I scored ten tricky inputs, five per skill, against `shared/hard-surfaces.md` (`
 - **The skill descriptions don't cover vague or out-of-scope prompts (gap, still open).** No skill loaded for doc-review inputs 2, 4, and 5 or release-notes input 3, so the agent simply did the task.
 - **`hard-surfaces.md` had no bullet for a wrong-language document or a wrong skill name (gap, fixed).** I added both.
 - **The `house-style.md` reference had no path (ambiguity, fixed).** The agent could not find the file.
-- **Release-notes input 4 ("review commits against checklist") went to doc-review (unresolved).** That routing may be reasonable, but I scored it a fail because the response guessed instead of asking.
+- **Release-notes input 4 ("review commits against checklist") went to doc-review (unresolved).** That routing may be reasonable, and it may be a product design problem, because the two skills overlap when a prompt mixes commits and reviewing. I scored it a fail because the response guessed instead of asking.
 
 Each input ran once, so a one-input difference is within noise.
 
@@ -57,7 +57,7 @@ Run 11 was the first scripted run (one API call per commit). Its 5-repeat varian
 - **Commit 6 (1e3c29b) fails 4 of 5 repeats.** The model writes a note for a fix to the skill's own description, which users never see.
 - **Commit 18 (b50af03) fails all 5 repeats.** The model writes a note instead of skipping in 4 repeats and hedges in all 5.
 
-I made no edit. My working theory is that one call per commit invites hedging, because each call has no other commit to calibrate against.
+I made no edit. My working theory is that one call per commit invites hedging, because each call has no other commit to calibrate against. If that is right, the cause is the harness and not the skill, and I haven't tested it.
 
 ## Runs 8 to 10 (2026-09-15)
 
@@ -74,7 +74,7 @@ Run 6 sent one call per commit instead of one batch. It produced three new failu
 - **Nearly every skip came with a paragraph defending it (ambiguity).** Rule 4 said "no entry" but never barred writing about the decision.
 - **Prose around skips used the present tense (gap).** The tense rule covered notes only.
 
-Run 7 (batched again) scored 20 of 20, so the call format caused the regression. I fixed the wording anyway.
+Run 7 (batched again) scored 20 of 20, so the call format caused the regression (a tool or harness cause, not the skill). I fixed the wording anyway.
 
 ## Run 5 (2026-09-14): 19 of 20
 
@@ -87,6 +87,6 @@ Commit 18 hedged ("I'm not confident; let me know") instead of deciding. This wa
 
 ## Runs 1 to 3 (2026-09-14)
 
-- **Run 1 scored 0 of 20.** Nothing forbade checking other repos, so the model tried to verify hashes elsewhere (tool-causing gap). Nothing required past tense or barred internal file names (tool-causing gap). The skill also said both "skip" and "always write a SKIP line," so the model followed the second rule while the rubric wanted no note (ambiguity).
+- **Run 1 scored 0 of 20.** Nothing forbade checking other repos, so the model tried to verify hashes elsewhere (gap, with a tool problem underneath: the test hashes didn't exist in any repo the model could reach, so every lookup was doomed). Nothing required past tense or barred internal file names (gap). The skill also said both "skip" and "always write a SKIP line," so the model followed the second rule while the rubric wanted no note (ambiguity).
 - **Run 2 also scored 0 of 20.** The model still looked commits up, because the rule only said "don't check other repos" (ambiguity).
 - **Run 3 also scored 0 of 20.** The model skipped commit 19 although users would see its effect, because the skill had no example showing that technical-sounding commits can matter (gap). Notes for commits 4 and 19 stayed vague through two revisions, so the skill now says an accurate but vague note fails (ambiguity).

@@ -2,6 +2,11 @@
 
 This file lists every change to a skill, its rubric, or the eval tooling, newest first. Rule changes quote the old and new wording and give the reason. Scores are in `evals/runs/README.md`, failure causes are in `evals/findings.md`, and the reasoning is in `decisions.md`.
 
+## 2026-09-25: CI workflow removed (no skill edit)
+- **`.github/workflows/eval.yml`:** I deleted it and removed the `ANTHROPIC_API_KEY` repository secret, because the project is finished and every push would otherwise spend API money. Nothing else changed: the scripts still run by hand, and no score changed.
+- **`evals/screenshots/eval error messages.png`:** I deleted it because no file linked to it. The four screenshots that `evals/findings.md` embeds stay as the record of the CI test.
+- **Older entries:** the 2026-09-21 entry below describes the workflow as it was.
+
 ## 2026-09-23: Default-to-skip exception and gold-write guard
 - **`shared/house-style.md` rule 3:** the old wording, "When a skill silently defaults to something, say that a default was applied," conflicted with `release-notes` rule 8 (default to skip) and rule 4 (no per-commit skip explanations). It now adds: "Exception: a default-to-skip is not announced per commit. The skill reports skips only in one aggregate line." The release-notes skill itself is unchanged.
 - **`release-notes/SKILL.md` Purpose:** it now says the skill "is written for the book-recommendation project's release notes."
@@ -18,12 +23,12 @@ This file lists every change to a skill, its rubric, or the eval tooling, newest
 I removed the two pointer rules (old rules 5 and 8) from `release-notes/SKILL.md`, because `shared/house-style.md` already states them. The remaining rules moved up, so the old rules 10, 11, and 12 are now rules 8, 9, and 10. I also changed the rule 1 example to "…so you will not be shown books you've already read." Earlier entries and run files use the rule numbers in force at the time.
 
 ## 2026-09-21: Run names standardized (no skill edit)
-I renamed `v3` to Run 11 and `v4` to `run-12` so every run follows the `run-NN` pattern, and updated the scripts, CSVs, and links to match. No score changed.
+I renamed `v3` to Run 11 and the CI run `v4` to the `run-NN` pattern so every run follows the `run-NN` pattern, and updated the scripts, CSVs, and links to match. No score changed.
 
 ## 2026-09-21: CI check added (no skill edit)
 A GitHub Action now re-runs the 20-case eval on every push that touches `.claude/skills/` or `shared/`, and it fails the check if the pass rate drops below 0.75.
 - **`.github/workflows/eval.yml`:** The workflow runs `run-eval.py`, `check-mechanical.py`, and then the gate. The API key is a repository secret and never appears in the file.
-- **`scripts/check-pass-rate.py` (new):** It reads `mechanical-results.csv`, scores only the run the job just produced (`--run run-12`), and exits nonzero below the minimum. It also fails when no rows match, so a run that produced nothing can't pass.
+- **`scripts/check-pass-rate.py` (new):** It reads `mechanical-results.csv`, scores only the run the job just produced (`--run`), and exits nonzero below the minimum. It also fails when no rows match, so a run that produced nothing can't pass.
 - **Testing:** I broke `SKILL.md` on purpose in five temporary ways and reverted every one. Only the last break failed the check (0.10), and `evals/findings.md` has the results and screenshots of the failing and passing runs. The skill and shared files are byte-identical before and after the tests.
 
 ## 2026-09-19: Shared rules and hard-input handling
