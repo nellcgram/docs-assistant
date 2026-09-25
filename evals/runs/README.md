@@ -2,7 +2,7 @@
 
 This file is every number in this project and the file that backs it. I copied the numbers from the linked files and didn't recompute them, so update this page whenever a source file changes.
 
-Last checked: 2026-09-21.
+Last checked: 2026-09-25.
 
 Related: [case-study.md](../../case-study.md) (the narrative) · [decisions.md](../../decisions.md) (why) · [CHANGELOG.md](../../CHANGELOG.md) (skill edits) · [findings.md](../findings.md) (failure causes)
 
@@ -30,11 +30,11 @@ These aren't among the five numbers, but the plan requires them.
 - **Phase 5, mechanical vs. manual grading:** I reconciled them case by case. The comparison caught wrong summaries in Runs 5, 6, 8, and 9, which I corrected in place. Sources: [mechanical-results.csv](mechanical-results.csv), [judgment-grades.csv](judgment-grades.csv), [decisions.md](../../decisions.md).
 - **Phase 6, cases passing all 5 repeats: 9 of 20.** Source: [run-11-stats.csv](run-11-stats.csv). This predates the shared-rules change (see [decisions.md](../../decisions.md)).
 - **Phase 6, same measure on an earlier skill (Run 10): 16 of 20.** Source: [run-10-stats.csv](run-10-stats.csv).
-- **CI failing once and passing once:** a deliberately broken skill scored 0.10 (2 of 20) and failed the check (commit `58ba015`). After the revert the identical skill scored 0.85 (17 of 20) and passed (commit `12e8829`). Sources: [findings.md](../findings.md), `.github/workflows/eval.yml`, and screenshots of the GitHub Actions pages: the [run list](../screenshots/all%20workflows%20error%20message.png), the [failing log](../screenshots/log%20error%20message.png), the [passing run list](../screenshots/fixed%20skill%201.png), and the [passing log](../screenshots/fixed%20skill%202_log.png).
+- **CI failing once and passing once:** a deliberately broken skill scored 0.10 (2 of 20) and failed the check (commit `58ba015`). After the revert the identical skill scored 0.85 (17 of 20) and passed (commit `12e8829`). Sources: [findings.md](../findings.md), and screenshots of the GitHub Actions pages (the workflow file itself was removed on 2026-09-25): the [run list](../screenshots/all%20workflows%20error%20message.png), the [failing log](../screenshots/log%20error%20message.png), the [passing run list](../screenshots/fixed%20skill%201.png), and the [passing log](../screenshots/fixed%20skill%202_log.png).
 
 ## Every run
 
-Each entry says what changed since the previous run and what the run scored. Every scripted run uses the `run-NN` name, and CI writes to `run-12`.
+Each entry says what changed since the previous run and what the run scored. Every scripted run uses the `run-NN` name.
 
 - **Run 1: 0 of 20.** The first version of the skill had no rules yet. [run-01.md](run-01.md)
 - **Run 2: 0 of 20.** I added rules against checking other repos, using the wrong tense, and naming internal files. [run-02.md](run-02.md)

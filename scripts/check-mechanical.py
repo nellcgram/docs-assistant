@@ -126,7 +126,7 @@ def discover_runs() -> dict[str, tuple[str, Path]]:
             continue
         # A run folder can hold a single run's case files directly (the
         # non-repeat run) AND rep-*/ subfolders (a --repeats run) at the same
-        # time, as run-11 and run-12 do — check both, don't stop at the first match.
+        # time, as run-11 does — check both, don't stop at the first match.
         if any(d.glob("case-*.md")):
             runs[d.name] = ("multi", d)
         for rep_dir in sorted(d.glob("rep-*")):

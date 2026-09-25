@@ -4,15 +4,62 @@ This file records every judgment call in the project, newest first. Each entry s
 
 Short on time? Start with these three: [The CI test used an override, because four simpler breaks passed](#2026-09-21-the-ci-test-used-an-override-because-four-simpler-breaks-passed), [Run 1 vs Run 5 is the second number, not Run 6](#2026-09-17-run-1-vs-run-5-is-the-second-number-not-run-6), and [Unverifiable doesn't count against a commit](#2026-09-15-unverifiable-doesnt-count-against-a-commit).
 
+## 2026-09-25: Remove the CI workflow and unused screenshot
+**Decision:** I deleted `.github/workflows/eval.yml`, deleted the `ANTHROPIC_API_KEY` repository secret, and deleted `evals/screenshots/eval error messages.png`.
+
+**Why:** The project is finished, and a workflow that calls the API on every push keeps costing money for no new information. The deleted screenshot was the only one no file linked to.
+
+**Result:** The eval scripts still run by hand. I kept the four screenshots that `findings.md` embeds, because they are the only proof that the CI check failed once and passed once. Older entries describe the workflow as it was.
+
+## 2026-09-24: No held-out set, and the draft was kept off GitHub
+**Decision:** I drafted a synthetic held-out set of 20 commits with a gold file, then removed it before publishing. I also removed the `--cases` option from `run-eval.py` and the `holdout-NN` grading from `check-mechanical.py`, which existed only for it. Neither file is in the repo.
+
+**Why:** The other 20 of the original 40 real commits could not be recovered: the book-recommendation repo has no local history and isn't on GitHub. Claude drafted the set after reading the skill, so its gold file was biased toward what the skill already does, and it was never reviewed or frozen. An unreviewed set would look like evidence without being any.
+
+**Result:** No held-out run exists. Every score still comes from the 20 commits the skill was tuned against, and the case study says so.
+
+## 2026-09-23: Default-to-skip is exempt from "say a default was applied"
+**Decision:** I added an exception to `shared/house-style.md` rule 3: a default-to-skip is not announced per commit, and the skill reports skips only in one aggregate line. I left the release-notes skill alone.
+
+**Why:** Rule 3 said to announce any silent default, while `release-notes` rules 4 and 8 told the skill to default to skip and bar per-commit skip explanations. Changing the skill would have changed the behavior every score measures. Changing the shared file settled the conflict without touching the tested rules.
+
+**Result:** Logged in `CHANGELOG.md`. Old runs predate the wording and I did not re-score them.
+
+## 2026-09-23: A skill that skips everything can no longer pass the check
+**Decision:** I added a `gold_commit_written` column to `check-mechanical.py` and a `--min-gold` gate (default 0.6) to `check-pass-rate.py`. A commit the gold file says gets a note (1, 2, 4, 8, 19) now fails if it was skipped, asked about, or missing.
+
+**Why:** Fifteen of the 20 commits are skips, so a skill that skipped everything scored 0.75, exactly the CI threshold. Adding only the column would have left that hole open, so I added the second gate.
+
+**Result:** A simulated skip-everything run now fails. No existing run's pass count changed. The five deliberate breaks in the CI test predate this guard.
+
+## 2026-09-23: `release-notes` stays specific to the book-recommendation project
+**Decision:** I did not generalize rule 4. I added one line to the Purpose and one to the README saying the skill is written for that project.
+
+**Why:** Rule 4 names the book-recommendation skill, and every test case comes from that project. A general version would change behavior and need new test cases I don't have.
+
+**Result:** The README and the skill say so plainly.
+
+## 2026-09-23: Grade rows for Runs 4, 5, 6, and 7 expanded to 20 each
+**Decision:** I expanded the grouped rows in `judgment-grades.csv` into one row per case, copying the grades from `run-04.md` through `run-07.md`.
+
+**Why:** The rubric requires one graded row per case, and these four runs had grouped rows.
+
+**Result:** Every run in the file now has 20 rows. No grade changed.
+
+## 2026-09-23: The two squash-merged branches stay
+**Decision:** I kept `add-release-notes` and `add-eval-automation-and-file-renames` and deleted the other merged branches.
+
+**Why:** Those two were squash-merged, so their commit-by-commit history is only on the branches. `main` has the files but not the day-by-day steps.
+
 ## 2026-09-21: Every run uses one naming scheme
-**Decision:** I renamed the scripted run `v3` to Run 11 and made the CI run name `run-12`, so every run follows the `run-NN` pattern. I also moved `run-06/grading.md` to `run-06.md`, so Run 6 keeps its grading file beside its folder like the other runs. I renamed `hard-cases-01.md` to `hard-cases-run-01.md` to match `trigger-run-01.md`.
+**Decision:** I renamed the scripted run `v3` to Run 11 and gave the CI run the same `run-NN` pattern, so every run follows the `run-NN` pattern. I also moved `run-06/grading.md` to `run-06.md`, so Run 6 keeps its grading file beside its folder like the other runs. I renamed `hard-cases-01.md` to `hard-cases-run-01.md` to match `trigger-run-01.md`.
 
 **Why:** Two naming schemes made the run history harder to scan.
 
 **Result:** Links, CSV row labels, and scripts all use the new names, and the scripts no longer recognize `vN` names. No score changed.
 
 ## 2026-09-21: The CI gate scores only the fresh run
-**Decision:** `scripts/check-pass-rate.py` takes `--run run-12` and scores only the run the job just produced. It fails if it finds no matching rows.
+**Decision:** `scripts/check-pass-rate.py` takes a `--run` name and scores only the run the job just produced. It fails if it finds no matching rows.
 
 **Why:** `mechanical-results.csv` holds every run in the project's history (340 rows before CI), so averaging all of them would let old good runs hide a new bad one. An eval that produced nothing must not pass.
 
