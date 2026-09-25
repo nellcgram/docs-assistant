@@ -1,6 +1,6 @@
 # Case Study: Building and Evaluating Two Claude Code Skills
 
-[One line for you to fill in: your role, the job this portfolio is for, and how long the project took.]
+This was my first completed project to teach myself how to build an agentic AI skill, rubric, and eval harness.
 
 **In short:** I wrote two Claude Code skills, one that turns git commits into release notes and one that reviews a document against a checklist. I built an evaluation around the first: 20 real commits, a hand-written answer key, a graded rubric, scripted runs, and a GitHub Action that fails on regressions. The scores moved a lot, but what I learned from the failures is worth more than any score. The test commits come from a separate book-recommendation project of mine, and every number below links to the file behind it.
 
