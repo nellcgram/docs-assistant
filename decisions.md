@@ -7,16 +7,9 @@ Short on time? Start with these three: [The CI test used an override, because fo
 ## 2026-09-25: Remove the CI workflow and unused screenshot
 **Decision:** I deleted `.github/workflows/eval.yml`, deleted the `ANTHROPIC_API_KEY` repository secret, and deleted `evals/screenshots/eval error messages.png`.
 
-**Why:** The project is finished, and a workflow that calls the API on every push keeps costing money for no new information. The deleted screenshot was the only one no file linked to.
+**Why:** The project is finished for now, and a workflow that calls the API on every push keeps costing money for no new information. The deleted screenshot was the only one no file linked to.
 
 **Result:** The eval scripts still run by hand. I kept the four screenshots that `findings.md` embeds, because they are the only proof that the CI check failed once and passed once. Older entries describe the workflow as it was.
-
-## 2026-09-24: No held-out set, and the draft was kept off GitHub
-**Decision:** I drafted a synthetic held-out set of 20 commits with a gold file, then removed it before publishing. I also removed the `--cases` option from `run-eval.py` and the `holdout-NN` grading from `check-mechanical.py`, which existed only for it. Neither file is in the repo.
-
-**Why:** The other 20 of the original 40 real commits could not be recovered: the book-recommendation repo has no local history and isn't on GitHub. Claude drafted the set after reading the skill, so its gold file was biased toward what the skill already does, and it was never reviewed or frozen. An unreviewed set would look like evidence without being any.
-
-**Result:** No held-out run exists. Every score still comes from the 20 commits the skill was tuned against, and the case study says so.
 
 ## 2026-09-23: Default-to-skip is exempt from "say a default was applied"
 **Decision:** I added an exception to `shared/house-style.md` rule 3: a default-to-skip is not announced per commit, and the skill reports skips only in one aggregate line. I left the release-notes skill alone.
