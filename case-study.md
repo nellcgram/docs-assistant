@@ -6,11 +6,11 @@ This was my first completed project to teach myself how to build an agentic AI s
 
 ## Four things I found
 
-**1. My first 0 of 20 was my own documents disagreeing.** The rubric required past tense and no internal file names. The skill never said either, and it also told the model to write a SKIP line where the rubric wanted no note at all. Most of the climb to 19 of 20 was making the spec and the rubric agree/ I made the same kind of mistake twice more, between `hard-surfaces.md` and rule 10, and between `house-style.md` rule 3 and skill rules 4 and 8. I caught both by reading.
+**1. My first 0 of 20 was my own documents disagreeing.** The rubric required past tense and no internal file names. The skill never said either, and it also told the model to write a SKIP line where the rubric wanted no note at all. Most of the climb to 19 of 20 was making the spec and the rubric agree. I made the same kind of mistake twice more, between `hard-surfaces.md` and rule 10, and between `house-style.md` rule 3 and skill rules 4 and 8. I caught both by reading.
 
 **2. A passing test gate can be nearly blind, because of redundancy.** The GitHub Action (since removed) failed a push below a 0.75 pass rate. To test it, I broke the skill five ways on purpose. Four of the breaks passed at 0.80 to 0.85, including deleting four rules and reversing the tense rule, because the shared files repeated the key rules and the model followed those. Only an explicit override scored 0.10 and failed. The identical correct skill scored 0.95 and then 0.85, since one case was worth 0.05, so a stricter threshold would have failed a good skill.
 
-**3. How I called the skill changed the score more than most rule edits.** The same skill scored 20 of 20 when all 20 commits went in one request (Run 7) and 4 of 20 when each commit was its own call (Run 6). With no other commit to calibrate against, the model wrote notes for changes no user would see and attached reasons to skipped commits, which the skill forbid. A score measured the skill.
+**3. How I called the skill changed the score more than most rule edits.** The same skill scored 20 of 20 when all 20 commits went in one request (Run 7) and 4 of 20 when each commit was its own call (Run 6). With no other commit to calibrate against, the model wrote notes for changes no user would see and attached reasons to skipped commits, which the skill forbade. A score measured the skill.
 
 **4. The skill was right more often than it was consistent, and my own summaries were wrong.** Across 5 repeats of 20 cases, only 9 cases passed every time. The misses were mostly correct decisions with extra explanation attached. Separately, grading a whole run as one verdict hid failures. Reconciling the script's grades with mine corrected four run summaries (Runs 5, 6, 8, and 9), including Run 6, which went from "0 of 20" to 4 of 20. That's why every run was graded one row per case.
 
@@ -49,7 +49,7 @@ After several more rounds of fixes, Run 5 ([`evals/runs/run-05.md`](evals/runs/r
 
 Once the skill held up under manual testing, I automated the harness. [`scripts/run-eval.py`](scripts/run-eval.py) read the skill and the 20 cases and called the API once per commit, where before I had pasted prompts into a fresh session by hand. A script ran the cases, but grading was still by hand at this point. The scripted run (Run 11, [`evals/runs/run-11.md`](evals/runs/run-11.md)) scored **15 of 20**.
 
-That ws lower than Run 5's 19, and the gap came from the call format. Each commit was judged with no other commit to calibrate against. The model wrote a note for a fix to the skill's own description and it attached reasons to four correct commit skips, which the skill forbid.
+That was lower than Run 5's 19, and the gap came from the call format. Each commit was judged with no other commit to calibrate against. The model wrote a note for a fix to the skill's own description and it attached reasons to four correct commit skips, which the skill forbid.
 
 ## Automating grading, partially (Phase 5)
 
