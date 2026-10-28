@@ -1,32 +1,16 @@
 # Case Study: Building and Evaluating Two Claude Code Skills
 
-This was my first completed project to teach myself how to build an agentic AI skill, rubric, and eval harness.
-
-**Summary:** I wrote two Claude Code skills, one that turns git commits into release notes and one that reviews a document against a checklist. I built an evaluation around the first: 20 commits, a hand-written answer key, a graded rubric, scripted runs, and a GitHub Action that fails on regressions. The test commits come from a separate book-recommendation project of mine.
-
-## Four things I found
-
-**1. My first 0 of 20 was my own documents disagreeing.** The rubric required past tense and no internal file names. The skill never said either, and it also told the model to write a SKIP line where the rubric wanted no note at all. Most of the climb to 19 of 20 was making the spec and the rubric agree. I made the same kind of mistake twice more, between `hard-surfaces.md` and rule 10, and between `house-style.md` rule 3 and skill rules 4 and 8. I caught both by reading.
-
-**2. A passing test gate can be nearly blind, because of redundancy.** The GitHub Action (since removed) failed a push below a 0.75 pass rate. To test it, I broke the skill five ways on purpose. Four of the breaks passed at 0.80 to 0.85, including deleting four rules and reversing the tense rule, because the shared files repeated the key rules and the model followed those. Only an explicit override scored 0.10 and failed. The identical correct skill scored 0.95 and then 0.85, since one case was worth 0.05, so a stricter threshold would have failed a good skill.
-
-**3. How I called the skill changed the score more than most rule edits.** The same skill scored 20 of 20 when all 20 commits went in one request (Run 7) and 4 of 20 when each commit was its own call (Run 6). With no other commit to calibrate against, the model wrote notes for changes no user would see and attached reasons to skipped commits, which the skill forbade. A score measured the skill.
-
-**4. The skill was right more often than it was consistent, and my own summaries were wrong.** Across 5 repeats of 20 cases, only 9 cases passed every time. The misses were mostly correct decisions with extra explanation attached. Separately, grading a whole run as one verdict hid failures. Reconciling the script's grades with mine corrected four run summaries (Runs 5, 6, 8, and 9), including Run 6, which went from "0 of 20" to 4 of 20. That's why every run was graded one row per case.
-
 ## What the numbers do and don't show
 
 | Phase | What I measured | Result | What it can't show |
 |---|---|---|---|
-| 2 | First version of `release-notes` | 0 of 20 | Model quality: the rubric asked for rules the skill never had (finding 1) |
+| 2 | First version of `release-notes` | 0 of 20 | Model quality: the rubric asked for rules the skill never had |
 | 3 | After diagnosing and fixing the spec | 19 of 20 | Generalization: I tuned on these same 20 commits |
-| 4 | First scripted run (one API call per commit) | 15 of 20 | Skill quality alone: the call format changed too (finding 3) |
+| 4 | First scripted run (one API call per commit) | 15 of 20 | Skill quality alone: the call format changed too |
 | 6 | Cases that pass in all 5 repeats | 9 of 20 | Which failures matter: most are extra explanation on a correct answer |
 | 7 | Whether the right skill fires (before and after a reword) | 18 of 20, then 18 of 20 | Anything about vague prompts: I ran each prompt once |
 | 7 | Handling of missing, unclear, and out-of-scope input | 3 of 10 | Precision: ten inputs, so one flipped verdict is 10 points |
-| 8 | CI check on a deliberately broken skill | failed at 0.10, passed at 0.85 once fixed | Subtle regressions (finding 2) |
-
-Every score above came from the same 20 commits I tuned the skill against, which I graded. They showed that the method worked and how the skill behaved in those cases. They don't show that it would work on commits it had never seen. A separate set of commits the skill was never tuned on would show that, and I haven't built one yet.
+| 8 | CI check on a deliberately broken skill | failed at 0.10, passed at 0.85 once fixed | Subtle regressions |
 
 [`evals/runs/README.md`](evals/runs/README.md) links every number to the file behind it, and [`README.md`](README.md) explains how to re-run any of it.
 
@@ -88,7 +72,7 @@ Only the 10 release-notes prompts were re-run, since the other skill didn't chan
 
 A GitHub Action re-ran the 20 cases whenever a file under `.claude/skills/` or `shared/` changed, then ran `check-mechanical.py` and [`scripts/check-pass-rate.py`](scripts/check-pass-rate.py). The gate scores only the run the job just produced, because the results file holds every past run and averaging them would let old good runs hide a new bad one. It fails if it finds no rows, so an eval that produced nothing can't pass. The workflow first watched only `.claude/skills/`, and I fixed that gap when I saw that `shared/` edits change the model's behavior too.
 
-I removed the workflow and its API key secret on 2026-09-25 since this section is in-progress and may not be completed due to time constraints, so the screenshots in [`findings.md`](evals/findings.md) are the record of it working. To test it, I broke `SKILL.md` on purpose five ways and reverted each one ([`findings.md`](evals/findings.md), "CI safety net"):
+To test it, I broke `SKILL.md` on purpose five ways and reverted each one ([`findings.md`](evals/findings.md), "CI safety net"):
 
 | Change to the skill | Pass rate | Check |
 |---|---|---|
@@ -100,26 +84,11 @@ I removed the workflow and its API key secret on 2026-09-25 since this section i
 | Added an override: write no notes, only ask | **0.10 (2/20)** | **failed** |
 | Reverted to the correct skill | 0.85 (17/20) | passed |
 
-Four breaks passed because the shared files repeat the skill's key rules, so removing or contradicting one copy did nothing. The identical correct skill scored 0.95 before the tests and 0.85 after, which is run-to-run noise (one case is worth 0.05). That is why the threshold sits at 0.75 and not 0.90, which would have failed a good skill.
+The identical correct skill scored 0.95 before the tests and 0.85 after, which is run-to-run noise (one case is worth 0.05). That is why the threshold sits at 0.75 and not 0.90, which would have failed a good skill.
 
-The failing run's log shows the gate itself caught it: every earlier step succeeded, then `check-pass-rate.py` reported `FAIL: pass rate 0.10 is below the minimum 0.75`.
+## Limits
 
-![Log of failed run #8: the run-eval and check-mechanical steps passed, then check-pass-rate.py failed with "pass rate 0.10 is below the minimum 0.75"](evals/screenshots/log%20error%20message.png)
-
-After I reverted the override, the next run (commit `12e8829`) passed, directly above the failed one:
-
-![GitHub Actions run list: run #9, "fixed skill, done testing," passed, directly above the failed run #8](evals/screenshots/fixed%20skill%201.png)
-
-## Limits of this work
-
-I built the full evaluation method on one skill, `release-notes`, to show it in depth rather than repeat it on two. Not everything is covered: `doc-review` is checked by eye, the automated check catches only large regressions, and the results come from a small test set that the skill was tuned against. The list below states each gap.
-
-- **The check catches large regressions, not subtle ones.** It grades only the four mechanical criteria plus one guard that the five commits with a gold-file note must get one, so a skill that skips everything fails. Four of my five test breaks passed, and I added the guard after those tests, so the tests don't cover it. Tone, whether the right commits were skipped, and whether a note is specific enough are judgment criteria that stay hand-graded, so automation has a real ceiling here.
+- **What the check grades.** The four mechanical criteria plus one guard: the five commits with a gold-file note must get one, so a skill that skips everything fails. I added the guard after the test breaks, so those tests don't cover it. Tone, whether the right commits were skipped, and whether a note is specific enough are judgment criteria that stay hand-graded.
 - **Scripted runs can't test the repo-check rule.** `run-eval.py` sends the skill text and one commit to the API with no repo access, so the rule that checks a commit against its description never fires, and rubric criterion 6 is always "unverifiable" in those runs. The earlier manual runs used Claude Code, which can look at a repo, so the two kinds of run don't test exactly the same thing.
-- **The skill's examples come from the test cases, and I have no held-out result.** Its worked examples quote or paraphrase commits 4, 12, 14, and 19 from the same 20 test cases, and I fixed the rules against those same cases. I also reworded commits 4 and 19 after Run 3 so they were specific enough to demand a precise note. A score of 19 of 20 partly shows the skill knows these 20, not that it generalizes. I have no held-out set: the other 20 of my original 40 real commits could not be recovered.
-- **One person graded.** The gold answers and every judgment grade are mine, with no independent second grade. Only the four mechanical criteria are checked by script.
-- **The Run 11 scores predate the shared-rules change.** I have not re-scored the skill by hand since moving rules into `shared/`, apart from the CI runs.
-- **The 5-repeat result is still open.** Correct skips still pick up unwanted reasons, and I made no edit.
-- **Skill descriptions don't cover vague prompts.** Two release-notes trigger prompts and several hard-case inputs show this gap.
-- **`doc-review` has no scored rubric.** I built the eval method in full on `release-notes` only. Everything for `doc-review` is checked by eye, and `check-mechanical.py` covers only `release-notes`.
+- **The skill's examples come from the test cases, and I have no held-out result.** Its worked examples quote or paraphrase commits 4, 12, 14, and 19 from the same 20 test cases, and I fixed the rules against those same cases. I also reworded commits 4 and 19 after Run 3 so they were specific enough to demand a precise note. I have no held-out set: the other 20 of my original 40 real commits could not be recovered.
 - **Most measurements ran once.** The trigger and hard-case inputs each ran a single time, so a one-input difference is within noise.
