@@ -2,6 +2,10 @@
 
 This project builds two Claude Code skills, `release-notes` and `doc-review`, and evaluates them the way you would test production software.
 
+**Outcome:** On the 20 test commits, `release-notes` went from 0 of 20 cases passing to 19 of 20 once the spec was fixed. Across 5 repeats, 9 of 20 cases passed every time. All scores come from the same commits the skill was tuned on.
+
+**Method:** I wrote the correct answers for 20 real commits by hand before writing the skill. Each run is graded one row per case against a versioned 8-criterion rubric (`evals/rubric.md`). A script grades the 4 criteria it can, and I grade the rest. Each failure is traced to a cause, fixed in the spec, and the skill is run again.
+
 **Start here:** [case-study.md](case-study.md) is the full write-up, with a file behind every claim. [evals/runs/README.md](evals/runs/README.md) lists every score in one line each.
 
 ## The two skills
@@ -13,12 +17,12 @@ This project builds two Claude Code skills, `release-notes` and `doc-review`, an
 Both skills share rules in `shared/house-style.md`. `shared/hard-surfaces.md` says what each should do when input is missing, unclear, or out of scope. `tools/read-commits.md` documents the input format `release-notes` expects.
 
 ## How to make a third skill
-1. Make a folder with the skill title under 'skills' folder.
-2. Write SKILL.md
-3. Add test cases in eval/cases folder
-4. Add 'gold' cases
-5. Add a rubric
-6. Add results of running the skill to the run folder
+1. Make a folder named for the skill under `.claude/skills/`.
+2. Write its `SKILL.md`.
+3. Add test cases in `evals/cases/`.
+4. Add hand-written correct answers in `evals/gold/`.
+5. Add a rubric for the skill in `evals/rubric.md`.
+6. Add results of running the skill to `evals/runs/`.
 
 ## Running it yourself
 
@@ -53,4 +57,3 @@ A person still grades the judgment criteria, such as whether a skip was correct.
 - `evals/runs/` holds every run's output and score.
 - `evals/findings.md`, `CHANGELOG.md`, and `decisions.md` record what went wrong, what changed, and why.
 - `scripts/` holds the eval runner, the mechanical grader, and the pass-rate gate.
-- The GitHub Action that ran all three on every push was removed on 2026-09-25 when the project was finished. [`evals/findings.md`](evals/findings.md) keeps the record and screenshots of it failing once and passing once.

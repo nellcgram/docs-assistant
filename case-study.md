@@ -1,5 +1,7 @@
 # Case Study: Building and Evaluating Two Claude Code Skills
 
+This is the technical record of two Claude Code skills and the evaluation built around the first. `release-notes` turns git commit messages into user-facing release notes. `doc-review` checks a document against a checklist. The evaluation covers `release-notes` only: 20 test commits from a separate book-recommendation project of mine, a hand-written answer key, a rubric, scripted runs, and a GitHub Action that was later removed. I graded every judgment criterion myself, with no second grader, and every score comes from the same 20 commits I tuned the skill against. The scores show how the skill behaved on those cases, not that it works on commits it has never seen.
+
 ## What the numbers do and don't show
 
 | Phase | What I measured | Result | What it can't show |
@@ -18,7 +20,7 @@
 
 Before writing the skill I wrote the answer key explaining which of the 20 commits need a note and what each note should say ([`evals/gold/release-notes.md`](evals/gold/release-notes.md)). I then ran the first version of the skill ([`.claude/skills/release-notes/SKILL.md`](.claude/skills/release-notes/SKILL.md)) against the 20 commit descriptions ([`evals/cases/release-notes-20.md`](evals/cases/release-notes-20.md)) and graded each case by hand against a 6-criterion rubric ([`evals/rubric.md`](evals/rubric.md), Version 1). Result, in [`evals/runs/run-01.md`](evals/runs/run-01.md): **0 of 20 cases passed every criterion.**
 
-The skill had no rule against checking other repos, so it stopped to ask about them. It had no tense requirement, so notes switched between past and present. It had no rule against naming internal files like `SKILL.md`. I had to run it first to be able to anticipate further problems.
+The skill had no rule against checking other repos, so it stopped to ask about them. It had no tense requirement, so notes switched between past and present. It had no rule against naming internal files like `SKILL.md`. The rubric required past tense and no internal file names, and the skill never said either. The skill also told the model to write a SKIP line where the rubric wanted no note at all. I had to run it first to be able to anticipate further problems.
 
 ## Diagnosis and second number (Phase 3): 0 of 20 to 19 of 20
 
@@ -27,19 +29,19 @@ I traced every failure to one of four causes in [`evals/findings.md`](evals/find
 > Old: *"Skip a commit if the effect is not visible to the user."*
 > New: *"Skip a commit if it's a portfolio-site, eval, or project-meta change, even if it's visible to someone. A portfolio visitor is not a user of the book-recommendation skill."*
 
-After several more rounds of fixes, Run 5 ([`evals/runs/run-05.md`](evals/runs/run-05.md)) scored **19 of 20**, and later runs reached 20 of 20 ([`evals/runs/README.md`](evals/runs/README.md) lists every run). Run 5, not the regressed Run 6, is the second number because Run 6 changed the call format as well as the skill ([`decisions.md`](decisions.md)).
+After several more rounds of fixes, Run 5 ([`evals/runs/run-05.md`](evals/runs/run-05.md)) scored **19 of 20**, and later runs reached 20 of 20 ([`evals/runs/README.md`](evals/runs/README.md) lists every run). Run 5, not the regressed Run 6, is the second number because Run 6 changed the call format as well as the skill ([`decisions.md`](decisions.md)). Most of the climb to 19 of 20 was making the spec and the rubric agree, not the model improving. I made the same kind of mistake twice more, between `hard-surfaces.md` and rule 10 (see Phase 7), and between `house-style.md` rule 3 and skill rules 4 and 8. I caught both by reading, before a test showed them.
 
 ## Automating the run (Phase 4): 15 of 20
 
 Once the skill held up under manual testing, I automated the harness. [`scripts/run-eval.py`](scripts/run-eval.py) read the skill and the 20 cases and called the API once per commit, where before I had pasted prompts into a fresh session by hand. A script ran the cases, but grading was still by hand at this point. The scripted run (Run 11, [`evals/runs/run-11.md`](evals/runs/run-11.md)) scored **15 of 20**.
 
-That was lower than Run 5's 19, and the gap came from the call format. Each commit was judged with no other commit to calibrate against. The model wrote a note for a fix to the skill's own description and it attached reasons to four correct commit skips, which the skill forbid.
+That was lower than Run 5's 19, and the gap came from the call format. Each commit was judged with no other commit to calibrate against. The model wrote a note for a fix to the skill's own description and it attached reasons to four correct commit skips, which the skill forbid. The same skill scored 20 of 20 when all 20 commits went in one request (Run 7) and 4 of 20 when each commit was its own call (Run 6), so a score measures the skill and the way it is called together.
 
 ## Automating grading, partially (Phase 5)
 
 The script [`scripts/check-mechanical.py`](scripts/check-mechanical.py) graded 4 of the 8 rubric criteria that needed only the response text: past tense, one note per commit, no internal file names, and no asking. I graded the other four against what each commit actually meant, in [`evals/runs/judgment-grades.csv`](evals/runs/judgment-grades.csv). Splitting them made 100-file runs practical, and hand grading kept the combined score trustworthy.
 
-Reconciling the mechanical and human grades case by case caught four runs whose summaries were wrong (Runs 5, 6, 8, and 9). I corrected them in place and kept the original numbers visible beside the fix ([`decisions.md`](decisions.md)).
+Reconciling the mechanical and human grades case by case caught four runs whose summaries were wrong (Runs 5, 6, 8, and 9). I corrected them in place and kept the original numbers visible beside the fix ([`decisions.md`](decisions.md)). Run 6 went from "0 of 20" to 4 of 20, because grading a whole run as one verdict had hidden failures. That is why every run is graded one row per case.
 
 ## Consistency (Phase 6): 9 of 20 clean across 5 repeats
 
@@ -49,7 +51,7 @@ A single pass didn't show whether the skill holds up on repeat, so [`evals/runs/
 - **Commit 6 failed 4 of 5.** It wrote a note for an internal fix no user would see.
 - **Eight correct skips failed at least one repeat** by attaching a reason the commit was skipped.
 
-The rule was clear, so I classed this as a model limitation, logged it, and made no edit. My working theory is that one call per commit invites hedging. This finding is still open.
+The skill was right more often than it was consistent. The misses were mostly correct decisions with extra explanation attached. The rule was clear, so I classed this as a model limitation, logged it, and made no edit. My working theory is that one call per commit invites hedging. This finding is still open.
 
 ## A second skill (Phase 7)
 
@@ -72,6 +74,8 @@ Only the 10 release-notes prompts were re-run, since the other skill didn't chan
 
 A GitHub Action re-ran the 20 cases whenever a file under `.claude/skills/` or `shared/` changed, then ran `check-mechanical.py` and [`scripts/check-pass-rate.py`](scripts/check-pass-rate.py). The gate scores only the run the job just produced, because the results file holds every past run and averaging them would let old good runs hide a new bad one. It fails if it finds no rows, so an eval that produced nothing can't pass. The workflow first watched only `.claude/skills/`, and I fixed that gap when I saw that `shared/` edits change the model's behavior too.
 
+I removed the workflow and its API key secret on 2026-09-25 because it made API calls on every push. The screenshots below are the record of it working. If I expanded this project, I would bring it back and refine it.
+
 To test it, I broke `SKILL.md` on purpose five ways and reverted each one ([`findings.md`](evals/findings.md), "CI safety net"):
 
 | Change to the skill | Pass rate | Check |
@@ -84,7 +88,15 @@ To test it, I broke `SKILL.md` on purpose five ways and reverted each one ([`fin
 | Added an override: write no notes, only ask | **0.10 (2/20)** | **failed** |
 | Reverted to the correct skill | 0.85 (17/20) | passed |
 
-The identical correct skill scored 0.95 before the tests and 0.85 after, which is run-to-run noise (one case is worth 0.05). That is why the threshold sits at 0.75 and not 0.90, which would have failed a good skill.
+Four breaks passed because the shared files repeat the skill's key rules, so removing or contradicting one copy did nothing. The identical correct skill scored 0.95 before the tests and 0.85 after, which is run-to-run noise (one case is worth 0.05). That is why the threshold sits at 0.75 and not 0.90, which would have failed a good skill.
+
+The failing run's log shows the gate itself caught it: every earlier step succeeded, then `check-pass-rate.py` reported `FAIL: pass rate 0.10 is below the minimum 0.75`.
+
+![Log of failed run #8: the run-eval and check-mechanical steps passed, then check-pass-rate.py failed with "pass rate 0.10 is below the minimum 0.75"](evals/screenshots/log%20error%20message.png)
+
+After I reverted the override, the next run (commit `12e8829`) passed, directly above the failed one:
+
+![GitHub Actions run list: run #9, "fixed skill, done testing," passed, directly above the failed run #8](evals/screenshots/fixed%20skill%201.png)
 
 ## Limits
 
