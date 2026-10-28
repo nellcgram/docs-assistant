@@ -1,38 +1,26 @@
 # Docs Assistant
 
-This project builds two Claude Code skills, `release-notes` and `doc-review`, and evaluates them the way you would test production software. I wrote a first version of each skill, ran it against real cases, diagnosed why it failed, fixed the spec, and re-ran it.
+This project builds two Claude Code skills, `release-notes` and `doc-review`, and evaluates them the way you would test production software.
+
+**Method:** I wrote the correct answers for 20 real commits by hand before writing the skill. Each run is graded one row per case against a versioned 8-criterion rubric (`evals/rubric.md`). A script grades the 4 criteria it can, and I grade the rest. Each failure is traced to a cause, fixed in the spec, and the skill is run again.
 
 **Start here:** [case-study.md](case-study.md) is the full write-up, with a file behind every claim. [evals/runs/README.md](evals/runs/README.md) lists every score in one line each.
 
-## Results
-
-| # | What it measures | Result |
-|---|---|---|
-| 1 | First version of `release-notes` | 0 of 20 cases |
-| 2 | After diagnosing and fixing the spec | 19 of 20 |
-| 3 | First scripted run | 15 of 20 |
-| 4 | Whether the right skill fires (before and after rewording) | 18 of 20, then 18 of 20 |
-| 5 | Handling of missing, unclear, and out-of-scope input | 3 of 10 |
-
-A 5-repeat run found that only 9 of 20 cases pass every time, so the skill is correct more often than it is consistent. That run predates moving the shared rules into `shared/house-style.md`.
-
-A GitHub Action (since removed, now that the project is finished) re-ran the 20 cases whenever a skill or shared file changed, and failed the check below a 0.75 pass rate. A deliberately broken skill scored 0.10 and failed it, and the fixed skill scored 0.85 and passed. The check grades only the four mechanical criteria, so it catches large regressions, not subtle ones: four of my five test breaks scored 0.80 to 0.85 and passed. The judgment criteria are still hand-graded. See `evals/findings.md` for the full test, with screenshots of the failing and passing runs.
-
 ## The two skills
 
-**`release-notes`** turns raw git commit messages into user-facing release notes. The notes use the past tense, and they cover only changes a user of the product would notice. The skill also flags anything it couldn't verify. The test cases come from a real project of mine, a book-recommendation skill, so "would a user notice this?" has a real answer. It is written for that one project: its skip rule names the book-recommendation skill, so using it for another product would need a rewrite and new test cases. It went through ten rounds of testing and rule changes before I first ran it by script. `CHANGELOG.md` and `decisions.md` record each mistake it made along the way.
+**`release-notes`** turns raw git commit messages into user-facing release notes. The notes use the past tense, and they cover only changes a user of the product would notice. The skill also flags anything it couldn't verify. The test cases come from a real project of mine, a book-recommendation skill, so "would a user notice this?" has a real answer. It is written for that one project: its skip rule names the book-recommendation skill, so using it for another product would need a rewrite and new test cases.
 
-**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply. I grounded it by hand-reviewing three real documents from this repo before writing any rule. Everything for this skill is graded by hand, and I did not build a rubric or automated checks for it because the point of the project was to show that the first skill could be replicated overall, not flesh out the second skill.
+**`doc-review`** checks a document against a short checklist, such as whether it states its purpose up front and uses active voice. It reports pass, fail, or unverifiable for each item and says plainly when an item doesn't apply.
 
 Both skills share rules in `shared/house-style.md`. `shared/hard-surfaces.md` says what each should do when input is missing, unclear, or out of scope. `tools/read-commits.md` documents the input format `release-notes` expects.
 
 ## How to make a third skill
-1. Make a folder with the skill title under 'skills' folder.
-2. Write SKILL.md
-3. Add test cases in eval/cases folder
-4. Add 'gold' cases
-5. Add a rubric
-6. Add results of running the skill to the run folder
+1. Make a folder named for the skill under `.claude/skills/`.
+2. Write its `SKILL.md`.
+3. Add test cases in `evals/cases/`.
+4. Add hand-written correct answers in `evals/gold/`.
+5. Add a rubric for the skill in `evals/rubric.md`.
+6. Add results of running the skill to `evals/runs/`.
 
 ## Running it yourself
 
@@ -67,4 +55,3 @@ A person still grades the judgment criteria, such as whether a skip was correct.
 - `evals/runs/` holds every run's output and score.
 - `evals/findings.md`, `CHANGELOG.md`, and `decisions.md` record what went wrong, what changed, and why.
 - `scripts/` holds the eval runner, the mechanical grader, and the pass-rate gate.
-- The GitHub Action that ran all three on every push was removed on 2026-09-25 when the project was finished. [`evals/findings.md`](evals/findings.md) keeps the record and screenshots of it failing once and passing once.
