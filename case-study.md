@@ -70,11 +70,16 @@ Only the 10 release-notes prompts were re-run, since the other skill didn't chan
 
 **One source of truth.** Both skills originally restated some of the same rules, so I moved the three shared ones into `shared/house-style.md` and left each skill with a single reference. `run-eval.py` had to be changed to send the shared files to the model, so the Run 11 numbers predate this move ([`decisions.md`](decisions.md)).
 
-## A safety net (Phase 8)
+## Next steps
+The project plan’s next step was a content engineering experiment to test whether the same instructions perform  differently depending on how they're arranged, isolating token budget, ordering, and drift as variables, separate from content quality. It was not clear to me that further testing would be worth it given my limited budget, AI models, and time.
 
-A GitHub Action re-ran the 20 cases whenever a file under `.claude/skills/` or `shared/` changed, then ran `check-mechanical.py` and [`scripts/check-pass-rate.py`](scripts/check-pass-rate.py). The gate scores only the run the job just produced, because the results file holds every past run and averaging them would let old good runs hide a new bad one. It fails if it finds no rows, so an eval that produced nothing can't pass. The workflow first watched only `.claude/skills/`, and I fixed that gap when I saw that `shared/` edits change the model's behavior too.
+The final phase would be CI integration, to make GitHub automatically re-run the eval whenever skill files change, and fail the check if quality drops.I tested the CI integration but didn’t keep it in the project because the API cost money. Details about those the CI integration are below.
 
-I removed the workflow and its API key secret on 2026-09-25 because it made API calls on every push. The screenshots below are the record of it working. If I expanded this project, I would bring it back and refine it.
+### GitHub Action
+
+A GitHub Action re-ran the 20 cases whenever a file under `.claude/skills/` or `shared/` changed, then ran `check-mechanical.py` and [`scripts/check-pass-rate.py`](scripts/check-pass-rate.py). The gate scores only the run the job just produced. The workflow first watched only `.claude/skills/`, and I fixed that gap when I saw that `shared/` edits change the model's behavior too.
+
+I removed the workflow and its API key secret on 2026-09-25 because it made API calls on every push. The screenshots below are the record of it working. 
 
 To test it, I broke `SKILL.md` on purpose five ways and reverted each one ([`findings.md`](evals/findings.md), "CI safety net"):
 
